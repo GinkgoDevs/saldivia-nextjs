@@ -1,0 +1,317 @@
+# PLAN DE PROYECTO — Desarrollo Web Institucional  
+**Saldivia Carrocerías | GinkGoDevs | Abril 2026**
+
+---
+
+## 1. Resumen Ejecutivo
+
+El objetivo de este proyecto es desarrollar el nuevo sitio web institucional de Saldivia Carrocerías, posicionándola como referente digital nacional en fabricación de buses y carrocerías.
+
+El sitio tendrá:
+- Alto impacto visual
+- Rendimiento técnico superior
+- Gestión dinámica de contenidos sin necesidad de tocar código
+
+**Stack tecnológico:**  
+Next.js 14 (App Router) · Supabase (PostgreSQL) · Vercel · next/image · Leaflet.js  
+
+**Duración:** 14 días corridos  
+**Inversión:** USD 1.000 (50/50)  
+**Equipo:** 2 devs  
+
+### Objetivos específicos
+
+- Reemplazar el sitio anterior por una plataforma moderna, veloz y escalable  
+- Reflejar identidad de marca: innovación, ingeniería argentina, solidez y liderazgo  
+- Permitir gestión autónoma de contenidos (sin código)  
+- Generar leads comerciales mediante formularios  
+- Optimizar SEO orgánico  
+- Implementar mapa interactivo de red comercial  
+
+---
+
+## 2. Alcance del Proyecto
+
+### 2.1 Mapa del Sitio
+
+| Ruta | Contenido | Estado |
+|------|----------|--------|
+| `/` | Hero, KPIs, Showcase, Segmentación, Mapa, Galería, CTA | ✔ Completo |
+| `/flota` | Modelos por segmento | ✔ Completo |
+| `/producto/[slug]` | Ficha técnica individual | ⚠ Parcial |
+| `/tecnologia` | Pilares tecnológicos | ✔ Completo |
+| `/nosotros` | Historia y empresa | ✔ Completo |
+| `/postventa` | Soporte técnico | ✔ Completo |
+| `/contacto` | Formulario cotización | ⚠ Pendiente |
+| `/dashboard` | Panel admin | ✗ No iniciado |
+
+---
+
+### 2.2 Componentes Globales
+
+- Navbar con mega-menú + dark/light mode + CTA  
+- Footer institucional  
+- Sistema de temas persistente  
+- Galería reutilizable  
+- Notificaciones de formularios  
+- Mapa interactivo con filtros (Leaflet.js + OpenStreetMap)
+
+---
+
+### 2.3 No incluido
+
+- E-commerce  
+- Blog  
+- Integración con CRM  
+- Multilenguaje  
+- App móvil  
+
+---
+
+## 3. Cronograma (14 días)
+
+### FASE 1 — Base Técnica (Días 1–4)
+
+**Objetivo:** Proyecto navegable en staging
+
+#### Día 1
+- Setup Next.js, Tailwind, ESLint
+- Repo GitHub
+- Supabase inicial
+
+#### Día 2
+- Navbar + Footer
+- Schema DB + seed data
+
+#### Día 3
+- Home (Hero + KPIs)
+- Skeleton de rutas
+
+#### Día 4
+- Deploy a staging
+- Feedback cliente
+
+🔵 **Checkpoint 1**
+
+---
+
+### FASE 2 — Desarrollo (Días 5–10)
+
+**Objetivo:** Producto completo y funcional
+
+#### Incluye:
+- Home completa con mapa interactivo  
+- Integración Supabase  
+- Página flota dinámica  
+- Ficha producto con SSG  
+- Formularios funcionales  
+- Dashboard con CRUD  
+- Responsive completo  
+
+🔵 **Checkpoint 2**
+
+---
+
+### FASE 3 — Optimización (Días 11–14)
+
+**Objetivo:** Producción
+
+- SEO técnico completo  
+- Optimización Lighthouse (>90)  
+- Configuración dominio  
+- Testing QA  
+- Deploy final  
+
+🔵 **Checkpoint 3**
+
+---
+
+## 4. División de Responsabilidades
+
+### Dev A — Frontend
+
+- UI completa (Home, Flota, Tecnología, Postventa)
+- Componentes del mapa
+- Responsive
+- SEO
+- Accesibilidad
+
+### Dev B — Backend
+
+- Supabase (DB + lógica)
+- Hooks de datos
+- Página producto
+- Contacto (server actions)
+- Dashboard CRUD
+- Performance
+
+### Ambos
+
+- Setup inicial  
+- Revisiones  
+- QA  
+- Presentación final  
+
+---
+
+## 5. Material Requerido
+
+| # | Material | Formato | Fecha |
+|--|---------|--------|------|
+| 1 | Logo | SVG/PNG | Día 0 |
+| 2 | Fotos modelos | JPG/PNG | Día 0 |
+| 3 | Fotos planta | JPG/PNG | Día 0 |
+| 4 | Fichas técnicas | PDF/Excel | Día 0 |
+| 5 | Manual de marca | PDF | Día 0 |
+| 6 | Info institucional | Texto | Día 0 |
+| 7 | Datos contacto | Texto | Día 0 |
+| 8 | Red de ubicaciones | Excel | Día 4 |
+| 9 | Dominio | Hosting | Día 10 |
+
+⚠ Items 1–7 son bloqueantes
+
+---
+
+## 6. Condiciones Comerciales
+
+### Pago
+
+| Cuota | Momento | Monto |
+|------|--------|------|
+| 1 | Inicio | USD 500 |
+| 2 | Entrega | USD 500 |
+
+**Total:** USD 1.000
+
+---
+
+### Soporte (opcional)
+
+- USD 20/mes  
+- Incluye hosting + DB + mantenimiento  
+- No incluye nuevas features  
+
+---
+
+### Post-entrega
+
+- 15 días de ajustes incluidos  
+
+---
+
+### Propiedad
+
+El código pasa a ser propiedad del cliente tras el pago total.
+
+---
+
+## 7. Protocolo de Trabajo
+
+### Git Flow
+
+- `main` → producción  
+- `develop` → integración  
+- `feature/*` → features  
+- `fix/*` → bugs  
+
+PR obligatorio + aprobación
+
+---
+
+### Commits
+
+Convención:
+feat:
+fix:
+chore:
+refactor:
+docs:
+
+
+Ejemplo:
+
+
+feat(mapa): add MapFilters component
+
+
+---
+
+### Comunicación
+
+| Canal | Uso |
+|------|----|
+| WhatsApp | Diario |
+| GitHub Issues | Tareas |
+| PR | Code review |
+| Meet | Checkpoints |
+
+---
+
+### Estructura del Proyecto
+
+
+app/
+components/
+components/map/
+lib/
+lib/supabase/
+hooks/
+types/
+public/
+supabase/
+
+
+---
+
+## 8. Definition of Done
+
+### Requisitos generales
+
+- Diseño fiel a maqueta  
+- Responsive (mobile/tablet/desktop)  
+- Datos desde Supabase  
+- Formularios funcionales  
+- Sin errores en consola  
+- Imágenes optimizadas  
+
+---
+
+### Mapa interactivo
+
+- Marcadores funcionales  
+- Filtros dinámicos  
+- Mobile usable  
+- Integrado con dashboard  
+- Lazy loading (SSR false)  
+- Fallback disponible  
+
+---
+
+### Producción
+
+- Lighthouse Performance > 90  
+- SEO > 95  
+- Accessibility > 85  
+- Sitemap + robots.txt  
+- Formularios funcionando  
+- Dashboard protegido  
+
+---
+
+## Checklist QA Final
+
+- Home completa  
+- Mapa funcional  
+- Flota OK  
+- Producto OK  
+- Tecnología OK  
+- Nosotros OK  
+- Postventa OK  
+- Contacto OK  
+- Dashboard OK  
+- Responsive OK  
+- Dark mode OK  
+- SEO OK  
+- Lighthouse OK  
+- Sin errores  
+- Dominio activo  
