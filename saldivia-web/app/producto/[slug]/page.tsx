@@ -1,11 +1,12 @@
 interface Props {
-  params: { slug: string }
+  params: Promise<{ slug: string }>
 }
 
-export default function ProductoPage({ params }: Props) {
+export default async function ProductoPage({ params }: Props) {
+  const { slug } = await params
   return (
     <main>
-      <h1>Producto: {params.slug}</h1>
+      <h1>Producto: {slug}</h1>
       <p>Ficha técnica — en desarrollo</p>
     </main>
   )
