@@ -17,11 +17,168 @@
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+
+  /* Homepage utilities */
+  .hero-gradient {
+    background: linear-gradient(to right, rgba(13, 44, 79, 0.9), rgba(13, 44, 79, 0.2));
+  }
+
+  .tech-slide {
+    display: none;
+  }
+
+  .tech-slide.active {
+    display: flex;
+  }
+
+  .tech-spec-row {
+    border-bottom: 1px solid rgba(229, 231, 235, 0.1);
+    padding: 0.75rem 0;
+  }
+
+  .glass-panel {
+    background: rgba(18, 18, 18, 0.85);
+    backdrop-filter: blur(12px);
+  }
+
+  .hub-card:hover .hub-bg {
+    transform: scale(1.05);
+  }
+
+  .industrial-grid {
+    background-image: radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px);
+    background-size: 30px 30px;
+  }
+
+  .desaturated-img {
+    filter: grayscale(0.4) contrast(1.1);
+  }
+
+  /* Flota utilities */
+  .hero-gradient-light {
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 1));
+  }
+
+  .industrial-grid-light {
+    background-image: radial-gradient(circle, rgba(0,0,0,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  .frosted-overlay-full {
+    background: rgba(13, 44, 79, 0.75);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  .industrial-charcoal-overlay {
+    background: rgba(18, 18, 18, 0.85);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+  }
+
+  .tech-card-glow {
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1), 0 10px 30px -5px rgba(0, 0, 0, 0.2);
+  }
+
+  .tech-card-glow:hover {
+    box-shadow: 0 0 40px rgba(32, 136, 204, 0.15), 0 20px 50px -10px rgba(0, 0, 0, 0.4);
+  }
+
+  /* Postventa utilities */
+  .hero-pattern {
+    background-image: linear-gradient(rgba(30, 41, 59, 0.8), rgba(30, 41, 59, 0.9)), url(https://lh3.googleusercontent.com/aida-public/AB6AXuBMWb2JbNo06lkh3wE7KzyMjzF3hL2TiH991ej3Bv1b9V58BV61bTXbJXEvGchNUBbmmp6Op3FPZB7C_3NCQFNCLFMnOtH5fe8zphrk3qrGcHaIR8hNm_L4USs3xjIQXvVG0nMeCG3SAJkN-UWVD7yE8gtcdeJM6BQ8FcsNxiTjGEBqjAArCHrcgqkCXO0iKFxKfYLeM0PKTIIh-uXIfxjyHp37NB5LNMR4Ld5lXWL4NcXkiEb-hi_H0GHshlgHStp4C8DL1i41hQ6J);
+    background-size: cover;
+    background-position: center;
+  }
+
+  /* Contacto utilities */
+  .hero-contact-gradient {
+    background: linear-gradient(to bottom, rgba(13, 44, 79, 0.4), rgba(8, 27, 49, 0.9));
+  }
+
+  .contact-card {
+    @apply bg-white dark:bg-industrial-steel border border-slate-200 dark:border-white/5 shadow-sm;
+  }
+
+  .gradient-input {
+    @apply border-transparent bg-slate-50 dark:bg-industrial-steel;
+    background-image: linear-gradient(white, white), linear-gradient(to right, #2088CC33, #0D2C4F33);
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+    transition: all 0.3s ease;
+  }
+
+  .dark .gradient-input {
+    background-image: linear-gradient(#2C2C2E, #2C2C2E), linear-gradient(to right, #2088CC55, #0D2C4F55);
+  }
+
+  .gradient-input:focus {
+    background-image: linear-gradient(white, white), linear-gradient(to right, #2088CC, #0D2C4F);
+  }
+
+  .dark .gradient-input:focus {
+    background-image: linear-gradient(#2C2C2E, #2C2C2E), linear-gradient(to right, #2088CC, #0D2C4F);
+  }
+
+  /* Stitch custom gradients */
+  .asymmetric-gradient {
+    background: linear-gradient(135deg, #0d2c4f 0%, #001732 100%);
+  }
+  .technical-gradient {
+    background: linear-gradient(135deg, #006493 0%, #58bcfd 100%);
+  }
+  .machined-gradient {
+    background: linear-gradient(135deg, #0d2c4f 0%, #001732 100%);
+  }
+  .primary-gradient {
+    background: linear-gradient(135deg, #0d2c4f 0%, #001732 100%);
+  }
+  .hero-gradient-home {
+    background: linear-gradient(to right, rgba(8, 27, 49, 0.55) 0%, rgba(8, 27, 49, 0.28) 45%, rgba(8, 27, 49, 0) 100%);
+  }
+  .hero-overlay-home {
+    background: radial-gradient(circle at 20% 50%, rgba(8, 27, 49, 0.18) 0%, rgba(13, 44, 79, 0.04) 100%);
+  }
+  .hide-scrollbar::-webkit-scrollbar { display: none; }
+  .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  .variant-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+  .variant-card:hover { transform: translateY(-4px); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04); }
+  .map-zone { transition: all 0.3s ease; cursor: pointer; }
+  .map-zone:hover { fill: #2095D4 !important; filter: drop-shadow(0 0 8px rgba(32, 149, 212, 0.6)); }
+  .map-zone.active { fill: #2095D4 !important; stroke: white; stroke-width: 2px; }
+  .zigzag-line {
+    background-image: url("data:image/svg+xml,%3Csvg width='40' height='100' viewBox='0 0 40 100' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0L40 50L0 100' stroke='%23006493' stroke-width='2'/%3E%3C/svg%3E");
+    background-repeat: repeat-y;
+    background-position: center;
+  }
+  .text-machined { text-transform: uppercase; letter-spacing: 0.05em; }
+
+  /* Aries 365 utilities */
+  .scroll-mt-nav {
+    scroll-margin-top: 120px;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #2088CC;
+    border-radius: 10px;
+  }
+
+  .dark ::-webkit-scrollbar-thumb {
+    background: #334155;
   }
 }
