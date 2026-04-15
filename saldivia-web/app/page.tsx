@@ -20,7 +20,10 @@ export default function HomePage() {
 
       <main>
         {/* Hero Section */}
-        <section className="relative h-screen overflow-hidden bg-slate-900">
+        <section
+          id="saldivia-home-hero"
+          className="relative h-screen overflow-hidden bg-slate-900"
+        >
           <img
             alt=""
             className="absolute inset-0 w-full h-full object-cover object-center brightness-[0.72] scale-100 transition-all duration-700"

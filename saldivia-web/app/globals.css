@@ -7,16 +7,25 @@
   --foreground: #171717;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  /* Densidad visual cercana al 80% de zoom del navegador, con zoom del navegador al 100% */
+  zoom: 0.8;
+}
+
+html.dark {
+  color-scheme: dark;
+}
+
+html.dark,
+html.dark :root {
+  --background: #0a0f14;
+  --foreground: #e8eaed;
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 @layer utilities {
