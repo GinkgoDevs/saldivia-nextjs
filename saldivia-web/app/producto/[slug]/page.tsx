@@ -2,7 +2,7 @@ import ProductGalleryCarousel from "../../components/ProductGalleryCarousel";
 import { getAries305GalleryPaths } from "@/lib/aries-305-gallery";
 
 interface Props {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }
 
 const DEFAULT_GALLERY_IMAGES = [
@@ -10,8 +10,9 @@ const DEFAULT_GALLERY_IMAGES = [
   "https://lh3.googleusercontent.com/aida-public/AB6AXuBhEV-y4sRKcJO2BpjLPmabNqqO92WDmJe0grKwAt8QKFpguZ7BxayAwB-4TxyAhi9sQc9G-Ctl0IhlxDBpvnDRfHVLFHUMTTvQOwkzYJ56WGivN9e6uZC_A7IBLvZJeOEV1iLuiKoSsy0LaaZA3od5MAGYqfoaN8u2kaqpoW7FrH2RtQZzJdb3JPtdadzuC2NKn_M9XAOvWPegQ4Li5OxJ7DqPtLnrpFXwDIfB6AB7RLDmcV0wV0U1nZltKjoYxat1aL7wxl32I1ol",
 ] as const;
 
-export default function ProductoPage({ params }: Props) {
-  const slugKey = params.slug.toLowerCase();
+export default async function ProductoPage({ params }: Props) {
+  const { slug } = await params;
+  const slugKey = slug.toLowerCase();
   const aries305FromDisk =
     slugKey === "aries-305" ? getAries305GalleryPaths() : null;
   const galleryImages =
@@ -21,7 +22,7 @@ export default function ProductoPage({ params }: Props) {
   const galleryAltPrefix =
     aries305FromDisk && aries305FromDisk.length > 0
       ? "Aries 305"
-      : `Modelo ${params.slug}`;
+      : `Modelo ${slug}`;
   const heroSrc =
     aries305FromDisk && aries305FromDisk.length > 0
       ? aries305FromDisk[0]
@@ -47,7 +48,7 @@ export default function ProductoPage({ params }: Props) {
             <div className="max-w-3xl">
               <span className="inline-block bg-saldivia-blue text-white px-3 py-1 mb-6 text-[10px] font-bold tracking-[0.1em] uppercase">Familia ARIES</span>
               <h1 className="text-white text-7xl font-black leading-none tracking-tighter mb-6">
-                Modelo {params.slug.toUpperCase()}
+                Modelo {slug.toUpperCase()}
               </h1>
               <p className="text-on-primary-container text-xl font-light mb-8 max-w-2xl leading-relaxed">
                 Uniendo caminos. El estándar de eficiencia para traslados de media y larga distancia. Versatilidad absoluta en configuraciones de 12 y 13.20 metros.
