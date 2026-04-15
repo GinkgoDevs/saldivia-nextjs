@@ -554,6 +554,7 @@ export default function Navbar({
   const pathname = usePathname();
   /** Hero aún visible (home): barra transparente y enlaces claros. Fuera del hero o resto de rutas: barra sólida (evita texto blanco sobre secciones claras; estable con html { zoom }). */
   const [heroIntersects, setHeroIntersects] = useState(pathname === "/");
+  const [desktopScrolled, setDesktopScrolled] = useState(false);
   const [megaMenuOpen, setMegaMenuOpen] = useState(false);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const headerRef = useRef<HTMLElement>(null);
@@ -578,7 +579,8 @@ export default function Navbar({
     return () => io.disconnect();
   }, [pathname]);
 
-  const solidNav = pathname !== "/" || !heroIntersects || mobileNavOpen;
+  const solidNav =
+    pathname !== "/" || !heroIntersects || mobileNavOpen || desktopScrolled;
 
   useLayoutEffect(() => {
     const el = headerRef.current;
@@ -601,6 +603,22 @@ export default function Navbar({
     };
     mq.addEventListener("change", closeIfDesktop);
     return () => mq.removeEventListener("change", closeIfDesktop);
+  }, []);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 768px)");
+    const updateDesktopScrollState = () => {
+      setDesktopScrolled(mq.matches && window.scrollY > 0);
+    };
+
+    updateDesktopScrollState();
+    window.addEventListener("scroll", updateDesktopScrollState, { passive: true });
+    mq.addEventListener("change", updateDesktopScrollState);
+
+    return () => {
+      window.removeEventListener("scroll", updateDesktopScrollState);
+      mq.removeEventListener("change", updateDesktopScrollState);
+    };
   }, []);
 
   return (
