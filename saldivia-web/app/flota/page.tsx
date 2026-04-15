@@ -1,117 +1,10 @@
-type FleetModel = {
-  name: string;
-  href: string;
-  description: string;
-  /** Opcional: imagen distinta por modelo; si no, se usa placeholder de catálogo */
-  image?: string;
-};
-
-/** Imagen de catálogo compartida por todos los modelos en /flota (public/ARIES-305/345_1.png) */
-const CATALOG_IMG = "/ARIES-305/345_1.png";
-
-const SEGMENTS: {
-  id: string;
-  eyebrow: string;
-  title: string;
-  intro: string;
-  variant: "surface" | "muted";
-  columns: "2" | "3";
-  aspect: "video" | "square";
-  models: FleetModel[];
-}[] = [
-  {
-    id: "urbano",
-    eyebrow: "Operación citadina",
-    title: "Segmento urbano",
-    intro: "Unidades ágiles para alto volumen de pasajeros, accesibilidad y eficiencia en recorridos urbanos.",
-    variant: "surface",
-    columns: "2",
-    aspect: "video",
-    models: [
-      {
-        name: "Aries 305",
-        href: "/producto/aries-305",
-        description:
-          "Diseño compacto y robusto para líneas de alta frecuencia. Optimizado para maniobrabilidad y bajo costo operativo.",
-      },
-      {
-        name: "Aries 315",
-        href: "/producto/aries-315",
-        description:
-          "Mayor capacidad manteniendo el estándar Saldivia en confort y accesibilidad para el transporte metropolitano.",
-      },
-    ],
-  },
-  {
-    id: "interurbano",
-    eyebrow: "Media distancia",
-    title: "Segmento interurbano",
-    intro: "Confort y rendimiento para trayectos regionales, con bodega generosa y climatización de precisión.",
-    variant: "muted",
-    columns: "2",
-    aspect: "video",
-    models: [
-      {
-        name: "Aries 325",
-        href: "/producto/aries-325",
-        description:
-          "Equilibrio entre capacidad y consumo. Ideal para corredores interurbanos y servicios semirrápido.",
-      },
-      {
-        name: "Aries 330",
-        href: "/producto/aries-330",
-        description:
-          "Plataforma versátil con múltiples layouts de cabina y bodega para operadores que priorizan flexibilidad.",
-      },
-    ],
-  },
-  {
-    id: "interprovincial",
-    eyebrow: "Larga distancia",
-    title: "Segmento interprovincial",
-    intro: "Referentes en confort ejecutivo y presencia en ruta. Ingeniería para los viajes más exigentes.",
-    variant: "surface",
-    columns: "3",
-    aspect: "square",
-    models: [
-      {
-        name: "Aries 345",
-        href: "/producto/aries-345",
-        description:
-          "Semicama y ejecutivo con acabados premium. Aerodinámica y silencio de marcha para largas distancias.",
-      },
-      {
-        name: "Aries 365",
-        href: "/producto/aries-365",
-        description:
-          "Tope de gama en capacidad y tecnología de abordo. La referencia para operadores de alta exigencia.",
-      },
-      {
-        name: "Aries 405",
-        href: "/producto/aries-405",
-        description:
-          "Doble piso para máxima capacidad sin renunciar a seguridad estructural y confort de clase mundial.",
-      },
-    ],
-  },
-];
-
-const SPECIAL_MODELS: (FleetModel & { label: string })[] = [
-  {
-    name: "Truck",
-    label: "Heavy duty",
-    href: "#",
-    description:
-      "Soluciones de carga y chasis especializado para aplicaciones industriales y logística pesada.",
-  },
-  {
-    name: "Truck Mini",
-    label: "Urban logistics",
-    href: "#",
-    description:
-      "Formato reducido para última milla y entornos urbanos con restricciones de tamaño y radio de giro.",
-  },
-];
+import {
+  CATALOG_IMG,
+  FLEET_SEGMENTS,
+  FLEET_SPECIALS_SECTION_ID,
+  SPECIAL_MODELS,
+  type FleetModel,
+} from "../data/flota-catalog";
 
 function ModelCard({
   model,
@@ -329,7 +222,7 @@ export default function FlotaPage() {
               industrial y el estándar de calidad Saldivia en cada carrocería.
             </p>
             <div className="mt-10 flex flex-wrap gap-3">
-              {SEGMENTS.map((s) => (
+              {FLEET_SEGMENTS.map((s) => (
                 <a
                   key={s.id}
                   href={`#${s.id}`}
@@ -342,7 +235,7 @@ export default function FlotaPage() {
           </div>
         </section>
 
-        {SEGMENTS.map((seg) => (
+        {FLEET_SEGMENTS.map((seg) => (
           <SegmentSection
             key={seg.id}
             id={seg.id}
@@ -356,7 +249,7 @@ export default function FlotaPage() {
           />
         ))}
 
-        <section className="bg-primary py-20 md:py-28">
+        <section id={FLEET_SPECIALS_SECTION_ID} className="scroll-mt-24 bg-primary py-20 md:py-28">
           <div className="mx-auto max-w-screen-2xl px-6 md:px-8">
             <header className="mb-12 md:mb-16">
               <span className="mb-3 block font-headline text-xs font-bold uppercase tracking-[0.25em] text-secondary-container">

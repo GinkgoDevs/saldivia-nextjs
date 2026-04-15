@@ -3,6 +3,8 @@ import { Inter, Montserrat, Orbitron, JetBrains_Mono, Outfit, Plus_Jakarta_Sans 
 import "./globals.css";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import { Providers } from "./providers";
+import { getMegaMenuFleet } from "@/lib/supabase/mega-menu-models";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -45,13 +47,15 @@ export const metadata: Metadata = {
   description: "Líderes en fabricación de carrocerías para el transporte de pasajeros en Argentina. Más de 40 años innovando.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const megaMenuFleet = await getMegaMenuFleet();
+
   return (
-    <html lang="es">
+    <html lang="es" suppressHydrationWarning>
       <head>
         <link
           rel="stylesheet"
@@ -65,9 +69,11 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${montserrat.variable} ${orbitron.variable} ${jetbrainsMono.variable} ${outfit.variable} ${plusJakartaSans.variable} font-body antialiased`}
       >
-        <Navbar />
-        {children}
-        <Footer />
+        <Providers>
+          <Navbar megaMenuFleet={megaMenuFleet} />
+          {children}
+          <Footer />
+        </Providers>
       </body>
     </html>
   );
