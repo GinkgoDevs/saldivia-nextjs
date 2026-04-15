@@ -36,7 +36,7 @@ export async function getMegaMenuFleet(): Promise<MegaMenuSegment[]> {
     return i === -1 ? 999 : i;
   };
 
-  const supabase = createClient();
+  const supabase = await createClient();
   const { data, error } = await supabase
     .from("models")
     .select("slug, name, segment, sort_order")

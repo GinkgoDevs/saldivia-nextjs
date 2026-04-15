@@ -1,0 +1,10 @@
+{
+  "name": "saldivia-nextjs",
+  "private": true,
+  "scripts": {
+    "dev": "npm run dev --prefix saldivia-web",
+    "build": "npm run build --prefix saldivia-web",
+    "start": "npm run start --prefix saldivia-web",
+    "lint": "npm run lint --prefix saldivia-web"
+  }
+}
