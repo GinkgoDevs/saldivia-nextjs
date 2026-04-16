@@ -57,9 +57,8 @@ function CountCell({
   reduceMotion: boolean;
 }) {
   const durationMs = end >= 1000 ? 2200 : 1600;
-  const animateCount = inView && !reduceMotion;
-  const value = useCountUp(end, animateCount, durationMs, delayMs);
-  const display = inView && reduceMotion ? end : value;
+  const value = useCountUp(end, inView, durationMs, delayMs);
+  const display = value;
   const delayS = delayMs / 1000;
 
   return (
