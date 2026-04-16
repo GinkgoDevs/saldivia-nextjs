@@ -7,12 +7,12 @@ const SEGMENT_LINKS = [
   { label: "Interprovincial", href: "/flota#interprovincial" },
 ] as const;
 
-export default function HomeHero3() {
+export default function HomeHero3({ fullHeight = false }: { fullHeight?: boolean }) {
   return (
     <section
       id="saldivia-home-hero"
       className="relative overflow-hidden bg-primary"
-      style={{ height: '93.75dvh' }}
+      style={{ height: fullHeight ? '125dvh' : '93.75dvh' }}
       aria-labelledby="home-hero-heading-3"
     >
       <div className="absolute inset-0 z-0 bg-slate-900">

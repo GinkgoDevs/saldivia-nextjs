@@ -552,8 +552,9 @@ export default function Navbar({
   megaMenuFleet: MegaMenuSegment[];
 }) {
   const pathname = usePathname();
-  /** Hero aún visible (home): barra transparente y enlaces claros. Fuera del hero o resto de rutas: barra sólida (evita texto blanco sobre secciones claras; estable con html { zoom }). */
-  const [heroIntersects, setHeroIntersects] = useState(pathname === "/");
+  /** Hero aún visible (home y variantes): barra transparente y enlaces claros. Fuera del hero o resto de rutas: barra sólida (evita texto blanco sobre secciones claras; estable con html { zoom }). */
+  const isHomePath = pathname === "/" || pathname === "/home-2" || pathname === "/home-3";
+  const [heroIntersects, setHeroIntersects] = useState(isHomePath);
   const [desktopScrolled, setDesktopScrolled] = useState(false);
   const [megaMenuOpen, setMegaMenuOpen] = useState(false);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
@@ -561,7 +562,7 @@ export default function Navbar({
   const [headerH, setHeaderH] = useState(80);
 
   useEffect(() => {
-    if (pathname !== "/") {
+    if (!isHomePath) {
       setHeroIntersects(false);
       return;
     }
@@ -580,7 +581,7 @@ export default function Navbar({
   }, [pathname]);
 
   const solidNav =
-    pathname !== "/" || !heroIntersects || mobileNavOpen || desktopScrolled;
+    !isHomePath || !heroIntersects || mobileNavOpen || desktopScrolled;
 
   useLayoutEffect(() => {
     const el = headerRef.current;

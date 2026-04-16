@@ -1,26 +1,15 @@
 import ArgentinaProjectsMap from "./components/ArgentinaProjectsMap";
 import { CountUpStatsRow } from "./components/CountUpStatsRow";
+import GalleryCarousel from "./components/GalleryCarousel";
 import HomeHero3 from "./components/HomeHero3";
 
-const saldiviaGalleryImages = [
-  { src: "/saldivia/buses.jpg", alt: "Flota de buses Saldivia" },
-  { src: "/saldivia/buses_1.jpg", alt: "Unidades Saldivia en ruta" },
-  { src: "/saldivia/carroceria.jpg", alt: "Carrocería y producción Saldivia" },
-  { src: "/saldivia/soldadura.jpg", alt: "Soldadura y fabricación en planta" },
-  { src: "/saldivia/taller_1.jpg", alt: "Taller Saldivia" },
-  { src: "/saldivia/taller_2.jpg", alt: "Línea de mantenimiento y ensamble" },
-  { src: "/saldivia/taller_3.jpg", alt: "Instalaciones de taller" },
-  { src: "/saldivia/taller_4.jpg", alt: "Procesos en planta industrial" },
-  { src: "/saldivia/img-20210910-wa0010.jpg", alt: "Instalaciones Saldivia" },
-  { src: "/saldivia/3.jpg", alt: "Producción e ingeniería Saldivia" },
-] as const;
 
 export default function HomePage() {
   return (
     <div className="font-body bg-surface text-on-surface antialiased">
 
       <main>
-        <HomeHero3 />
+        <HomeHero3 fullHeight />
 
         {/* Stats Row */}
         <CountUpStatsRow />
@@ -195,25 +184,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Gallery of Innovation */}
-        <section className="py-16 bg-industrial-charcoal">
-          <div className="container mx-auto px-4 md:px-6">
-            <div className="flex flex-col items-center mb-10">
-              <h3 className="font-headline text-xl font-light text-metallic-silver tracking-[0.2em] uppercase">Gallery of Innovation</h3>
-              <div className="w-12 h-[1px] bg-accent-blue mt-4"></div>
-            </div>
-            <div className="flex gap-4 overflow-x-auto pb-2 snap-x snap-mandatory scroll-smooth [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-              {saldiviaGalleryImages.map((item) => (
-                <img
-                  key={item.src}
-                  alt={item.alt}
-                  className="min-w-[min(72vw,300px)] md:min-w-[280px] lg:min-w-[260px] aspect-[16/7] object-cover rounded-sm desaturated-img hover:grayscale-0 transition-all duration-700 snap-center shrink-0"
-                  src={item.src}
-                />
-              ))}
-            </div>
-          </div>
-        </section>
+        <GalleryCarousel />
 
         {/* Final CTA */}
         <section className="py-20 bg-slate-900 relative">
