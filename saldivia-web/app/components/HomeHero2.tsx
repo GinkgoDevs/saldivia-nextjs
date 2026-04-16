@@ -11,7 +11,7 @@ export default function HomeHero2() {
   return (
     <section
       id="saldivia-home-hero"
-      className="relative h-screen overflow-hidden bg-primary"
+      className="relative h-dvh overflow-hidden bg-primary"
       aria-labelledby="home-hero-heading-2"
     >
       <div className="absolute inset-0 z-0 bg-slate-900">
