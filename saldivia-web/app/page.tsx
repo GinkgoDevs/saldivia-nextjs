@@ -1,5 +1,6 @@
 import ArgentinaProjectsMap from "./components/ArgentinaProjectsMap";
 import { CountUpStatsRow } from "./components/CountUpStatsRow";
+import HomeHero from "./components/HomeHero";
 
 const saldiviaGalleryImages = [
   { src: "/saldivia/buses.jpg", alt: "Flota de buses Saldivia" },
@@ -19,52 +20,7 @@ export default function HomePage() {
     <div className="font-body bg-surface text-on-surface antialiased">
 
       <main>
-        {/* Hero Section */}
-        <section
-          id="saldivia-home-hero"
-          className="relative h-screen overflow-hidden bg-slate-900"
-        >
-          <img
-            alt=""
-            className="absolute inset-0 w-full h-full object-cover object-center brightness-[0.72] scale-100 transition-all duration-700"
-            src="/background.png"
-          />
-          <div className="absolute inset-0 hero-gradient-home"></div>
-          <div className="absolute inset-0 hero-overlay-home"></div>
-          <div className="relative container mx-auto px-4 md:px-6 h-full flex flex-col justify-center">
-            <div className="max-w-4xl text-white">
-              <div className="inline-flex items-center gap-3 mb-8">
-                <span className="h-[1px] w-12 bg-accent-blue"></span>
-                <span className="text-xs font-black tracking-[0.3em] uppercase text-accent-blue">Ingeniería de Clase Mundial</span>
-              </div>
-              <h1 className="font-headline text-6xl md:text-8xl lg:text-7xl font-black mb-8 leading-[0.9] tracking-tighter uppercase">
-                Nuevo ARIES<br /><span className="text-accent-blue">405 DD</span>
-              </h1>
-              <p className="text-xl md:text-2xl text-slate-200 mb-12 leading-relaxed max-w-2xl font-light">
-                Redefiniendo los estándares del transporte de pasajeros. Potencia, seguridad extrema y el diseño más imponente de la industria nacional.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-6">
-                <a
-                  className="inline-flex items-center justify-center bg-accent-blue hover:bg-accent-blue-alt text-white px-10 py-5 rounded-sm font-black text-sm uppercase tracking-widest transition-all transform hover:scale-105 shadow-2xl"
-                  href="/flota"
-                >
-                  EXPLORAR MODELOS
-                  <span className="material-symbols-outlined ml-3">arrow_forward</span>
-                </a>
-                <a
-                  className="inline-flex items-center justify-center bg-white/5 hover:bg-white/10 backdrop-blur-xl text-white border border-white/20 px-10 py-5 rounded-sm font-black text-sm uppercase tracking-widest transition-all"
-                  href="/nosotros"
-                >
-                  TOUR INDUSTRIAL
-                </a>
-              </div>
-            </div>
-          </div>
-          <div className="absolute bottom-12 left-1/2 -translate-x-1/2 text-white/30 flex flex-col items-center gap-2">
-            <span className="text-[10px] uppercase tracking-[0.4em] font-bold">Descubrir</span>
-            <span className="material-symbols-outlined text-3xl animate-bounce">expand_more</span>
-          </div>
-        </section>
+        <HomeHero />
 
         {/* Stats Row */}
         <CountUpStatsRow />
@@ -89,13 +45,13 @@ export default function HomePage() {
           </div>
           <div className="flex-grow flex flex-col lg:flex-row relative">
             <div className="flex flex-col lg:flex-row w-full min-h-screen">
-              <div className="lg:w-2/3 relative h-[50vh] lg:h-auto">
+              <div className="lg:w-2/3 relative h-[50vh] lg:h-full">
                 <img
                   alt="Aries 405 DD Detailed"
                   className="w-full h-full object-cover"
-                  src="https://lh3.googleusercontent.com/aida/ADBb0uj4pIvVhuL3wPnZ8Y4382UPXGKpGW4O6MJjurtbklrB_GuH9bpBXG7McvElBXPJrxq5YGLz8fdcEl2OSO-ylalqbMEiLa5f20OfXrEoQuOBkrLvy2rJeO3FwDvCZ_UWQsBH-7Nmm3aUZJ6-f-4Kjj9EyKp_O7BxWqL7rxg8LEdgj5SHI-raPYK8KCjeWZFvmKo0Cw4BHilwUWzP0K6PaRZ9j-Tu2z7kFoxbOAZY-6BvTf4hd9lSI1jC2a2mi64W3NvY7ZzUpVkXkZo"
+                  src="/ARIES-305/345_1.png"
                 />
-                <div className="absolute inset-0 bg-gradient-to-r from-industrial-charcoal via-transparent to-transparent hidden lg:block"></div>
+                <div className="absolute inset-0 bg-gradient-to-r from-industrial-charcoal/70 via-transparent to-transparent hidden lg:block"></div>
               </div>
               <div className="lg:w-1/3 glass-panel p-8 md:p-12 lg:p-16 flex flex-col justify-center border-l border-white/5">
                 <div className="mb-10">
@@ -135,35 +91,79 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Segmented Solutions */}
-        <section className="py-24 bg-white">
+        {/* Segmentación: tres distancias → anclas del catálogo /flota */}
+        <section className="bg-surface py-20 md:py-24" aria-labelledby="home-segmentacion-heading">
           <div className="container mx-auto px-4 md:px-6">
-            <div className="text-center mb-16">
-              <h2 className="text-accent-blue font-bold tracking-[0.2em] uppercase text-sm mb-4">Segmentación Especializada</h2>
-              <h3 className="font-headline text-4xl md:text-5xl font-extrabold text-primary mb-6">Soluciones para cada distancia</h3>
-              <div className="w-24 h-1.5 bg-accent-blue mx-auto rounded-full"></div>
+            <div className="mb-14 text-center md:mb-16">
+              <p className="mb-3 font-headline text-xs font-bold uppercase tracking-[0.28em] text-secondary">
+                Segmentación especializada
+              </p>
+              <h2
+                id="home-segmentacion-heading"
+                className="font-headline text-3xl font-black uppercase tracking-tighter text-primary md:text-5xl"
+              >
+                Soluciones para cada distancia
+              </h2>
+              <div className="technical-gradient mx-auto mt-5 h-1 w-24" />
+              <p className="mx-auto mt-6 max-w-2xl font-headline text-sm leading-relaxed text-on-surface-variant md:text-base">
+                Urbano, media distancia y larga distancia: mismos estándares de ingeniería, distintas plataformas según su operación.
+              </p>
             </div>
-            <div className="flex flex-col space-y-8">
-              <a className="hub-card group relative h-[400px] overflow-hidden rounded-3xl flex flex-col justify-center p-8 md:p-12 shadow-xl" href="/flota">
-                <div className="absolute inset-0 hub-bg transition-transform duration-700">
-                  <img
-                    alt="Transporte Urbano"
-                    className="w-full h-full object-cover"
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuBp1v9AMqTiqFcZea0MHsqrp5mtMe32wUnE5I7fq-DZdPRgSsD6k8RVx7mKqnnlJ9-1R76EfefScx7uRIZJPfrl_JKeGVP9ybdsgjHj3M2ehL8ms1rz_zUIIKGIpuEAfTKO2RGja7niSdTYjXC1dd98lcpAjoKOQ0g15LgeEkOIbUNRloXzrVJVKEyg3blta6ll7Z37BFsK0QYDAPiH9ykAKvLC2Ibbo3_kl5eXSgUGWYgxLUJHVTz47FxuhKZVoaWwkk5Yrh2W_190"
-                  />
-                </div>
-                <div className="absolute inset-0 bg-gradient-to-r from-primary/95 via-primary/70 to-transparent"></div>
-                <div className="relative z-10 text-white max-w-xl">
-                  <div className="w-14 h-14 bg-accent-blue rounded-2xl flex items-center justify-center mb-6">
-                    <span className="material-symbols-outlined text-3xl">location_city</span>
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-3 md:gap-8">
+              {[
+                {
+                  href: "/flota#urbano",
+                  title: "Urbano",
+                  copy: "Alto volumen, maniobrabilidad y eficiencia para el transporte citadino.",
+                  icon: "location_city" as const,
+                  img: "/saldivia/buses_1.jpg",
+                  imgAlt: "Colectivo urbano Saldivia",
+                },
+                {
+                  href: "/flota#interurbano",
+                  title: "Interurbano",
+                  copy: "Confort y rendimiento para trayectos regionales y corredores semirrápidos.",
+                  icon: "route" as const,
+                  img: "/saldivia/carroceria.jpg",
+                  imgAlt: "Carrocería Saldivia para media distancia",
+                },
+                {
+                  href: "/flota#interprovincial",
+                  title: "Interprovincial",
+                  copy: "Presencia en ruta y confort ejecutivo para los viajes más exigentes.",
+                  icon: "map" as const,
+                  img: "/saldivia/buses.jpg",
+                  imgAlt: "Bus de larga distancia Saldivia",
+                },
+              ].map((card) => (
+                <a
+                  key={card.href}
+                  href={card.href}
+                  className="hub-card group relative flex min-h-[320px] cursor-pointer flex-col justify-end overflow-hidden rounded-sm border border-outline-variant/25 bg-surface-container-lowest p-8 shadow-[0px_12px_32px_rgba(13,44,79,0.08)] transition-shadow duration-300 hover:border-accent-blue/35 hover:shadow-[0px_20px_48px_rgba(13,44,79,0.14)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue focus-visible:ring-offset-2 md:min-h-[380px] md:p-10"
+                >
+                  <div className="absolute inset-0 hub-bg transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]">
+                    <img alt={card.imgAlt} className="h-full w-full object-cover" src={card.img} />
                   </div>
-                  <h4 className="font-headline text-4xl font-bold mb-4">Urbano</h4>
-                  <p className="text-slate-100 text-lg mb-8">Eficiencia y versatilidad para el flujo constante de la ciudad.</p>
-                  <div className="flex items-center text-sm font-bold tracking-widest uppercase text-accent-blue">
-                    Explorar Segmento <span className="material-symbols-outlined ml-2">arrow_right_alt</span>
+                  <div className="absolute inset-0 bg-gradient-to-t from-primary via-primary/75 to-primary/20" />
+                  <div className="relative z-10 text-white">
+                    <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-sm bg-accent-blue">
+                      <span className="material-symbols-outlined text-2xl">{card.icon}</span>
+                    </div>
+                    <h3 className="font-headline text-2xl font-black uppercase tracking-tighter md:text-3xl">
+                      {card.title}
+                    </h3>
+                    <p className="mt-3 font-headline text-sm leading-relaxed text-white/90 md:text-base">
+                      {card.copy}
+                    </p>
+                    <span className="mt-6 inline-flex items-center font-headline text-xs font-bold uppercase tracking-widest text-secondary-container transition-colors duration-200 group-hover:text-white">
+                      Ver en catálogo
+                      <span className="material-symbols-outlined ml-1 text-lg transition-transform duration-200 group-hover:translate-x-0.5">
+                        arrow_forward
+                      </span>
+                    </span>
                   </div>
-                </div>
-              </a>
+                </a>
+              ))}
             </div>
           </div>
         </section>

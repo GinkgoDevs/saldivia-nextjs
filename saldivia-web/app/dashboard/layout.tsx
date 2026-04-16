@@ -1,11 +1,11 @@
-import { redirect } from 'next/navigation'
-import { createClient } from '@/lib/supabase/server'
-
-export default async function DashboardLayout({
+export default function DashboardLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
+<<<<<<< add/SkeletonsAndHero
+  return <div className="min-h-screen bg-surface">{children}</div>;
+=======
   const supabase = await createClient()
   const { data: { session } } = await supabase.auth.getSession()
 
@@ -18,4 +18,5 @@ export default async function DashboardLayout({
       {children}
     </div>
   )
+>>>>>>> main
 }
