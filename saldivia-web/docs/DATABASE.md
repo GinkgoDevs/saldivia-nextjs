@@ -2,7 +2,7 @@
 
 Referencia del esquema definido en `supabase/migrations/`. La fuente de verdad son esos archivos SQL; este documento resume tablas, relaciones y políticas RLS que viven en el repo.
 
-## Migraciones
+## Migracionesgit ad
 
 | Archivo | Contenido |
 |---------|-----------|
