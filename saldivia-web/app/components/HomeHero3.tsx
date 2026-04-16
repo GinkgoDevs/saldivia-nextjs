@@ -11,7 +11,8 @@ export default function HomeHero3() {
   return (
     <section
       id="saldivia-home-hero"
-      className="relative h-screen overflow-hidden bg-primary"
+      className="relative overflow-hidden bg-primary"
+      style={{ height: '93.75dvh' }}
       aria-labelledby="home-hero-heading-3"
     >
       <div className="absolute inset-0 z-0 bg-slate-900">
@@ -35,7 +36,7 @@ export default function HomeHero3() {
 
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-y-0 right-0 z-[1] hidden w-[min(560px,52vw)] bg-primary/40 lg:block"
+        className="pointer-events-none absolute inset-y-0 right-0 z-[1] hidden w-[min(560px,52vw)] bg-primary/75 lg:block"
         style={{ clipPath: "polygon(26% 0, 100% 0, 100% 100%, 0% 100%)" }}
       />
 

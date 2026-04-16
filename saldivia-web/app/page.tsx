@@ -1,6 +1,6 @@
 import ArgentinaProjectsMap from "./components/ArgentinaProjectsMap";
 import { CountUpStatsRow } from "./components/CountUpStatsRow";
-import HomeHero from "./components/HomeHero";
+import HomeHero3 from "./components/HomeHero3";
 
 const saldiviaGalleryImages = [
   { src: "/saldivia/buses.jpg", alt: "Flota de buses Saldivia" },
@@ -20,7 +20,7 @@ export default function HomePage() {
     <div className="font-body bg-surface text-on-surface antialiased">
 
       <main>
-        <HomeHero />
+        <HomeHero3 />
 
         {/* Stats Row */}
         <CountUpStatsRow />

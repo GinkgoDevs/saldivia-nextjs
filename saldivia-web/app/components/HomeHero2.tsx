@@ -12,7 +12,7 @@ export default function HomeHero2() {
     <section
       id="saldivia-home-hero"
       className="relative overflow-hidden bg-primary"
-      style={{ height: '100dvh' }}
+      style={{ height: '125dvh' }}
       aria-labelledby="home-hero-heading-2"
     >
       <div className="absolute inset-0 z-0 bg-slate-900">
