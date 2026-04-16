@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 48;
+        }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        .asymmetric-gradient {
+            background: linear-gradient(135deg, #0d2c4f 0%, #001732 100%);
+        }
+        .technical-gradient {
+            background: linear-gradient(135deg, #006493 0%, #58bcfd 100%);
+        }
+        .zigzag-line {
+            background-image: url("data:image/svg+xml,%3Csvg width='40' height='100' viewBox='0 0 40 100' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0L40 50L0 100' stroke='%23006493' stroke-width='2'/%3E%3C/svg%3E");
+            background-repeat: repeat-y;
+            background-position: center;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-low": "#f4f3f6",
+                        "primary-fixed-dim": "#adc8f3",
+                        "surface-dim": "#dad9dd",
+                        "on-secondary-fixed-variant": "#004b70",
+                        "on-primary-fixed": "#001c3a",
+                        "on-surface": "#1a1c1e",
+                        "surface-container-high": "#e9e7eb",
+                        "surface-container-highest": "#e3e2e5",
+                        "outline-variant": "#c4c6cf",
+                        "on-background": "#1a1c1e",
+                        "surface-container": "#eeedf1",
+                        "tertiary": "#001929",
+                        "primary": "#001732",
+                        "on-secondary-fixed": "#001e30",
+                        "surface-variant": "#e3e2e5",
+                        "primary-container": "#0d2c4f",
+                        "secondary-fixed": "#cae6ff",
+                        "tertiary-fixed": "#c9e6ff",
+                        "secondary-container": "#58bcfd",
+                        "on-tertiary-container": "#2a9bda",
+                        "on-primary-container": "#7a94bd",
+                        "error-container": "#ffdad6",
+                        "inverse-on-surface": "#f1f0f4",
+                        "tertiary-fixed-dim": "#8bceff",
+                        "on-secondary-container": "#004a6e",
+                        "surface-bright": "#faf9fc",
+                        "primary-fixed": "#d4e3ff",
+                        "background": "#faf9fc",
+                        "outline": "#74777f",
+                        "surface-tint": "#456085",
+                        "tertiary-container": "#002f47",
+                        "surface-container-lowest": "#ffffff",
+                        "error": "#ba1a1a",
+                        "on-tertiary-fixed": "#001e2f",
+                        "on-surface-variant": "#43474e",
+                        "inverse-surface": "#2f3033",
+                        "inverse-primary": "#adc8f3",
+                        "secondary-fixed-dim": "#8ccdff",
+                        "on-tertiary-fixed-variant": "#004b6f",
+                        "on-error": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "on-secondary": "#ffffff",
+                        "on-primary-fixed-variant": "#2d486c",
+                        "secondary": "#006493",
+                        "on-tertiary": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "surface": "#faf9fc"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Plus Jakarta Sans"],
+                        "body": ["Plus Jakarta Sans"],
+                        "label": ["Plus Jakarta Sans"]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-surface text-on-surface">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-[#faf9fc] shadow-[0px_12px_32px_rgba(13,44,79,0.08)]">
+<nav class="flex justify-between items-center px-8 py-4 max-w-full mx-auto font-['Plus_Jakarta_Sans'] font-medium tracking-tight">
+<div class="text-2xl font-black tracking-tighter text-[#0D2C4F]">SALDIVIA</div>
+<div class="hidden md:flex gap-8 items-center">
+<a class="text-[#43474e] hover:text-[#0D2C4F] transition-colors" href="#">Home</a>
+<a class="text-[#43474e] hover:text-[#0D2C4F] transition-colors" href="#">Modelos</a>
+<a class="text-[#43474e] hover:text-[#0D2C4F] transition-colors" href="#">Tecnología</a>
+<a class="text-[#006493] border-b-2 border-[#006493] pb-1" href="#">Nosotros</a>
+<a class="text-[#43474e] hover:text-[#0D2C4F] transition-colors" href="#">Postventa</a>
+<a class="text-[#43474e] hover:text-[#0D2C4F] transition-colors" href="#">Contacto</a>
+</div>
+<button class="bg-[#001732] text-white px-6 py-2 rounded font-bold uppercase tracking-widest text-xs hover:bg-[#006493] transition-all duration-300 active:scale-95">
+                Cotizar
+            </button>
+</nav>
+</header>
+<main class="pt-24">
+<!-- Hero Section -->
+<section class="relative h-[614px] flex items-center overflow-hidden asymmetric-gradient">
+<div class="absolute inset-0 opacity-40 mix-blend-overlay">
+<img class="w-full h-full object-cover" data-alt="Modern high-tech bus factory interior with clean floors, blue lighting accents, and rows of vehicle chassis in assembly" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDy_GWM56dioRQctR5tYKjjSo_grPjzDOsD4QnxY6euQderK2_vK08JC-oc-GGiokQpNdZFzGdQ31ks3ucE_AmwKv6FJM08wiUS3z2FnHfPKNIBTjfKpykewj557aUsk67Z9J-V7hOKuneG7_mN11dMjd1zifKtA4u0baRkfhMtXQyD8VMMRiOhqhlYV1BCkAEoeqnAekz9wo62xMYCHIl5wNa-VDnO0qh08nDKu6NxGIPXiklT9yrLDGfhlECI8fzN2fCLJ3FSoLMt"/>
+</div>
+<div class="relative z-10 px-12 max-w-5xl">
+<span class="text-secondary-container font-bold tracking-[0.2em] uppercase text-sm block mb-4">Nuestra Trayectoria</span>
+<h1 class="text-white text-6xl md:text-8xl font-black tracking-tighter mb-6 leading-none">DÉCADAS DE<br/><span class="text-secondary-container">PRECISIÓN</span></h1>
+<p class="text-on-primary-container max-w-xl text-lg font-medium leading-relaxed">
+                    Desde nuestros orígenes industriales hasta convertirnos en referentes del transporte regional, cada kilómetro recorrido es testimonio de ingeniería y compromiso.
+                </p>
+</div>
+</section>
+<!-- History Timeline Section -->
+<section class="py-24 bg-surface relative">
+<div class="container mx-auto px-6">
+<div class="text-center mb-24">
+<h2 class="text-4xl font-black text-primary tracking-tighter uppercase mb-4">Línea de Tiempo Industrial</h2>
+<div class="w-24 h-1 technical-gradient mx-auto"></div>
+</div>
+<div class="relative">
+<!-- Zigzag Path (Mobile hidden, Desktop absolute) -->
+<div class="hidden lg:block absolute left-1/2 top-0 bottom-0 w-10 -ml-5 zigzag-line opacity-20"></div>
+<!-- Milestones -->
+<div class="space-y-32">
+<!-- 1980s: The Foundation -->
+<div class="flex flex-col lg:flex-row items-center gap-12 group">
+<div class="lg:w-1/2 order-2 lg:order-1 text-right">
+<div class="bg-surface-container-low p-8 rounded shadow-sm border-r-4 border-secondary">
+<span class="text-secondary font-black text-5xl block mb-2">1988</span>
+<h3 class="text-xl font-bold text-primary uppercase tracking-tight mb-4">EL NACIMIENTO DEL GIGANTE</h3>
+<p class="text-on-surface-variant leading-relaxed">Fundación de Saldivia como taller especializado en mantenimiento pesado. El inicio de un sueño basado en la robustez estructural.</p>
+<div class="mt-6 flex gap-2 justify-end">
+<span class="bg-secondary-container text-on-secondary-container px-3 py-1 text-[10px] font-bold uppercase tracking-tighter">ORIGEN</span>
+<span class="bg-secondary-container text-on-secondary-container px-3 py-1 text-[10px] font-bold uppercase tracking-tighter">PASIÓN</span>
+</div>
+</div>
+</div>
+<div class="z-10 bg-primary w-16 h-16 rounded flex items-center justify-center text-white font-black shrink-0 shadow-xl ring-8 ring-surface">
+<span class="material-symbols-outlined">factory</span>
+</div>
+<div class="lg:w-1/2 order-3">
+<div class="h-64 rounded-lg overflow-hidden grayscale hover:grayscale-0 transition-all duration-500 shadow-2xl">
+<img class="w-full h-full object-cover" data-alt="Vintage black and white photo of an industrial workshop with mechanical components and heavy machinery" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBUhz9LWXaVud5PgInl9OtqbGeOwEoNB1vcTPQ8MNejdXm1GK7niy2OyQRQ85yueYFGfchvxtLzwCHvzZlZQzFZLD7-zVA6trRFq50kxcYtL4kBNQHMgwjDKqkNPmAvJsc-tCFiEwPMyTSSac0t4Qc3zE_EIo354wRIE-YTcgF1i9rn_ERcPSHGetZbetiC2zL-ckZncIDR7p-xtu0RguPPl5x0qOrAtJ5TNCBRDVBo2KOhndp2Qb2Uj4Y139RyeeVMlMZJ6IM7VJpF"/>
+</div>
+</div>
+</div>
+<!-- 2000s: Innovation -->
+<div class="flex flex-col lg:flex-row items-center gap-12 group">
+<div class="lg:w-1/2 order-3 lg:order-1">
+<div class="h-64 rounded-lg overflow-hidden grayscale hover:grayscale-0 transition-all duration-500 shadow-2xl">
+<img class="w-full h-full object-cover" data-alt="Modern technical drawing of a bus chassis on a large monitor in a dimly lit engineering office" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDliWzV3M-UWKH5-1ss4GfBt-T2JaTVHdyQeNz59G_dbJxk2xkb6d1mZlKc1_SP-eXo2_W0vXldYKO0Q63hc_4M22KoC2AuZXog_l3gZidh2S0te39iilEdgXvdPDPi87NL2M81gnvxM_zbypAdn8wTivHeh9fYznw3ED-lAXmAtYT9i08wREhX2RkBoE8XKjT1E7VpJg5NpxSojND74u4BwceTLllKexXclnoD1oliKElkhwNAhH9OiIfWDm9K4rE8KPXXsVuijX9V"/>
+</div>
+</div>
+<div class="z-10 bg-secondary w-16 h-16 rounded flex items-center justify-center text-white font-black shrink-0 shadow-xl ring-8 ring-surface">
+<span class="material-symbols-outlined">precision_manufacturing</span>
+</div>
+<div class="lg:w-1/2 order-2 text-left">
+<div class="bg-surface-container-low p-8 rounded shadow-sm border-l-4 border-secondary">
+<span class="text-secondary font-black text-5xl block mb-2">2005</span>
+<h3 class="text-xl font-bold text-primary uppercase tracking-tight mb-4">INGENIERÍA PROPIA</h3>
+<p class="text-on-surface-variant leading-relaxed">Presentación del primer chasis desarrollado íntegramente por Saldivia. Marcamos el inicio de una era de independencia tecnológica.</p>
+<div class="mt-6 flex gap-2">
+<span class="bg-secondary-container text-on-secondary-container px-3 py-1 text-[10px] font-bold uppercase tracking-tighter">CHASIS</span>
+<span class="bg-secondary-container text-on-secondary-container px-3 py-1 text-[10px] font-bold uppercase tracking-tighter">INNOVACIÓN</span>
+</div>
+</div>
+</div>
+</div>
+<!-- 2015: Expansion -->
+<div class="flex flex-col lg:flex-row items-center gap-12 group">
+<div class="lg:w-1/2 order-2 lg:order-1 text-right">
+<div class="bg-surface-container-low p-8 rounded shadow-sm border-r-4 border-secondary">
+<span class="text-secondary font-black text-5xl block mb-2">2015</span>
+<h3 class="text-xl font-bold text-primary uppercase tracking-tight mb-4">LIDERAZGO REGIONAL</h3>
+<p class="text-on-surface-variant leading-relaxed">Expansión de la planta industrial a 25,000m². Saldivia se posiciona como el carrocero líder en soluciones personalizadas.</p>
+<div class="mt-6 flex gap-2 justify-end">
+<span class="bg-secondary-container text-on-secondary-container px-3 py-1 text-[10px] font-bold uppercase tracking-tighter">CRECIMIENTO</span>
+<span class="bg-secondary-container text-on-secondary-container px-3 py-1 text-[10px] font-bold uppercase tracking-tighter">CAPACIDAD</span>
+</div>
+</div>
+</div>
+<div class="z-10 bg-primary w-16 h-16 rounded flex items-center justify-center text-white font-black shrink-0 shadow-xl ring-8 ring-surface">
+<span class="material-symbols-outlined">public</span>
+</div>
+<div class="lg:w-1/2 order-3">
+<div class="h-64 rounded-lg overflow-hidden grayscale hover:grayscale-0 transition-all duration-500 shadow-2xl">
+<img class="w-full h-full object-cover" data-alt="A fleet of white modern buses parked in a professional logistics yard during blue hour" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBiTFG7DhNGyoDqVv6EBvMzw_ImM8oYQZVvZNBxoEwuiBYLD-0C3kb25UwxAErLnyPoce4eHmZItnT2MFLnkGCkN3nrNIAB-G67LKqX3KX-v7Atjf1MVTyFLLVnHoEaSeWQD4bULHjUNBtun6FaFrd6mUTYuz2CKSGVwkMjoyDfj6HNlPWWGqmoiYHOUsmuq2g_bmgl_hM2qHX--M29E_husSlCr-IuWC-q36W7Cb4sPQTXmJA4R8_zdbEGceRYGDvufSWripCImM5q"/>
+</div>
+</div>
+</div>
+<!-- 2024: Future -->
+<div class="flex flex-col lg:flex-row items-center gap-12 group">
+<div class="lg:w-1/2 order-3 lg:order-1">
+<div class="h-64 rounded-lg overflow-hidden grayscale hover:grayscale-0 transition-all duration-500 shadow-2xl">
+<img class="w-full h-full object-cover" data-alt="Futuristic electronic circuit board glowing with blue light and technical data overlays" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDOeSF4qyLXEOT_k71T_v1K52ayE4kQASEKIvriTYlHwivddTHVpisPXZ266D7SbPeBndrt6R8jftKMd4sRRzvnsgVb51TCgJWN-yvcaW7uICzMXB7Ztp3b73bJTF826CpA8MZmEZ-vLQ36QXuTznz0W9smFygHbQ-IZWvDEPefzdAYqBAptuanlNoK0qw64Q4AjDlgG1Ak8FCsmjRhujy_QDmNPDv4kXrR6cAV33WE8lDxTP9Q_eoQeBoRmKCeIO3S-d14Uwi33_pz"/>
+</div>
+</div>
+<div class="z-10 technical-gradient w-16 h-16 rounded flex items-center justify-center text-white font-black shrink-0 shadow-xl ring-8 ring-surface">
+<span class="material-symbols-outlined">bolt</span>
+</div>
+<div class="lg:w-1/2 order-2 text-left">
+<div class="bg-surface-container-low p-8 rounded shadow-sm border-l-4 border-secondary">
+<span class="text-secondary font-black text-5xl block mb-2">2024</span>
+<h3 class="text-xl font-bold text-primary uppercase tracking-tight mb-4">SISTEMAS INTELIGENTES</h3>
+<p class="text-on-surface-variant leading-relaxed">Integración de telemetría avanzada y sistemas de asistencia al conductor de última generación. El futuro es digital.</p>
+<div class="mt-6 flex gap-2">
+<span class="bg-secondary-container text-on-secondary-container px-3 py-1 text-[10px] font-bold uppercase tracking-tighter">SMART BUS</span>
+<span class="bg-secondary-container text-on-secondary-container px-3 py-1 text-[10px] font-bold uppercase tracking-tighter">DATOS</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Stats Bento Grid -->
+<section class="py-24 bg-surface-container-low">
+<div class="container mx-auto px-6">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Big Stat Card -->
+<div class="md:col-span-2 bg-primary p-12 flex flex-col justify-between relative overflow-hidden group">
+<div class="absolute right-0 bottom-0 opacity-10 transform translate-x-1/4 translate-y-1/4 group-hover:scale-110 transition-transform duration-700">
+<span class="material-symbols-outlined !text-[240px]">directions_bus</span>
+</div>
+<div class="relative z-10">
+<h4 class="text-secondary-container font-black uppercase tracking-widest text-sm mb-2">Producción Histórica</h4>
+<div class="text-7xl font-black text-white tracking-tighter mb-4">+5,000</div>
+<p class="text-on-primary-container text-lg max-w-sm">Unidades fabricadas y rodando por toda la geografía sudamericana, garantizando seguridad y confort.</p>
+</div>
+<button class="mt-8 self-start flex items-center gap-2 text-white font-bold uppercase tracking-widest text-xs hover:text-secondary-container transition-colors">
+                            Ver nuestros modelos <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+<!-- Small Stat 1 -->
+<div class="bg-surface-container-highest p-8 flex flex-col justify-center border-t-4 border-secondary">
+<span class="material-symbols-outlined text-secondary text-4xl mb-4">groups</span>
+<div class="text-4xl font-black text-primary tracking-tighter mb-1">450+</div>
+<p class="text-on-surface-variant text-sm font-bold uppercase tracking-wider">Expertos Industriales</p>
+</div>
+<!-- Small Stat 2 -->
+<div class="bg-surface-container-highest p-8 flex flex-col justify-center border-t-4 border-secondary">
+<span class="material-symbols-outlined text-secondary text-4xl mb-4">military_tech</span>
+<div class="text-4xl font-black text-primary tracking-tighter mb-1">12</div>
+<p class="text-on-surface-variant text-sm font-bold uppercase tracking-wider">Patentes de Diseño</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Technical Excellence Section (High-end layout) -->
+<section class="py-24 bg-surface overflow-hidden">
+<div class="container mx-auto px-6">
+<div class="flex flex-col lg:flex-row items-center gap-16">
+<div class="lg:w-1/2">
+<div class="relative">
+<div class="absolute -top-12 -left-12 w-64 h-64 technical-gradient opacity-10 rounded-full blur-3xl"></div>
+<h2 class="text-5xl font-black text-primary uppercase tracking-tighter leading-tight relative">
+                                EL ADN DE <br/><span class="text-secondary">CADA ESTRUCTURA</span>
+</h2>
+<p class="mt-8 text-on-surface-variant text-lg leading-relaxed">
+                                No solo fabricamos carrocerías; esculpimos piezas de ingeniería que resisten las condiciones más extremas. Nuestra obsesión por el detalle se traduce en longevidad para su flota.
+                            </p>
+<ul class="mt-10 space-y-6">
+<li class="flex items-start gap-4">
+<div class="w-6 h-6 rounded bg-secondary-container flex items-center justify-center shrink-0 mt-1">
+<span class="material-symbols-outlined text-on-secondary-container text-sm">check</span>
+</div>
+<div>
+<p class="text-primary font-bold uppercase text-sm tracking-widest">Aceros de alta resistencia</p>
+<p class="text-on-surface-variant text-sm">Aleaciones certificadas que optimizan el peso sin comprometer la seguridad.</p>
+</div>
+</li>
+<li class="flex items-start gap-4">
+<div class="w-6 h-6 rounded bg-secondary-container flex items-center justify-center shrink-0 mt-1">
+<span class="material-symbols-outlined text-on-secondary-container text-sm">check</span>
+</div>
+<div>
+<p class="text-primary font-bold uppercase text-sm tracking-widest">Aerodinámica computacional</p>
+<p class="text-on-surface-variant text-sm">Diseños testeados en túneles de viento virtuales para reducir el consumo.</p>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="lg:w-1/2 relative">
+<div class="bg-surface-container-high rounded-xl p-4 shadow-2xl rotate-2 hover:rotate-0 transition-transform duration-500">
+<img class="w-full rounded-lg h-[500px] object-cover" data-alt="Close-up of industrial welding process with sparks and blue glowing light on metal structural components" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDrDFciMzKIDBVpeDSlHAdhQ64TjXYVTPMsFO5nwrejTh-YiKGjy86Jr2ALH03jcOhb7DUWWzgo6wunQ3RuxcUFYS8ENvh_wXE-X9tQ_fsQST0tRMDBy6a4AfvH57CdzEk8r4EZURzfNLrXPKiWxLyN5Yw64JZOOe8ZqJA-1CZFCjqvqyqOlIDlE2e6q-ZLDW7SEMMzdW5SNyihyiDnBzUGRDR2CSJdoj8vgeqz_rh8Vi2o3ulPAtvS0mMD82y_4_sWw4DSXQjZVCZc"/>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-[#0D2C4F] dark:bg-[#001732] w-full rounded-none border-t border-[#ffffff1a] py-16 px-12 font-['Plus_Jakarta_Sans']">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-screen-xl mx-auto">
+<div>
+<div class="text-xl font-black text-white mb-6 uppercase tracking-tighter">SALDIVIA</div>
+<p class="text-[#c4c6cf] text-sm leading-relaxed mb-8">
+                    Comprometidos con la evolución del transporte pesado desde hace más de 35 años.
+                </p>
+<div class="flex gap-4">
+<a class="w-10 h-10 rounded bg-[#ffffff1a] flex items-center justify-center text-white hover:bg-[#58bcfd] transition-colors" href="#"><span class="material-symbols-outlined">share</span></a>
+<a class="w-10 h-10 rounded bg-[#ffffff1a] flex items-center justify-center text-white hover:bg-[#58bcfd] transition-colors" href="#"><span class="material-symbols-outlined">mail</span></a>
+</div>
+</div>
+<div class="flex flex-col gap-4">
+<h5 class="text-white text-xs font-bold uppercase tracking-[0.2em] mb-4">Navegación</h5>
+<a class="text-[#c4c6cf] text-sm uppercase font-bold tracking-wide hover:text-[#58bcfd] transition-colors duration-200" href="#">Privacidad</a>
+<a class="text-[#c4c6cf] text-sm uppercase font-bold tracking-wide hover:text-[#58bcfd] transition-colors duration-200" href="#">Términos</a>
+<a class="text-[#c4c6cf] text-sm uppercase font-bold tracking-wide hover:text-[#58bcfd] transition-colors duration-200" href="#">Soporte</a>
+<a class="text-[#c4c6cf] text-sm uppercase font-bold tracking-wide hover:text-[#58bcfd] transition-colors duration-200" href="#">Distribuidores</a>
+</div>
+<div class="flex flex-col gap-6">
+<h5 class="text-white text-xs font-bold uppercase tracking-[0.2em] mb-2">Contacto Directo</h5>
+<div class="text-[#faf9fc] text-sm uppercase font-bold tracking-wide">
+                    Paseo Industrial 1200,<br/>Rosario, Argentina
+                </div>
+<div class="text-[#58bcfd] text-sm font-bold tracking-widest">+54 341 400 0000</div>
+</div>
+</div>
+<div class="max-w-screen-xl mx-auto mt-16 pt-8 border-t border-[#ffffff0d] text-center">
+<p class="text-[#c4c6cf] text-[10px] uppercase font-bold tracking-[0.3em]">© 2024 Saldivia Buses. Todos los derechos reservados.</p>
+</div>
+</footer>
+</body></html>

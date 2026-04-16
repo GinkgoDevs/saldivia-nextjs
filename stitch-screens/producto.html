@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-low": "#f4f3f6",
+                        "primary-fixed-dim": "#adc8f3",
+                        "surface-dim": "#dad9dd",
+                        "on-secondary-fixed-variant": "#004b70",
+                        "on-primary-fixed": "#001c3a",
+                        "on-surface": "#1a1c1e",
+                        "surface-container-high": "#e9e7eb",
+                        "surface-container-highest": "#e3e2e5",
+                        "outline-variant": "#c4c6cf",
+                        "on-background": "#1a1c1e",
+                        "surface-container": "#eeedf1",
+                        "tertiary": "#001929",
+                        "primary": "#001732",
+                        "on-secondary-fixed": "#001e30",
+                        "surface-variant": "#e3e2e5",
+                        "primary-container": "#0d2c4f",
+                        "secondary-fixed": "#cae6ff",
+                        "tertiary-fixed": "#c9e6ff",
+                        "secondary-container": "#58bcfd",
+                        "on-tertiary-container": "#2a9bda",
+                        "on-primary-container": "#7a94bd",
+                        "error-container": "#ffdad6",
+                        "inverse-on-surface": "#f1f0f4",
+                        "tertiary-fixed-dim": "#8bceff",
+                        "on-secondary-container": "#004a6e",
+                        "surface-bright": "#faf9fc",
+                        "primary-fixed": "#d4e3ff",
+                        "background": "#faf9fc",
+                        "outline": "#74777f",
+                        "surface-tint": "#456085",
+                        "tertiary-container": "#002f47",
+                        "surface-container-lowest": "#ffffff",
+                        "error": "#ba1a1a",
+                        "on-tertiary-fixed": "#001e2f",
+                        "on-surface-variant": "#43474e",
+                        "inverse-surface": "#2f3033",
+                        "inverse-primary": "#adc8f3",
+                        "secondary-fixed-dim": "#8ccdff",
+                        "on-tertiary-fixed-variant": "#004b6f",
+                        "on-error": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "on-secondary": "#ffffff",
+                        "on-primary-fixed-variant": "#2d486c",
+                        "secondary": "#006493",
+                        "on-tertiary": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "surface": "#faf9fc",
+                        "saldivia-blue": "#2095D4",
+                        "saldivia-accent": "#1B94D2"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Plus Jakarta Sans"],
+                        "body": ["Plus Jakarta Sans"],
+                        "label": ["Plus Jakarta Sans"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .technical-gradient {
+            background: linear-gradient(135deg, #2095D4 0%, #1B94D2 100%);
+        }
+        .primary-gradient {
+            background: linear-gradient(135deg, #0d2c4f 0%, #001732 100%);
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .variant-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .variant-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface selection:bg-secondary-container">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-[#faf9fc] dark:bg-[#1a1c1e] shadow-[0px_12px_32px_rgba(13,44,79,0.08)]">
+<nav class="flex justify-between items-center px-8 py-4 max-w-full mx-auto">
+<div class="text-2xl font-black tracking-tighter text-[#0D2C4F] dark:text-[#faf9fc]">SALDIVIA</div>
+<div class="hidden md:flex items-center space-x-8 font-['Plus_Jakarta_Sans'] font-medium tracking-tight">
+<a class="text-[#43474e] dark:text-[#c4c6cf] hover:text-[#0D2C4F] transition-colors" href="#">Home</a>
+<a class="text-[#006493] dark:text-[#58bcfd] border-b-2 border-[#006493] pb-1" href="#">Modelos</a>
+<a class="text-[#43474e] dark:text-[#c4c6cf] hover:text-[#0D2C4F] transition-colors" href="#">Tecnología</a>
+<a class="text-[#43474e] dark:text-[#c4c6cf] hover:text-[#0D2C4F] transition-colors" href="#">Nosotros</a>
+<a class="text-[#43474e] dark:text-[#c4c6cf] hover:text-[#0D2C4F] transition-colors" href="#">Postventa</a>
+<a class="text-[#43474e] dark:text-[#c4c6cf] hover:text-[#0D2C4F] transition-colors" href="#">Contacto</a>
+</div>
+<button class="bg-primary text-on-primary px-6 py-2 rounded font-bold uppercase text-xs tracking-widest hover:opacity-90 transition-all active:scale-95 duration-150">
+                Cotizar
+            </button>
+</nav>
+</header>
+<main class="pt-20">
+<!-- Hero Section -->
+<section class="relative h-[600px] overflow-hidden bg-primary">
+<div class="absolute inset-0 z-0">
+<img alt="Ultra-modern Aries bus" class="w-full h-full object-cover opacity-60" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAa81PkDYDCwb4mk_Oa2HLAVwSfDCyhiRdRijLyE5Hdd_JvlS1LxSySncTX8BZktEgIvF-u7qIUADgsgWMN8vjxHp_4m4_3Nbn_bJ2dMUk7NgcaLizLMXBEcGce77x2gDuLaSJ5rOGs9uQKh3WVc7CERcZxjHGtR9ujp0cQ_Y3xdXquEWDcf5fvULA5ttylFrHRQ5gfrUzSXUztJgI3EulsY-Cud__9SXFvDCruOYAzPDcROn1apERN1wpB5pDNc6vXAhcfWGqly7bX"/>
+<div class="absolute inset-0 bg-gradient-to-r from-primary via-primary/40 to-transparent"></div>
+</div>
+<div class="relative z-10 container mx-auto px-8 h-full flex flex-col justify-center">
+<div class="max-w-3xl">
+<span class="inline-block bg-saldivia-blue text-white px-3 py-1 mb-6 text-[10px] font-bold tracking-[0.1em] uppercase">Familia ARIES</span>
+<h1 class="text-white text-7xl font-black leading-none tracking-tighter mb-6">Modelo 345/1050</h1>
+<p class="text-on-primary-container text-xl font-light mb-8 max-w-2xl leading-relaxed">
+                        Uniendo caminos. El estándar de eficiencia para traslados de media y larga distancia. Versatilidad absoluta en configuraciones de 12 y 13.20 metros.
+                    </p>
+</div>
+</div>
+</section>
+<!-- Image Carousel Section -->
+<section class="py-12 bg-surface">
+<div class="container mx-auto px-8">
+<div class="relative overflow-hidden group">
+<div class="flex overflow-x-auto snap-x snap-mandatory hide-scrollbar gap-4 pb-4">
+<div class="flex-none w-full md:w-3/4 snap-start aspect-[21/9] bg-surface-container-highest">
+<img alt="Interior Luxury Detail" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBl35QlkaqDVVp_W4DopBaNChJ0xBztpjtERM2fPqE7qXeq6XrFgG-NAz_Z790vCf_tvHdNxNcsw2si0Q809vVT2IIxa-8-pKirMysbZzKAixDsgkOk5g7j5L3iq8yhTtVvKPej3zk5x34VHu_8vR_0VpHSHmxWe-rn6BWgBpjvTT18-zXh8NuINlfEXw_HwA7OkiMEZSN15DmNpOgh4EZ1RAYQs5ny5huSEQHDgQhepO64JXKlUw91iyKUzv9fREXJQFYz3a05Mt17"/>
+</div>
+<div class="flex-none w-full md:w-3/4 snap-start aspect-[21/9] bg-surface-container-highest">
+<img alt="Aerodynamic Profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBhEV-y4sRKcJO2BpjLPmabNqqO92WDmJe0grKwAt8QKFpguZ7BxayAwB-4TxyAhi9sQc9G-Ctl0IhlxDBpvnDRfHVLFHUMTTvQOwkzYJ56WGivN9e6uZC_A7IBLvZJeOEV1iLuiKoSsy0LaaZA3od5MAGYqfoaN8u2kaqpoW7FrH2RtQZzJdb3JPtdadzuC2NKn_M9XAOvWPegQ4Li5OxJ7DqPtLnrpFXwDIfB6AB7RLDmcV0wV0U1nZltKjoYxat1aL7wxl32I1ol"/>
+</div>
+</div>
+<div class="flex justify-center gap-2 mt-4">
+<div class="w-8 h-1 bg-saldivia-blue rounded-full"></div>
+<div class="w-8 h-1 bg-outline-variant rounded-full"></div>
+</div>
+</div>
+</div>
+</section>
+<!-- Model Variants Section -->
+<section class="py-24 bg-white border-y border-outline-variant/30">
+<div class="container mx-auto px-8">
+<div class="mb-12 text-center">
+<h3 class="text-saldivia-blue text-sm font-bold tracking-[0.3em] uppercase mb-4">Saldivia Precision</h3>
+<h2 class="text-primary text-4xl font-black tracking-tighter uppercase">VARIANTES DISPONIBLES</h2>
+<div class="h-1 w-24 bg-saldivia-blue mt-4 mx-auto"></div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto"><!-- Variant Card: Turismo 4x2 -->
+<div class="variant-card bg-surface-container-low p-8 border-t-4 border-saldivia-blue flex flex-col justify-between">
+<div>
+<h4 class="text-xl font-black text-primary mb-2">Turismo 4x2</h4>
+<p class="text-on-surface-variant text-sm font-medium tracking-tight italic opacity-80">Configuración estándar</p>
+</div>
+<button class="mt-8 w-full py-2 border border-primary text-primary font-bold text-[10px] uppercase tracking-[0.2em] hover:bg-primary hover:text-white transition-all">Ver Especificaciones</button>
+</div>
+<!-- Variant Card: 4x4 -->
+<div class="variant-card bg-surface-container-low p-8 border-t-4 border-saldivia-blue flex flex-col justify-between">
+<div>
+<h4 class="text-xl font-black text-primary mb-2">4x4</h4>
+<p class="text-on-surface-variant text-sm font-medium tracking-tight italic opacity-80">Tracción total</p>
+</div>
+<button class="mt-8 w-full py-2 border border-primary text-primary font-bold text-[10px] uppercase tracking-[0.2em] hover:bg-primary hover:text-white transition-all">Ver Especificaciones</button>
+</div>
+<!-- Variant Card: Urbano -->
+<div class="variant-card bg-surface-container-low p-8 border-t-4 border-saldivia-blue flex flex-col justify-between">
+<div>
+<h4 class="text-xl font-black text-primary mb-2">Urbano</h4>
+<p class="text-on-surface-variant text-sm font-medium tracking-tight italic opacity-80">Uso citadino</p>
+</div>
+<button class="mt-8 w-full py-2 border border-primary text-primary font-bold text-[10px] uppercase tracking-[0.2em] hover:bg-primary hover:text-white transition-all">Ver Especificaciones</button>
+</div></div>
+</div>
+</section>
+<!-- General Characteristics Section -->
+<section class="py-24 bg-surface-container-low">
+<div class="container mx-auto px-8 max-w-5xl">
+<div class="mb-16">
+<h3 class="text-saldivia-blue text-sm font-bold tracking-[0.3em] uppercase mb-4">Saldivia Precision</h3>
+<h2 class="text-primary text-4xl font-black tracking-tighter uppercase">CARACTERÍSTICAS GENERALES</h2>
+<div class="h-1 w-24 bg-saldivia-blue mt-4"></div>
+</div>
+<div class="bg-white p-8 md:p-12 shadow-sm border-l-8 border-saldivia-blue">
+<ul class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6">
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-saldivia-blue mt-0.5">check_circle</span>
+<span class="text-on-surface-variant font-medium text-sm leading-relaxed">Estructura en perfiles tubulares de acero-carbono de alta resistencia.</span>
+</li>
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-saldivia-blue mt-0.5">check_circle</span>
+<span class="text-on-surface-variant font-medium text-sm leading-relaxed">Puerta de ascenso pantográfica con sistema de traba neumática.</span>
+</li>
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-saldivia-blue mt-0.5">check_circle</span>
+<span class="text-on-surface-variant font-medium text-sm leading-relaxed">Revestimiento externo en acero galvanizado y Fiberglass.</span>
+</li>
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-saldivia-blue mt-0.5">check_circle</span>
+<span class="text-on-surface-variant font-medium text-sm leading-relaxed">Bodegas pasantes con acceso lateral y revestimiento galvanizado.</span>
+</li>
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-saldivia-blue mt-0.5">check_circle</span>
+<span class="text-on-surface-variant font-medium text-sm leading-relaxed">Interior climatizado con aire acondicionado y calefacción.</span>
+</li>
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-saldivia-blue mt-0.5">check_circle</span>
+<span class="text-on-surface-variant font-medium text-sm leading-relaxed">Sensores de retroceso y sistema de audio de serie.</span>
+</li>
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-saldivia-blue mt-0.5">check_circle</span>
+<span class="text-on-surface-variant font-medium text-sm leading-relaxed">Asientos reclinables tipo Turismo, Semicama o Ejecutivo.</span>
+</li>
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-saldivia-blue mt-0.5">check_circle</span>
+<span class="text-on-surface-variant font-medium text-sm leading-relaxed">Configuraciones personalizables con o sin sanitario.</span>
+</li>
+</ul>
+</div>
+</div>
+</section>
+<!-- Interior Luxury Showcase -->
+<section class="h-[500px] flex items-center bg-primary relative overflow-hidden">
+<div class="absolute inset-0">
+<img alt="Interior luxury detail" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBl35QlkaqDVVp_W4DopBaNChJ0xBztpjtERM2fPqE7qXeq6XrFgG-NAz_Z790vCf_tvHdNxNcsw2si0Q809vVT2IIxa-8-pKirMysbZzKAixDsgkOk5g7j5L3iq8yhTtVvKPej3zk5x34VHu_8vR_0VpHSHmxWe-rn6BWgBpjvTT18-zXh8NuINlfEXw_HwA7OkiMEZSN15DmNpOgh4EZ1RAYQs5ny5huSEQHDgQhepO64JXKlUw91iyKUzv9fREXJQFYz3a05Mt17"/>
+<div class="absolute inset-0 bg-primary/60 backdrop-blur-sm"></div>
+</div>
+<div class="container mx-auto px-8 relative z-10">
+<div class="max-w-xl bg-surface/5 p-12 glass-panel border border-white/10">
+<h5 class="text-white text-4xl font-black mb-6 uppercase">El Lujo de la Precisión</h5>
+<p class="text-on-primary-container mb-8">
+                        Materiales de alta resistencia y texturas táctiles que elevan la experiencia del viaje en cada una de sus variantes.
+                    </p>
+<div class="space-y-4">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded bg-saldivia-blue flex items-center justify-center">
+<span class="material-symbols-outlined text-white">airline_seat_recline_extra</span>
+</div>
+<span class="text-white font-medium">Asientos Ergo-Soft Premium</span>
+</div>
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded bg-saldivia-blue flex items-center justify-center">
+<span class="material-symbols-outlined text-white">ac_unit</span>
+</div>
+<span class="text-white font-medium">Climatización Inteligente</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-[#0D2C4F] dark:bg-[#001732] w-full border-t border-[#ffffff1a]">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8 px-12 py-16 w-full">
+<div class="flex flex-col gap-4">
+<div class="text-xl font-black text-white">SALDIVIA</div>
+<p class="text-[#c4c6cf] text-xs font-['Plus_Jakarta_Sans'] tracking-wide">
+                    Líderes en carrocerías de alta gama. Innovación argentina con proyección global.
+                </p>
+</div>
+<div class="flex flex-col gap-4">
+<h6 class="text-[#faf9fc] font-['Plus_Jakarta_Sans'] text-sm tracking-wide uppercase font-bold">Enlaces Rápidos</h6>
+<div class="flex flex-col gap-2">
+<a class="text-[#c4c6cf] hover:text-[#58bcfd] transition-colors duration-200 text-xs font-bold uppercase tracking-wide" href="#">Privacidad</a>
+<a class="text-[#c4c6cf] hover:text-[#58bcfd] transition-colors duration-200 text-xs font-bold uppercase tracking-wide" href="#">Términos</a>
+<a class="text-[#c4c6cf] hover:text-[#58bcfd] transition-colors duration-200 text-xs font-bold uppercase tracking-wide" href="#">Soporte</a>
+<a class="text-[#c4c6cf] hover:text-[#58bcfd] transition-colors duration-200 text-xs font-bold uppercase tracking-wide" href="#">Distribuidores</a>
+</div>
+</div>
+<div class="flex flex-col gap-4">
+<h6 class="text-[#faf9fc] font-['Plus_Jakarta_Sans'] text-sm tracking-wide uppercase font-bold">Newsletter</h6>
+<div class="flex">
+<input class="bg-white/5 border-none text-white px-4 py-2 w-full focus:ring-1 focus:ring-secondary text-sm" placeholder="Email" type="email"/>
+<button class="bg-saldivia-blue text-white px-4 py-2 hover:opacity-90 transition-colors">
+<span class="material-symbols-outlined">send</span>
+</button>
+</div>
+</div>
+</div>
+<div class="px-12 py-6 border-t border-[#ffffff0d] text-center">
+<p class="text-[#c4c6cf] text-[10px] font-['Plus_Jakarta_Sans'] tracking-widest uppercase font-bold">
+                © 2024 Saldivia Buses. Todos los derechos reservados.
+            </p>
+</div>
+</footer>
+</body></html>
