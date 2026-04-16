@@ -96,7 +96,7 @@ El objetivo de este proyecto es desarrollar el nuevo sitio web institucional de 
 
 **Entregable:** Home visible en staging con secciones superiores. Todas las rutas navegan sin errores 404.
 
-#### Día 3 — Dev B
+#### Día 3 — Dev B (hecho)
 
 - Integración Supabase client en el frontend
 - Hooks de datos: `useModels`, `useProducts`, `useLocations` (acepta filtros `{ type, province }`)
