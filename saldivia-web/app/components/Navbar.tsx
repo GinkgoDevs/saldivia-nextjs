@@ -9,7 +9,7 @@ import { FLEET_SPECIALS_SECTION_ID } from "../data/flota-catalog";
 import ThemeToggle from "./ThemeToggle";
 
 const navLinksAfterModelos = [
-  { label: "Tecnología", href: "#" },
+  { label: "Tecnología", href: "/tecnologia" },
   { label: "Nosotros", href: "/nosotros" },
   { label: "Postventa", href: "/postventa" },
   { label: "Contacto", href: "/contacto" },
