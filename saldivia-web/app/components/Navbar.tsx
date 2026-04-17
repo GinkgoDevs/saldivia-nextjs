@@ -573,7 +573,7 @@ export default function Navbar({
   /** Hero aún visible (home y variantes): barra transparente y enlaces claros. Fuera del hero o resto de rutas: barra sólida (evita texto blanco sobre secciones claras; estable con html { zoom }). */
   const isHomePath = pathname === "/" || pathname === "/home-2" || pathname === "/home-3";
   const [heroIntersects, setHeroIntersects] = useState(isHomePath);
-  const [desktopScrolled, setDesktopScrolled] = useState(false);
+  const [hasScrolled, setHasScrolled] = useState(false);
   const [megaMenuOpen, setMegaMenuOpen] = useState(false);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const headerRef = useRef<HTMLElement>(null);
@@ -596,10 +596,10 @@ export default function Navbar({
     );
     io.observe(hero);
     return () => io.disconnect();
-  }, [pathname]);
+  }, [isHomePath, pathname]);
 
   const solidNav =
-    !isHomePath || !heroIntersects || mobileNavOpen || desktopScrolled;
+    !isHomePath || !heroIntersects || mobileNavOpen || hasScrolled;
 
   useLayoutEffect(() => {
     const el = headerRef.current;
@@ -625,18 +625,15 @@ export default function Navbar({
   }, []);
 
   useEffect(() => {
-    const mq = window.matchMedia("(min-width: 768px)");
-    const updateDesktopScrollState = () => {
-      setDesktopScrolled(mq.matches && window.scrollY > 0);
+    const updateScrollState = () => {
+      setHasScrolled(window.scrollY > 0);
     };
 
-    updateDesktopScrollState();
-    window.addEventListener("scroll", updateDesktopScrollState, { passive: true });
-    mq.addEventListener("change", updateDesktopScrollState);
+    updateScrollState();
+    window.addEventListener("scroll", updateScrollState, { passive: true });
 
     return () => {
-      window.removeEventListener("scroll", updateDesktopScrollState);
-      mq.removeEventListener("change", updateDesktopScrollState);
+      window.removeEventListener("scroll", updateScrollState);
     };
   }, []);
 
