@@ -42,13 +42,13 @@ export default function Aries365Client({ galleryImages }: Props) {
               />
             </div>
             <nav className="hidden md:flex space-x-8">
-              <a className="text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-primary font-medium transition-colors" href="/">HOME</a>
-              <a className="text-primary font-bold border-b-2 border-primary" href="/flota">PRODUCTOS</a>
-              <a className="text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-primary font-medium transition-colors" href="/nosotros">NOSOTROS</a>
-              <a className="text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-primary font-medium transition-colors" href="/contacto">CONTACTO</a>
-              <a className="flex items-center text-slate-600 dark:text-slate-300 hover:text-primary font-medium transition-colors" href="/postventa">
+              <Link className="text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-primary font-medium transition-colors" href="/">HOME</Link>
+              <Link className="text-primary font-bold border-b-2 border-primary" href="/flota">PRODUCTOS</Link>
+              <Link className="text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-primary font-medium transition-colors" href="/nosotros">NOSOTROS</Link>
+              <Link className="text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-primary font-medium transition-colors" href="/contacto">CONTACTO</Link>
+              <Link className="flex items-center text-slate-600 dark:text-slate-300 hover:text-primary font-medium transition-colors" href="/postventa">
                 <span className="material-icons-outlined text-sm mr-1">build</span>POSTVENTA
-              </a>
+              </Link>
             </nav>
             <div className="flex items-center gap-4">
               <button
@@ -61,9 +61,9 @@ export default function Aries365Client({ galleryImages }: Props) {
                   <span className="material-icons-outlined">dark_mode</span>
                 )}
               </button>
-              <a className={buttonClass({ variant: "secondary", size: "sm", className: "px-5 text-sm" })} href="/contacto">
+              <Link className={buttonClass({ variant: "secondary", size: "sm", className: "px-5 text-sm" })} href="/contacto">
                 COTIZAR
-              </a>
+              </Link>
             </div>
           </div>
         </div>
@@ -352,10 +352,10 @@ export default function Aries365Client({ galleryImages }: Props) {
                   <div className="p-6">
                     <h3 className="font-bold text-xl mb-1">{model.title}</h3>
                     <p className="text-slate-500 text-sm mb-4">{model.subtitle}</p>
-                    <a className={buttonClass({ variant: "link-cta", size: "sm", className: "min-h-0 px-0 py-0 text-primary" })} href="/flota">
+                    <Link className={buttonClass({ variant: "link-cta", size: "sm", className: "min-h-0 px-0 py-0 text-primary" })} href="/flota">
                       Ver Detalles{" "}
                       <span className="material-icons-outlined text-sm">arrow_forward</span>
-                    </a>
+                    </Link>
                   </div>
                 </div>
               ))}
