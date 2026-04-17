@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { buttonClass } from "../components/ui/Button";
+import NosotrosTimeline from "../components/NosotrosTimeline";
 
 export default function NosotrosPage() {
   return (

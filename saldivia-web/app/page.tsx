@@ -1,6 +1,7 @@
 import ArgentinaProjectsMap from "./components/ArgentinaProjectsMap";
 import { CountUpStatsRow } from "./components/CountUpStatsRow";
-import HomeHero from "./components/HomeHero";
+import HomeHero3 from "./components/HomeHero3";
+import GalleryCarousel from "./components/GalleryCarousel";
 import Link from "next/link";
 import { Button, buttonClass } from "./components/ui/Button";
 import { Input } from "./components/ui/Input";
