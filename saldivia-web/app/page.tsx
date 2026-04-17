@@ -1,7 +1,10 @@
 import ArgentinaProjectsMap from "./components/ArgentinaProjectsMap";
 import { CountUpStatsRow } from "./components/CountUpStatsRow";
-import GalleryCarousel from "./components/GalleryCarousel";
 import HomeHero3 from "./components/HomeHero3";
+import GalleryCarousel from "./components/GalleryCarousel";
+import Link from "next/link";
+import { Button, buttonClass } from "./components/ui/Button";
+import { Input } from "./components/ui/Input";
 
 
 export default function HomePage() {
@@ -24,12 +27,20 @@ export default function HomePage() {
               <h3 className="font-headline text-4xl md:text-5xl font-extrabold tracking-tight">SHOWCASE TÉCNICO</h3>
             </div>
             <div className="flex gap-4">
-              <button className="w-14 h-14 rounded-full border border-white/20 flex items-center justify-center hover:bg-white/10 transition-all">
+              <Button
+                variant="icon"
+                className="h-14 w-14 rounded-curve-pill border-white/20 text-white hover:bg-white/10"
+                aria-label="Anterior"
+              >
                 <span className="material-symbols-outlined">chevron_left</span>
-              </button>
-              <button className="w-14 h-14 rounded-full bg-accent-blue flex items-center justify-center hover:bg-accent-blue-alt transition-all shadow-xl">
+              </Button>
+              <Button
+                variant="icon"
+                className="h-14 w-14 rounded-curve-pill bg-accent-blue text-white shadow-elev-2 hover:bg-accent-blue-alt"
+                aria-label="Siguiente"
+              >
                 <span className="material-symbols-outlined">chevron_right</span>
-              </button>
+              </Button>
             </div>
           </div>
           <div className="flex-grow flex flex-col lg:flex-row relative">
@@ -68,13 +79,18 @@ export default function HomePage() {
                     <div className="text-[10px] text-slate-400 uppercase font-bold tracking-tighter">Frenado</div>
                   </div>
                 </div>
-                <a
-                  className="group inline-flex items-center justify-center bg-white text-industrial-charcoal py-5 rounded-full font-bold uppercase tracking-widest text-xs hover:bg-accent-blue hover:text-white transition-all shadow-lg"
-                  href="#"
+                <Link
+                  className={buttonClass({
+                    variant: "outline",
+                    size: "lg",
+                    className:
+                      "group rounded-curve-pill border-white bg-white text-industrial-charcoal hover:border-accent-blue hover:bg-accent-blue hover:text-white dark:text-white",
+                  })}
+                  href="/contacto"
                 >
                   Descargar Ficha Técnica
                   <span className="material-symbols-outlined ml-2 group-hover:translate-x-1 transition-transform">download</span>
-                </a>
+                </Link>
               </div>
             </div>
           </div>
@@ -84,17 +100,17 @@ export default function HomePage() {
         <section className="bg-surface py-20 md:py-24" aria-labelledby="home-segmentacion-heading">
           <div className="container mx-auto px-4 md:px-6">
             <div className="mb-14 text-center md:mb-16">
-              <p className="mb-3 font-headline text-xs font-bold uppercase tracking-[0.28em] text-secondary">
+              <p className="ui-section-eyebrow">
                 Segmentación especializada
               </p>
               <h2
                 id="home-segmentacion-heading"
-                className="font-headline text-3xl font-black uppercase tracking-tighter text-primary md:text-5xl"
+                className="ui-section-title"
               >
                 Soluciones para cada distancia
               </h2>
               <div className="technical-gradient mx-auto mt-5 h-1 w-24" />
-              <p className="mx-auto mt-6 max-w-2xl font-headline text-sm leading-relaxed text-on-surface-variant md:text-base">
+              <p className="ui-section-intro mx-auto">
                 Urbano, media distancia y larga distancia: mismos estándares de ingeniería, distintas plataformas según su operación.
               </p>
             </div>
@@ -125,10 +141,10 @@ export default function HomePage() {
                   imgAlt: "Bus de larga distancia Saldivia",
                 },
               ].map((card) => (
-                <a
+                <Link
                   key={card.href}
                   href={card.href}
-                  className="hub-card group relative flex min-h-[320px] cursor-pointer flex-col justify-end overflow-hidden rounded-sm border border-outline-variant/25 bg-surface-container-lowest p-8 shadow-[0px_12px_32px_rgba(13,44,79,0.08)] transition-shadow duration-300 hover:border-accent-blue/35 hover:shadow-[0px_20px_48px_rgba(13,44,79,0.14)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue focus-visible:ring-offset-2 md:min-h-[380px] md:p-10"
+                  className="ui-surface-card hub-card group relative flex min-h-[320px] cursor-pointer flex-col justify-end overflow-hidden rounded-curve-md p-8 hover:border-accent-blue/35 hover:shadow-elev-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue focus-visible:ring-offset-2 md:min-h-[380px] md:p-10"
                 >
                   <div className="absolute inset-0 hub-bg transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]">
                     <img alt={card.imgAlt} className="h-full w-full object-cover" src={card.img} />
@@ -151,7 +167,7 @@ export default function HomePage() {
                       </span>
                     </span>
                   </div>
-                </a>
+                </Link>
               ))}
             </div>
           </div>
@@ -170,14 +186,19 @@ export default function HomePage() {
               </div>
               <div className="p-10 lg:w-[55%] w-full bg-white/5 backdrop-blur-sm">
                 <form className="flex flex-col sm:flex-row gap-4">
-                  <input
-                    className="flex-grow bg-[#081b31]/70 border-white/10 text-white placeholder-slate-500 rounded-md px-4 py-3 text-sm focus:ring-accent-blue outline-none focus:ring-2"
+                  <Input
+                    className="flex-grow bg-[#081b31]/70 border-white/10 text-white placeholder-slate-500 rounded-curve-sm"
                     placeholder="Ciudad"
                     type="text"
+                    tone="inverse"
                   />
-                  <button className="bg-accent-blue hover:bg-accent-blue-alt text-white font-bold px-8 py-3.5 rounded-md flex items-center justify-center gap-2 transition-all uppercase tracking-widest text-xs" type="submit">
+                  <Button
+                    className="px-8"
+                    size="sm"
+                    type="submit"
+                  >
                     <span className="material-symbols-outlined text-sm">search</span> BUSCAR
-                  </button>
+                  </Button>
                 </form>
               </div>
             </div>
@@ -187,12 +208,37 @@ export default function HomePage() {
         <GalleryCarousel />
 
         {/* Final CTA */}
-        <section className="py-20 bg-slate-900 relative">
+        <section className="relative overflow-hidden bg-slate-900 py-20">
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_20%,rgba(32,149,212,0.18),transparent_60%)]" />
           <div className="container relative mx-auto px-4 md:px-6 text-center">
+            <p className="mb-3 font-headline text-xs font-bold uppercase tracking-[0.24em] text-secondary-container">
+              Atención comercial personalizada
+            </p>
             <h2 className="font-headline text-3xl md:text-5xl font-bold text-white mb-8">¿Estás listo para renovar tu flota?</h2>
+            <p className="mx-auto mb-8 max-w-2xl font-headline text-sm leading-relaxed text-slate-300 md:text-base">
+              Te acompañamos desde la configuración inicial hasta la entrega de la unidad, con tiempos de fabricación líderes y soporte postventa dedicado.
+            </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <a className="bg-accent-blue hover:bg-accent-blue-alt text-white px-10 py-4 rounded-full font-bold shadow-xl transition-all" href="/contacto">CONTACTAR VENTAS</a>
-              <a className="bg-white text-primary px-10 py-4 rounded-full font-bold transition-all" href="/contacto">PEDIR PRESUPUESTO</a>
+              <Link
+                className={buttonClass({
+                  variant: "primary",
+                  size: "lg",
+                  className: "rounded-curve-pill px-10 shadow-elev-2",
+                })}
+                href="/contacto"
+              >
+                Contactar Ventas
+              </Link>
+              <Link
+                className={buttonClass({
+                  variant: "outline",
+                  size: "lg",
+                  className: "rounded-curve-pill border-white bg-white text-primary px-10 hover:bg-white/90",
+                })}
+                href="/contacto"
+              >
+                Pedir Presupuesto
+              </Link>
             </div>
           </div>
         </section>

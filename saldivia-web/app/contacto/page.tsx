@@ -1,3 +1,7 @@
+import { Button, buttonClass } from "../components/ui/Button";
+import { Input } from "../components/ui/Input";
+import { Textarea } from "../components/ui/Textarea";
+
 const PLANT_ADDRESS =
   "Parque Industrial Alvear, Ruta 21 Km 7, Alvear, Santa Fe, Argentina";
 export default function ContactoPage() {
@@ -45,7 +49,7 @@ export default function ContactoPage() {
                 </div>
                 <div className="grid gap-6">
                   {/* Sales */}
-                  <div className="bg-surface-container-low p-8 rounded-lg group transition-all duration-300 hover:bg-surface-container-highest">
+                  <div className="ui-surface-card p-8 group hover:bg-surface-container-highest">
                     <div className="flex items-start gap-5">
                       <div className="w-12 h-12 rounded bg-secondary-container flex items-center justify-center text-on-secondary-container">
                         <span className="material-symbols-outlined">shopping_cart</span>
@@ -59,7 +63,7 @@ export default function ContactoPage() {
                     </div>
                   </div>
                   {/* After-Sales */}
-                  <div className="bg-surface-container-low p-8 rounded-lg group transition-all duration-300 hover:bg-surface-container-highest">
+                  <div className="ui-surface-card p-8 group hover:bg-surface-container-highest">
                     <div className="flex items-start gap-5">
                       <div className="w-12 h-12 rounded bg-secondary-container flex items-center justify-center text-on-secondary-container">
                         <span className="material-symbols-outlined">build</span>
@@ -73,7 +77,7 @@ export default function ContactoPage() {
                     </div>
                   </div>
                   {/* Admin */}
-                  <div className="bg-surface-container-low p-8 rounded-lg group transition-all duration-300 hover:bg-surface-container-highest">
+                  <div className="ui-surface-card p-8 group hover:bg-surface-container-highest">
                     <div className="flex items-start gap-5">
                       <div className="w-12 h-12 rounded bg-secondary-container flex items-center justify-center text-on-secondary-container">
                         <span className="material-symbols-outlined">corporate_fare</span>
@@ -91,31 +95,35 @@ export default function ContactoPage() {
 
               {/* Right: Form */}
               <div className="lg:col-span-7">
-                <div className="bg-surface-container-lowest p-8 md:p-12 rounded-lg shadow-[0px_12px_32px_rgba(13,44,79,0.08)]">
+                <div className="ui-surface-card p-8 md:p-12">
                   <h3 className="text-3xl font-headline font-bold text-primary mb-2">Envíenos un mensaje</h3>
                   <p className="text-on-surface-variant mb-10">Complete el formulario y un asesor técnico lo contactará a la brevedad.</p>
                   <form className="space-y-8">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                       <div className="space-y-2">
                         <label className="text-machined text-[11px] font-bold text-secondary">Nombre Completo</label>
-                        <input className="w-full bg-surface-variant border-none rounded p-4 focus:ring-2 focus:ring-secondary focus:bg-surface-container-lowest transition-all duration-200 outline-none" placeholder="Ej: Juan Pérez" type="text" />
+                        <Input placeholder="Ej: Juan Pérez" type="text" />
                       </div>
                       <div className="space-y-2">
                         <label className="text-machined text-[11px] font-bold text-secondary">Empresa</label>
-                        <input className="w-full bg-surface-variant border-none rounded p-4 focus:ring-2 focus:ring-secondary focus:bg-surface-container-lowest transition-all duration-200 outline-none" placeholder="Transporte del Sol" type="text" />
+                        <Input placeholder="Transporte del Sol" type="text" />
                       </div>
                     </div>
                     <div className="space-y-2">
                       <label className="text-machined text-[11px] font-bold text-secondary">Correo Electrónico</label>
-                      <input className="w-full bg-surface-variant border-none rounded p-4 focus:ring-2 focus:ring-secondary focus:bg-surface-container-lowest transition-all duration-200 outline-none" placeholder="email@empresa.com" type="email" />
+                      <Input placeholder="email@empresa.com" type="email" />
                     </div>
                     <div className="space-y-2">
                       <label className="text-machined text-[11px] font-bold text-secondary">Mensaje o Consulta</label>
-                      <textarea className="w-full bg-surface-variant border-none rounded p-4 focus:ring-2 focus:ring-secondary focus:bg-surface-container-lowest transition-all duration-200 outline-none resize-none" placeholder="¿En qué podemos ayudarlo?" rows={5}></textarea>
+                      <Textarea placeholder="¿En qué podemos ayudarlo?" rows={5} />
                     </div>
-                    <button className="w-full bg-secondary text-on-secondary py-5 rounded font-bold text-machined tracking-widest hover:opacity-90 transition-all duration-300 active:scale-[0.98]" type="submit">
+                    <Button
+                      className="w-full bg-secondary text-on-secondary hover:bg-secondary"
+                      size="lg"
+                      type="submit"
+                    >
                       Enviar consulta técnica
-                    </button>
+                    </Button>
                   </form>
                 </div>
               </div>
@@ -135,7 +143,17 @@ export default function ContactoPage() {
                   <p className="font-headline">{PLANT_ADDRESS}.</p>
                 </div>
               </div>
-              <a className="text-secondary font-bold text-machined text-sm flex items-center gap-2 group border-b-2 border-transparent hover:border-secondary transition-all" href={mapsExternalHref} target="_blank" rel="noopener noreferrer">
+              <a
+                className={buttonClass({
+                  variant: "link-cta",
+                  size: "sm",
+                  className:
+                    "group min-h-0 px-0 py-0 text-secondary hover:text-secondary border-b-2 border-transparent hover:border-secondary rounded-none focus-visible:ring-offset-surface-container-low",
+                })}
+                href={mapsExternalHref}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 Ver en Google Maps
                 <span className="material-symbols-outlined transition-transform group-hover:translate-x-1">arrow_forward</span>
               </a>
@@ -159,7 +177,12 @@ export default function ContactoPage() {
                   <code className="text-sm bg-surface-container-low px-2 py-0.5 rounded">.env.local</code> para mostrar el mapa.
                 </p>
                 <a
-                  className="text-secondary font-bold text-machined text-sm underline"
+                  className={buttonClass({
+                    variant: "link-cta",
+                    size: "sm",
+                    className:
+                      "min-h-0 px-0 py-0 text-secondary underline rounded-none focus-visible:ring-offset-surface-container-highest",
+                  })}
                   href={mapsExternalHref}
                   target="_blank"
                   rel="noopener noreferrer"

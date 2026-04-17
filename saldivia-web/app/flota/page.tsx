@@ -5,6 +5,8 @@ import {
   SPECIAL_MODELS,
   type FleetModel,
 } from "../data/flota-catalog";
+import Link from "next/link";
+import { buttonClass } from "../components/ui/Button";
 
 function ModelCard({
   model,
@@ -19,7 +21,7 @@ function ModelCard({
   return (
     <a
       href={model.href}
-      className="group relative flex flex-col overflow-hidden rounded-sm border border-outline-variant/35 bg-surface-container-lowest shadow-[0px_12px_32px_rgba(13,44,79,0.08)] transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:border-accent-blue/45 hover:shadow-[0px_24px_56px_rgba(13,44,79,0.18)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue focus-visible:ring-offset-2"
+      className="ui-surface-card group relative flex flex-col overflow-hidden rounded-curve-md hover:border-accent-blue/45 hover:shadow-elev-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue focus-visible:ring-offset-2"
     >
       <div className={`relative ${aspectClass} w-full overflow-hidden bg-surface-container-high`}>
         <img
@@ -109,14 +111,14 @@ function SegmentSection({
 
   const heading = (
     <>
-      <span className="mb-3 block font-headline text-xs font-bold uppercase tracking-[0.25em] text-secondary">
+      <span className="ui-section-eyebrow">
         {eyebrow}
       </span>
-      <h2 className="font-headline text-3xl font-black uppercase tracking-tighter text-primary md:text-4xl">
+      <h2 className="ui-section-title md:text-4xl">
         {title}
       </h2>
       <div className="technical-gradient mt-4 h-1 w-20" />
-      <p className="mt-6 max-w-2xl font-headline text-sm leading-relaxed text-on-surface-variant md:text-base">
+      <p className="ui-section-intro">
         {intro}
       </p>
     </>
@@ -141,7 +143,7 @@ function SpecialCard({ model }: { model: (typeof SPECIAL_MODELS)[number] }) {
   return (
     <a
       href={model.href}
-      className="group relative block overflow-hidden rounded-sm border border-white/15 bg-primary-darker/40 shadow-[0px_20px_48px_rgba(0,0,0,0.25)] transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:border-accent-blue/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue focus-visible:ring-offset-2 focus-visible:ring-offset-primary"
+      className="group relative block overflow-hidden rounded-curve-md border border-white/15 bg-primary-darker/40 shadow-elev-2 transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:border-accent-blue/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue focus-visible:ring-offset-2 focus-visible:ring-offset-primary"
     >
       <div className="relative aspect-[21/9] w-full overflow-hidden">
         <img
@@ -223,13 +225,18 @@ export default function FlotaPage() {
             </p>
             <div className="mt-10 flex flex-wrap gap-3">
               {FLEET_SEGMENTS.map((s) => (
-                <a
+                <Link
                   key={s.id}
                   href={`#${s.id}`}
-                  className="inline-flex items-center border border-white/25 bg-white/5 px-4 py-2 font-headline text-xs font-bold uppercase tracking-wider text-white backdrop-blur-sm transition hover:border-secondary-container/60 hover:bg-white/10"
+                  className={buttonClass({
+                    variant: "outline",
+                    size: "sm",
+                    className:
+                      "border-white/25 bg-white/5 text-white backdrop-blur-sm hover:border-secondary-container/60 hover:bg-white/10 hover:text-white dark:border-white/20 dark:text-white",
+                  })}
                 >
                   {s.title}
-                </a>
+                </Link>
               ))}
             </div>
           </div>

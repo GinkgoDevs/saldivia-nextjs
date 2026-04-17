@@ -1,5 +1,6 @@
 import ProductGalleryCarousel from "../../components/ProductGalleryCarousel";
 import { getAries305GalleryPaths } from "@/lib/aries-305-gallery";
+import { Button } from "../../components/ui/Button";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -73,27 +74,39 @@ export default async function ProductoPage({ params }: Props) {
                   <h4 className="text-xl font-black text-primary mb-2">Turismo 4x2</h4>
                   <p className="text-on-surface-variant text-sm font-medium tracking-tight italic opacity-80">Configuración estándar</p>
                 </div>
-                <button className="mt-8 w-full py-2 border border-primary text-primary font-bold text-[10px] uppercase tracking-[0.2em] hover:bg-primary hover:text-white transition-all">
+                <Button
+                  className="mt-8 w-full border-primary text-primary hover:bg-primary hover:text-white"
+                  size="sm"
+                  variant="outline"
+                >
                   Ver Especificaciones
-                </button>
+                </Button>
               </div>
               <div className="variant-card bg-surface-container-low p-8 border-t-4 border-saldivia-blue flex flex-col justify-between">
                 <div>
                   <h4 className="text-xl font-black text-primary mb-2">4x4</h4>
                   <p className="text-on-surface-variant text-sm font-medium tracking-tight italic opacity-80">Tracción total</p>
                 </div>
-                <button className="mt-8 w-full py-2 border border-primary text-primary font-bold text-[10px] uppercase tracking-[0.2em] hover:bg-primary hover:text-white transition-all">
+                <Button
+                  className="mt-8 w-full border-primary text-primary hover:bg-primary hover:text-white"
+                  size="sm"
+                  variant="outline"
+                >
                   Ver Especificaciones
-                </button>
+                </Button>
               </div>
               <div className="variant-card bg-surface-container-low p-8 border-t-4 border-saldivia-blue flex flex-col justify-between">
                 <div>
                   <h4 className="text-xl font-black text-primary mb-2">Urbano</h4>
                   <p className="text-on-surface-variant text-sm font-medium tracking-tight italic opacity-80">Uso citadino</p>
                 </div>
-                <button className="mt-8 w-full py-2 border border-primary text-primary font-bold text-[10px] uppercase tracking-[0.2em] hover:bg-primary hover:text-white transition-all">
+                <Button
+                  className="mt-8 w-full border-primary text-primary hover:bg-primary hover:text-white"
+                  size="sm"
+                  variant="outline"
+                >
                   Ver Especificaciones
-                </button>
+                </Button>
               </div>
             </div>
           </div>

@@ -73,7 +73,7 @@ const ITEMS = [
 ] as const;
 
 /* ─── item individual ───────────────────────────────── */
-function TimelineItem({ item, index }: { item: typeof ITEMS[number]; index: number }) {
+function TimelineItem({ item }: { item: typeof ITEMS[number] }) {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, amount: 0.25 });
   const year = useCountUp(item.year, inView);
@@ -152,8 +152,8 @@ export default function NosotrosTimeline() {
           </div>
 
           <div className="space-y-32">
-            {ITEMS.map((item, i) => (
-              <TimelineItem key={item.year} item={item} index={i} />
+            {ITEMS.map((item) => (
+              <TimelineItem key={item.year} item={item} />
             ))}
           </div>
         </div>

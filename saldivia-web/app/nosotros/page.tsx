@@ -1,3 +1,5 @@
+import Link from "next/link";
+import { buttonClass } from "../components/ui/Button";
 import NosotrosTimeline from "../components/NosotrosTimeline";
 
 export default function NosotrosPage() {
@@ -38,9 +40,16 @@ export default function NosotrosPage() {
                   <div className="text-7xl font-black text-white tracking-tighter mb-4">+5,000</div>
                   <p className="text-on-primary-container text-lg max-w-sm">Unidades fabricadas y rodando por toda la geografía sudamericana, garantizando seguridad y confort.</p>
                 </div>
-                <button className="mt-8 self-start flex items-center gap-2 text-white font-bold uppercase tracking-widest text-xs hover:text-secondary-container transition-colors">
+                <Link
+                  className={buttonClass({
+                    variant: "link-cta",
+                    size: "sm",
+                    className: "mt-8 self-start min-h-0 px-0 py-0 text-white hover:text-secondary-container",
+                  })}
+                  href="/flota"
+                >
                   Ver nuestros modelos <span className="material-symbols-outlined">arrow_forward</span>
-                </button>
+                </Link>
               </div>
               <div className="bg-surface-container-highest p-8 flex flex-col justify-center border-t-4 border-secondary">
                 <span className="material-symbols-outlined text-secondary text-4xl mb-4">groups</span>

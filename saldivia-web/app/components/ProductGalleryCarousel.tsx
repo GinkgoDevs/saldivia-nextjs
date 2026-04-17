@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
+import { Button } from "./ui/Button";
 
 type Props = {
   images: readonly string[] | string[];
@@ -46,22 +47,24 @@ export default function ProductGalleryCarousel({
               key={list[index]}
             />
 
-            <button
+            <Button
               type="button"
               onClick={prev}
-              className="absolute left-3 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-primary/20 bg-white/90 text-primary shadow-md backdrop-blur-sm transition hover:bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-saldivia-blue md:left-5"
+              variant="icon"
+              className="absolute left-3 top-1/2 z-10 -translate-y-1/2 rounded-curve-pill border-primary/20 bg-white/90 text-primary shadow-md backdrop-blur-sm hover:bg-white md:left-5"
               aria-label="Imagen anterior"
             >
               <span className="material-symbols-outlined text-2xl">chevron_left</span>
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
               onClick={next}
-              className="absolute right-3 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-primary/20 bg-white/90 text-primary shadow-md backdrop-blur-sm transition hover:bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-saldivia-blue md:right-5"
+              variant="icon"
+              className="absolute right-3 top-1/2 z-10 -translate-y-1/2 rounded-curve-pill border-primary/20 bg-white/90 text-primary shadow-md backdrop-blur-sm hover:bg-white md:right-5"
               aria-label="Imagen siguiente"
             >
               <span className="material-symbols-outlined text-2xl">chevron_right</span>
-            </button>
+            </Button>
           </div>
 
           <div
