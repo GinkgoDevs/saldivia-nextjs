@@ -2,6 +2,8 @@
 
 import { subscribeNewsletter } from "@/app/actions/newsletter";
 import { type FormEvent, useState, useTransition } from "react";
+import { Button } from "./ui/Button";
+import { Input } from "./ui/Input";
 
 export default function FooterNewsletter() {
   const [status, setStatus] = useState<"idle" | "sent" | "error">("idle");
@@ -45,26 +47,28 @@ export default function FooterNewsletter() {
         <label htmlFor="footer-newsletter-email" className="sr-only">
           Correo para newsletter
         </label>
-        <input
+        <Input
           id="footer-newsletter-email"
           name="email"
           autoComplete="email"
           disabled={pending}
-          className="w-full rounded border border-transparent bg-white/10 px-4 py-3 text-white outline-none placeholder:text-white/40 focus:border-accent-blue/50 focus:ring-2 focus:ring-accent-blue disabled:cursor-not-allowed disabled:opacity-60"
+          className="w-full border-white/15 bg-white/10 text-white placeholder:text-white/40"
           placeholder="Tu email"
           type="email"
+          tone="inverse"
           required
         />
-        <button
+        <Button
           type="submit"
           disabled={pending}
-          className="flex min-h-[44px] min-w-[44px] shrink-0 items-center justify-center rounded bg-accent-blue px-4 text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+          className="min-w-[44px] shrink-0 px-4"
+          size="sm"
           aria-label="Suscribirse al newsletter"
         >
           <span className="material-symbols-outlined" aria-hidden>
             send
           </span>
-        </button>
+        </Button>
       </form>
       {status === "sent" ? (
         <p className="text-sm font-medium text-secondary-container" role="status">

@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import type { MegaMenuSegment } from "@/lib/supabase/mega-menu-models";
 import { FLEET_SPECIALS_SECTION_ID } from "../data/flota-catalog";
 import ThemeToggle from "./ThemeToggle";
+import { Button, buttonClass } from "./ui/Button";
 
 const navLinksAfterModelos = [
   { label: "Tecnología", href: "/tecnologia" },
@@ -370,16 +371,17 @@ function MobileNavDrawer({
           <p className="font-headline text-xs font-bold uppercase tracking-[0.12em] text-primary dark:text-zinc-200">
             Menú
           </p>
-          <button
+          <Button
             type="button"
             onClick={onClose}
-            className="inline-flex h-11 w-11 shrink-0 cursor-pointer items-center justify-center rounded-md text-on-surface transition-colors hover:bg-surface-container-low focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue focus-visible:ring-offset-2 focus-visible:ring-offset-[#faf9fc] dark:text-zinc-100 dark:hover:bg-white/10 dark:focus-visible:ring-offset-[#111820]"
+            variant="icon"
+            className="text-on-surface dark:text-zinc-100"
             aria-label="Cerrar menú"
           >
             <span className="material-symbols-outlined text-2xl leading-none" aria-hidden>
               close
             </span>
-          </button>
+          </Button>
         </div>
 
         <div className="relative min-h-0 flex-1 touch-manipulation">
@@ -466,7 +468,11 @@ function MobileNavDrawer({
                 <Link
                   href="/flota"
                   onClick={closeAndNavigate}
-                  className="flex min-h-[44px] cursor-pointer items-center gap-2 rounded-md py-2 pl-1 font-headline text-sm font-bold uppercase tracking-wide text-accent-blue transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue dark:text-secondary-container"
+                  className={buttonClass({
+                    variant: "link-cta",
+                    size: "sm",
+                    className: "min-h-[44px] justify-start rounded-md py-2 pl-1 text-left",
+                  })}
                 >
                   <span className="material-symbols-outlined text-lg" aria-hidden>
                     grid_view
@@ -512,7 +518,11 @@ function MobileNavDrawer({
             <Link
               href="/contacto"
               onClick={closeAndNavigate}
-              className="flex min-h-[44px] w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-primary px-3 font-headline text-[15px] font-bold text-white shadow-sm transition-opacity hover:opacity-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue focus-visible:ring-offset-2 focus-visible:ring-offset-[#faf9fc] active:opacity-90 dark:bg-secondary-container dark:text-primary dark:focus-visible:ring-offset-[#111820]"
+              className={buttonClass({
+                variant: "secondary",
+                size: "md",
+                className: "w-full rounded-curve-md px-3 text-[15px]",
+              })}
             >
               <span className="material-symbols-outlined text-[1.25rem]" aria-hidden>
                 request_quote
@@ -523,13 +533,21 @@ function MobileNavDrawer({
               <Link
                 href="/contacto"
                 onClick={closeAndNavigate}
-                className="flex min-h-[44px] cursor-pointer items-center justify-center rounded-lg border border-outline-variant/50 bg-transparent px-2 font-headline text-[13px] font-semibold text-primary transition-colors hover:bg-surface-container focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue dark:border-white/15 dark:text-zinc-100 dark:hover:bg-white/5"
+                className={buttonClass({
+                  variant: "outline",
+                  size: "sm",
+                  className: "rounded-curve-md px-2 text-[13px]",
+                })}
               >
                 Contacto
               </Link>
               <a
                 href={SALES_TEL_HREF}
-                className="flex min-h-[44px] cursor-pointer items-center justify-center gap-1 rounded-lg border border-outline-variant/50 bg-transparent px-2 font-headline text-[13px] font-semibold text-primary transition-colors hover:bg-surface-container focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue dark:border-white/15 dark:text-zinc-100 dark:hover:bg-white/5"
+                className={buttonClass({
+                  variant: "outline",
+                  size: "sm",
+                  className: "rounded-curve-md px-2 text-[13px]",
+                })}
                 aria-label={`Llamar a ${SALES_TEL_DISPLAY}`}
               >
                 <span className="material-symbols-outlined text-[1.125rem]" aria-hidden>
@@ -686,9 +704,10 @@ export default function Navbar({
           <div className={mobileNavOpen ? "max-md:hidden" : "contents"}>
             <ThemeToggle scrolled={solidNav} />
           </div>
-          <button
+          <Button
             type="button"
-            className={`inline-flex min-h-[44px] min-w-[44px] cursor-pointer items-center justify-center rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue focus-visible:ring-offset-2 focus-visible:ring-offset-[#faf9fc] dark:focus-visible:ring-offset-[#111820] md:hidden ${
+            variant="icon"
+            className={`md:hidden ${
               mobileNavOpen ? "max-md:hidden" : ""
             }`}
             aria-expanded={mobileNavOpen}
@@ -706,17 +725,21 @@ export default function Navbar({
             >
               menu
             </span>
-          </button>
-          <button
-            type="button"
-            className={`hidden min-h-[44px] cursor-pointer items-center px-4 py-2.5 text-sm font-bold leading-tight transition-all duration-200 hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue focus-visible:ring-offset-2 focus-visible:ring-offset-[#faf9fc] active:scale-95 dark:focus-visible:ring-offset-[#111820] sm:px-6 sm:text-base md:inline-flex ${
-              solidNav
-                ? "rounded bg-primary text-white dark:bg-secondary-container dark:text-primary"
-                : "rounded border border-white/30 bg-white/10 text-white backdrop-blur-sm hover:bg-white/20 dark:border-white/25 dark:bg-black/25 dark:text-zinc-100 dark:hover:bg-black/40"
-            }`}
+          </Button>
+          <Link
+            href="/contacto"
+            className={buttonClass({
+              variant: solidNav ? "secondary" : "outline",
+              size: "md",
+              className: `hidden sm:px-6 sm:text-base md:inline-flex ${
+                solidNav
+                  ? "rounded-curve-pill text-white shadow-elev-1"
+                  : "rounded-curve-pill border-white/30 bg-white/10 text-white backdrop-blur-sm hover:bg-white/20 hover:text-white dark:border-white/25 dark:bg-black/25 dark:text-zinc-100 dark:hover:bg-black/40"
+              }`,
+            })}
           >
             Cotizar
-          </button>
+          </Link>
         </div>
       </div>
 

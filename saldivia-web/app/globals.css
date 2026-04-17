@@ -5,6 +5,13 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --ring-brand: #2095d4;
+  --radius-control-sm: 0.375rem;
+  --radius-control-md: 0.75rem;
+  --radius-control-lg: 1.125rem;
+  --motion-fast: 150ms;
+  --motion-base: 240ms;
+  --motion-ease-brand: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 html {
@@ -29,6 +36,35 @@ body {
 }
 
 @layer utilities {
+  .ui-section-eyebrow {
+    @apply mb-3 block font-headline text-xs font-bold uppercase tracking-[0.26em] text-secondary;
+  }
+
+  .ui-section-title {
+    @apply font-headline text-3xl font-black uppercase tracking-tighter text-primary md:text-5xl;
+  }
+
+  .ui-section-intro {
+    @apply mt-6 max-w-2xl font-headline text-sm leading-relaxed text-on-surface-variant md:text-base;
+  }
+
+  .ui-surface-card {
+    @apply rounded-curve-md border border-outline-variant/30 bg-surface-container-lowest shadow-elev-1 transition-all duration-base ease-brand-fluid;
+  }
+
+  .ui-focus-ring {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue focus-visible:ring-offset-2 focus-visible:ring-offset-[#faf9fc] dark:focus-visible:ring-offset-[#111820];
+  }
+
+  .ui-transition-brand {
+    transition-timing-function: var(--motion-ease-brand);
+    transition-duration: var(--motion-base);
+  }
+
+  .ui-chip {
+    @apply inline-flex min-h-[44px] items-center rounded-curve-sm border border-white/20 bg-primary/30 px-4 py-2.5 font-headline text-xs font-bold uppercase tracking-wider text-white backdrop-blur-sm transition-colors duration-base hover:border-secondary-container/60 hover:bg-white/10;
+  }
+
   .text-balance {
     text-wrap: balance;
   }

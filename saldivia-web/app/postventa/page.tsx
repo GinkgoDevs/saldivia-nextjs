@@ -1,3 +1,8 @@
+import Link from "next/link";
+import { Button, buttonClass } from "../components/ui/Button";
+import { Input } from "../components/ui/Input";
+import { Textarea } from "../components/ui/Textarea";
+
 export default function PostventaPage() {
   return (
     <div className="bg-surface text-on-surface font-headline">
@@ -35,9 +40,16 @@ export default function PostventaPage() {
                 <span className="material-symbols-outlined text-secondary mb-4 text-3xl block">{item.icon}</span>
                 <h3 className="text-primary font-bold text-sm tracking-widest uppercase mb-2">{item.title}</h3>
                 <p className="text-on-surface-variant text-sm mb-6">{item.desc}</p>
-                <a className="text-secondary font-bold text-xs uppercase tracking-widest flex items-center gap-2 hover:translate-x-1 transition-transform" href="#">
+                <Link
+                  className={buttonClass({
+                    variant: "link-cta",
+                    size: "sm",
+                    className: "min-h-0 px-0 py-0 text-secondary hover:text-primary",
+                  })}
+                  href="/contacto"
+                >
                   {item.link} <span className="material-symbols-outlined text-base">arrow_forward</span>
-                </a>
+                </Link>
               </div>
             ))}
           </div>
@@ -63,17 +75,29 @@ export default function PostventaPage() {
                   </div>
                   <div>
                     <label className="block text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-2">Número de Chasis (VIN)</label>
-                    <input className="w-full bg-surface-container-low border-none focus:ring-2 focus:ring-secondary text-on-surface text-sm py-3 px-4 rounded placeholder:text-outline-variant" placeholder="Ej: 9BW AA0123 456789" type="text" />
+                    <Input
+                      className="bg-surface-container-low placeholder:text-outline-variant"
+                      placeholder="Ej: 9BW AA0123 456789"
+                      type="text"
+                    />
                   </div>
                 </div>
                 <div>
                   <label className="block text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-2">Descripción del Requerimiento</label>
-                  <textarea className="w-full bg-surface-container-low border-none focus:ring-2 focus:ring-secondary text-on-surface text-sm py-3 px-4 rounded placeholder:text-outline-variant" placeholder="Describa el problema o el repuesto solicitado con el mayor detalle posible..." rows={4}></textarea>
+                  <Textarea
+                    className="bg-surface-container-low placeholder:text-outline-variant"
+                    placeholder="Describa el problema o el repuesto solicitado con el mayor detalle posible..."
+                    rows={4}
+                  />
                 </div>
                 <div className="flex justify-end">
-                  <button className="technical-gradient text-white px-10 py-4 font-bold uppercase text-xs tracking-[0.2em] hover:opacity-90 transition-opacity rounded">
+                  <Button
+                    className="technical-gradient px-10 text-white hover:opacity-95"
+                    size="sm"
+                    type="submit"
+                  >
                     Enviar Requerimiento
-                  </button>
+                  </Button>
                 </div>
               </form>
             </div>
@@ -110,9 +134,12 @@ export default function PostventaPage() {
                 <div className="relative z-10">
                   <h4 className="text-white font-black text-2xl tracking-tighter mb-4 leading-none">BIBLIOTECA TÉCNICA</h4>
                   <p className="text-on-primary-container text-sm mb-6 leading-relaxed">Acceda a manuales de usuario, esquemas eléctricos y guías de mantenimiento preventivo.</p>
-                  <button className="bg-secondary-container text-on-secondary-container px-6 py-2 font-bold uppercase text-[10px] tracking-widest hover:bg-white transition-colors rounded">
+                  <Button
+                    className="bg-secondary-container px-6 text-on-secondary-container hover:bg-white"
+                    size="sm"
+                  >
                     Area de Clientes
-                  </button>
+                  </Button>
                 </div>
               </div>
             </div>
@@ -126,12 +153,12 @@ export default function PostventaPage() {
                 <div className="w-12 h-1 bg-secondary"></div>
               </div>
               <div className="flex gap-2">
-                <button className="p-2 border border-outline-variant hover:bg-surface-container-low text-primary">
+                <Button className="h-10 w-10 border-outline-variant p-0" variant="icon" aria-label="Anterior">
                   <span className="material-symbols-outlined">chevron_left</span>
-                </button>
-                <button className="p-2 border border-outline-variant hover:bg-surface-container-low text-primary">
+                </Button>
+                <Button className="h-10 w-10 border-outline-variant p-0" variant="icon" aria-label="Siguiente">
                   <span className="material-symbols-outlined">chevron_right</span>
-                </button>
+                </Button>
               </div>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">

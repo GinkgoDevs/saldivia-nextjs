@@ -1,6 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
+import { Button, buttonClass } from "@/app/components/ui/Button";
+import { Input } from "@/app/components/ui/Input";
+import { Textarea } from "@/app/components/ui/Textarea";
 
 type Props = {
   galleryImages: string[];
@@ -40,7 +44,7 @@ export default function Aries365Client({ galleryImages }: Props) {
             <nav className="hidden md:flex space-x-8">
               <a className="text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-primary font-medium transition-colors" href="/">HOME</a>
               <a className="text-primary font-bold border-b-2 border-primary" href="/flota">PRODUCTOS</a>
-              <a className="text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-primary font-medium transition-colors" href="#">NOSOTROS</a>
+              <a className="text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-primary font-medium transition-colors" href="/nosotros">NOSOTROS</a>
               <a className="text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-primary font-medium transition-colors" href="/contacto">CONTACTO</a>
               <a className="flex items-center text-slate-600 dark:text-slate-300 hover:text-primary font-medium transition-colors" href="/postventa">
                 <span className="material-icons-outlined text-sm mr-1">build</span>POSTVENTA
@@ -57,7 +61,7 @@ export default function Aries365Client({ galleryImages }: Props) {
                   <span className="material-icons-outlined">dark_mode</span>
                 )}
               </button>
-              <a className="bg-primary text-white px-5 py-2.5 rounded font-semibold text-sm hover:opacity-90 transition-opacity" href="/contacto">
+              <a className={buttonClass({ variant: "secondary", size: "sm", className: "px-5 text-sm" })} href="/contacto">
                 COTIZAR
               </a>
             </div>
@@ -132,15 +136,24 @@ export default function Aries365Client({ galleryImages }: Props) {
                   </p>
                 </div>
                 <div className="flex flex-col gap-4">
-                  <a
-                    className="flex items-center justify-center gap-2 bg-primary text-white py-4 px-6 rounded-xl font-bold text-lg hover:brightness-110 transition-all shadow-lg shadow-primary/25"
-                    href="#"
+                  <Link
+                    className={buttonClass({
+                      variant: "secondary",
+                      size: "lg",
+                      className: "justify-center gap-2 rounded-xl px-6 normal-case tracking-normal text-lg font-bold",
+                    })}
+                    href="/contacto"
                   >
                     <span className="material-icons-outlined">picture_as_pdf</span>
                     Descargar Ficha Técnica
-                  </a>
+                  </Link>
                   <a
-                    className="flex items-center justify-center gap-2 border-2 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 py-4 px-6 rounded-xl font-bold text-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-all"
+                    className={buttonClass({
+                      variant: "outline",
+                      size: "lg",
+                      className:
+                        "justify-center gap-2 rounded-xl border-2 border-slate-200 px-6 normal-case tracking-normal text-lg font-bold text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800",
+                    })}
                     href="#contact"
                   >
                     Solicitar Presupuesto
@@ -200,9 +213,9 @@ export default function Aries365Client({ galleryImages }: Props) {
             <div className="bg-white dark:bg-slate-800 rounded-3xl overflow-hidden shadow-xl border border-slate-100 dark:border-slate-700">
               <div className="p-8 border-b border-slate-100 dark:border-slate-700 flex justify-between items-center">
                 <h2 className="text-2xl font-display font-bold">Especificaciones Técnicas</h2>
-                <button className="text-primary font-bold flex items-center gap-1 text-sm">
+                <Button variant="link-cta" size="sm" className="min-h-0 px-0 py-0 text-primary">
                   <span className="material-icons-outlined text-sm">file_download</span> PDF COMPLETO
-                </button>
+                </Button>
               </div>
               <div className="overflow-x-auto">
                 <table className="w-full text-left">
@@ -256,16 +269,16 @@ export default function Aries365Client({ galleryImages }: Props) {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                       <label className="block text-sm font-semibold mb-2 text-slate-600 dark:text-slate-300">Nombre</label>
-                      <input
-                        className="w-full bg-slate-50 dark:bg-slate-900 border-none rounded-xl py-3 px-4 focus:ring-2 focus:ring-primary transition-all"
+                      <Input
+                        className="rounded-xl bg-slate-50 dark:bg-slate-900"
                         placeholder="Tu nombre"
                         type="text"
                       />
                     </div>
                     <div>
                       <label className="block text-sm font-semibold mb-2 text-slate-600 dark:text-slate-300">Empresa</label>
-                      <input
-                        className="w-full bg-slate-50 dark:bg-slate-900 border-none rounded-xl py-3 px-4 focus:ring-2 focus:ring-primary transition-all"
+                      <Input
+                        className="rounded-xl bg-slate-50 dark:bg-slate-900"
                         placeholder="Nombre de empresa"
                         type="text"
                       />
@@ -273,26 +286,28 @@ export default function Aries365Client({ galleryImages }: Props) {
                   </div>
                   <div>
                     <label className="block text-sm font-semibold mb-2 text-slate-600 dark:text-slate-300">Correo Electrónico</label>
-                    <input
-                      className="w-full bg-slate-50 dark:bg-slate-900 border-none rounded-xl py-3 px-4 focus:ring-2 focus:ring-primary transition-all"
+                    <Input
+                      className="rounded-xl bg-slate-50 dark:bg-slate-900"
                       placeholder="email@ejemplo.com"
                       type="email"
                     />
                   </div>
                   <div>
                     <label className="block text-sm font-semibold mb-2 text-slate-600 dark:text-slate-300">Mensaje</label>
-                    <textarea
-                      className="w-full bg-slate-50 dark:bg-slate-900 border-none rounded-xl py-3 px-4 focus:ring-2 focus:ring-primary transition-all"
+                    <Textarea
+                      className="rounded-xl bg-slate-50 dark:bg-slate-900"
                       placeholder="Estoy interesado en..."
                       rows={4}
                     />
                   </div>
-                  <button
-                    className="w-full bg-primary text-white py-4 rounded-xl font-bold hover:brightness-110 transition-all shadow-lg shadow-primary/25"
+                  <Button
+                    className="w-full rounded-xl text-white"
                     type="submit"
+                    variant="secondary"
+                    size="lg"
                   >
                     ENVIAR CONSULTA
-                  </button>
+                  </Button>
                 </form>
               </div>
             </div>
@@ -337,7 +352,7 @@ export default function Aries365Client({ galleryImages }: Props) {
                   <div className="p-6">
                     <h3 className="font-bold text-xl mb-1">{model.title}</h3>
                     <p className="text-slate-500 text-sm mb-4">{model.subtitle}</p>
-                    <a className="text-primary font-bold flex items-center gap-1" href="/flota">
+                    <a className={buttonClass({ variant: "link-cta", size: "sm", className: "min-h-0 px-0 py-0 text-primary" })} href="/flota">
                       Ver Detalles{" "}
                       <span className="material-icons-outlined text-sm">arrow_forward</span>
                     </a>

@@ -117,10 +117,10 @@ export function CountUpStatsRow() {
     <section ref={ref} className="bg-primary py-20 text-white">
       <div className="container mx-auto px-4 md:px-6">
         <header className="mb-14 text-center md:mb-16">
-          <p className="mb-3 font-headline text-xs font-bold uppercase tracking-[0.28em] text-secondary-container">
+          <p className="ui-section-eyebrow text-secondary-container">
             Indicadores clave
           </p>
-          <h2 className="font-headline text-2xl font-black uppercase tracking-tighter text-white md:text-3xl">
+          <h2 className="ui-section-title text-white md:text-3xl">
             Trayectoria en números
           </h2>
           <div className="technical-gradient mx-auto mt-4 h-1 w-20 rounded-full" />

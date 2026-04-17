@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { buttonClass } from "./ui/Button";
 
 const SEGMENT_LINKS = [
   { label: "Urbano", href: "/flota#urbano" },
@@ -77,7 +78,12 @@ export default function HomeHero() {
             <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center sm:gap-5 md:mt-10">
               <Link
                 href="/flota"
-                className="inline-flex min-h-[48px] cursor-pointer items-center justify-center rounded-sm bg-accent-blue px-8 py-4 font-headline text-sm font-black uppercase tracking-widest text-white shadow-xl transition-colors duration-200 hover:bg-accent-blue-alt focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-primary md:px-10 md:py-5"
+                className={buttonClass({
+                  variant: "primary",
+                  size: "lg",
+                  className:
+                    "rounded-curve-md px-8 shadow-elev-2 md:px-10",
+                })}
               >
                 Explorar modelos
                 <span className="material-symbols-outlined ml-2 text-xl" aria-hidden>
@@ -86,7 +92,12 @@ export default function HomeHero() {
               </Link>
               <Link
                 href="/nosotros"
-                className="inline-flex min-h-[48px] cursor-pointer items-center justify-center rounded-sm border border-white/25 bg-white/5 px-8 py-4 font-headline text-sm font-black uppercase tracking-widest text-white backdrop-blur-md transition-colors duration-200 hover:border-white/40 hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue focus-visible:ring-offset-2 focus-visible:ring-offset-primary md:px-10 md:py-5"
+                className={buttonClass({
+                  variant: "outline",
+                  size: "lg",
+                  className:
+                    "rounded-curve-md border-white/25 bg-white/[0.07] px-8 text-white backdrop-blur-md hover:border-secondary-container/70 hover:bg-white/[0.14] hover:text-white dark:border-white/20 dark:text-white md:px-10",
+                })}
               >
                 Tour industrial
               </Link>
@@ -101,7 +112,12 @@ export default function HomeHero() {
                   <li key={item.href}>
                     <Link
                       href={item.href}
-                      className="inline-flex min-h-[44px] cursor-pointer items-center rounded-sm border border-white/20 bg-primary/30 px-4 py-2.5 font-headline text-xs font-bold uppercase tracking-wider text-white backdrop-blur-sm transition-colors duration-200 hover:border-secondary-container/60 hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue focus-visible:ring-offset-2 focus-visible:ring-offset-primary"
+                      className={buttonClass({
+                        variant: "outline",
+                        size: "sm",
+                        className:
+                          "rounded-curve-pill border-white/20 bg-primary/40 text-white backdrop-blur-sm hover:border-secondary-container/60 hover:bg-white/10 hover:text-white dark:border-white/20 dark:text-white",
+                      })}
                     >
                       {item.label}
                     </Link>

@@ -1,6 +1,5 @@
-import type { Config } from "tailwindcss";
-
-const config: Config = {
+/** @type {import('tailwindcss').Config} */
+const config = {
   darkMode: "class",
   content: [
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
@@ -83,12 +82,32 @@ const config: Config = {
       },
       borderRadius: {
         DEFAULT: "0.125rem",
+        sm: "0.25rem",
+        md: "0.375rem",
         lg: "0.25rem",
         xl: "0.5rem",
         full: "0.75rem",
+        "curve-sm": "0.375rem",
+        "curve-md": "0.75rem",
+        "curve-lg": "1.125rem",
+        "curve-pill": "9999px",
+      },
+      boxShadow: {
+        "elev-1": "0 6px 20px rgba(13,44,79,0.08)",
+        "elev-2": "0 14px 36px rgba(13,44,79,0.12)",
+        "elev-3": "0 22px 50px rgba(13,44,79,0.18)",
+      },
+      transitionTimingFunction: {
+        "brand-fluid": "cubic-bezier(0.22, 1, 0.36, 1)",
+      },
+      transitionDuration: {
+        fast: "150ms",
+        base: "240ms",
+        slow: "360ms",
       },
     },
   },
   plugins: [],
 };
+
 export default config;
