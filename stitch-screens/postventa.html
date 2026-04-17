@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-low": "#f4f3f6",
+                        "primary-fixed-dim": "#adc8f3",
+                        "surface-dim": "#dad9dd",
+                        "on-secondary-fixed-variant": "#004b70",
+                        "on-primary-fixed": "#001c3a",
+                        "on-surface": "#1a1c1e",
+                        "surface-container-high": "#e9e7eb",
+                        "surface-container-highest": "#e3e2e5",
+                        "outline-variant": "#c4c6cf",
+                        "on-background": "#1a1c1e",
+                        "surface-container": "#eeedf1",
+                        "tertiary": "#001929",
+                        "primary": "#001732",
+                        "on-secondary-fixed": "#001e30",
+                        "surface-variant": "#e3e2e5",
+                        "primary-container": "#0d2c4f",
+                        "secondary-fixed": "#cae6ff",
+                        "tertiary-fixed": "#c9e6ff",
+                        "secondary-container": "#58bcfd",
+                        "on-tertiary-container": "#2a9bda",
+                        "on-primary-container": "#7a94bd",
+                        "error-container": "#ffdad6",
+                        "inverse-on-surface": "#f1f0f4",
+                        "tertiary-fixed-dim": "#8bceff",
+                        "on-secondary-container": "#004a6e",
+                        "surface-bright": "#faf9fc",
+                        "primary-fixed": "#d4e3ff",
+                        "background": "#faf9fc",
+                        "outline": "#74777f",
+                        "surface-tint": "#456085",
+                        "tertiary-container": "#002f47",
+                        "surface-container-lowest": "#ffffff",
+                        "error": "#ba1a1a",
+                        "on-tertiary-fixed": "#001e2f",
+                        "on-surface-variant": "#43474e",
+                        "inverse-surface": "#2f3033",
+                        "inverse-primary": "#adc8f3",
+                        "secondary-fixed-dim": "#8ccdff",
+                        "on-tertiary-fixed-variant": "#004b6f",
+                        "on-error": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "on-secondary": "#ffffff",
+                        "on-primary-fixed-variant": "#2d486c",
+                        "secondary": "#006493",
+                        "on-tertiary": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "surface": "#faf9fc"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Plus Jakarta Sans"],
+                        "body": ["Plus Jakarta Sans"],
+                        "label": ["Plus Jakarta Sans"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .machined-gradient { background: linear-gradient(135deg, #0d2c4f 0%, #001732 100%); }
+        .technical-gradient { background: linear-gradient(135deg, #006493 0%, #58bcfd 100%); }
+    </style>
+</head>
+<body class="bg-surface text-on-surface">
+<nav class="fixed top-0 w-full z-50 bg-[#faf9fc] dark:bg-[#1a1c1e] shadow-[0px_12px_32px_rgba(13,44,79,0.08)]">
+<div class="flex justify-between items-center px-8 py-4 max-w-full mx-auto">
+<span class="text-2xl font-black tracking-tighter text-[#0D2C4F] dark:text-[#faf9fc]">SALDIVIA</span>
+<div class="hidden md:flex items-center space-x-8">
+<a class="font-['Plus_Jakarta_Sans'] font-medium tracking-tight text-[#43474e] dark:text-[#c4c6cf] hover:text-[#0D2C4F] transition-colors" href="#">Home</a>
+<a class="font-['Plus_Jakarta_Sans'] font-medium tracking-tight text-[#43474e] dark:text-[#c4c6cf] hover:text-[#0D2C4F] transition-colors" href="#">Modelos</a>
+<a class="font-['Plus_Jakarta_Sans'] font-medium tracking-tight text-[#43474e] dark:text-[#c4c6cf] hover:text-[#0D2C4F] transition-colors" href="#">Tecnología</a>
+<a class="font-['Plus_Jakarta_Sans'] font-medium tracking-tight text-[#43474e] dark:text-[#c4c6cf] hover:text-[#0D2C4F] transition-colors" href="#">Nosotros</a>
+<a class="font-['Plus_Jakarta_Sans'] font-medium tracking-tight text-[#006493] dark:text-[#58bcfd] border-b-2 border-[#006493] pb-1" href="#">Postventa</a>
+<a class="font-['Plus_Jakarta_Sans'] font-medium tracking-tight text-[#43474e] dark:text-[#c4c6cf] hover:text-[#0D2C4F] transition-colors" href="#">Contacto</a>
+</div>
+<button class="bg-primary text-on-primary px-6 py-2 font-bold uppercase text-xs tracking-widest hover:machined-gradient transition-all active:scale-95 duration-150 rounded">
+                Cotizar
+            </button>
+</div>
+</nav>
+<main class="pt-24 min-h-screen">
+<section class="relative h-[400px] flex items-center overflow-hidden">
+<div class="absolute inset-0 z-0">
+<img alt="Technical support" class="w-full h-full object-cover" data-alt="industrial maintenance facility with professional tools and heavy machinery components in high tech lighting environment" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD93K-U-tuqyy5pO_2gimujh3MAeZV1bIYRYw-Ezk4VbGX1XWWZtp0DvmIXli57Sm-WF4Du0cQmRny9_VI7crVJyMY372GchuvTYpI6psWPoeYCsNa6k1zJntrTH0wMtGUhrYgpBWVCLNWXLt6mtf3m3IEohDHT9IJwx9NjGAy-4pqMKtlAfnn573Szbrvm1FCpjKJgyHKnFICTowCeh8w2ifByxHQ78BgwJQlK8fpjIi6_c4XU5lnhdVglTnva13uNtPiRn6FQAXKv"/>
+<div class="absolute inset-0 machined-gradient opacity-80"></div>
+</div>
+<div class="relative z-10 max-w-7xl mx-auto px-8 w-full">
+<div class="max-w-2xl">
+<span class="inline-block bg-secondary text-white px-3 py-1 text-[10px] font-bold tracking-[0.2em] uppercase mb-4">Ingeniería en Movimiento</span>
+<h1 class="text-5xl font-extrabold text-white tracking-tighter mb-6 leading-tight">CENTRO DE POSTVENTA Y SOPORTE TÉCNICO</h1>
+<p class="text-on-primary-container text-lg max-w-lg mb-8 leading-relaxed">
+                        Compromiso de excelencia y precisión industrial para mantener su flota Saldivia operando al máximo rendimiento.
+                    </p>
+</div>
+</div>
+</section>
+<section class="max-w-7xl mx-auto px-8 -mt-16 relative z-20 pb-24">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+<div class="bg-surface-container-lowest p-8 shadow-[0px_12px_32px_rgba(13,44,79,0.08)] border-t-4 border-secondary">
+<span class="material-symbols-outlined text-secondary mb-4 text-3xl">precision_manufacturing</span>
+<h3 class="text-primary font-bold text-sm tracking-widest uppercase mb-2">Repuestos Originales</h3>
+<p class="text-on-surface-variant text-sm mb-6">Componentes de ingeniería con certificación de fábrica para garantizar durabilidad.</p>
+<a class="text-secondary font-bold text-xs uppercase tracking-widest flex items-center gap-2 hover:translate-x-1 transition-transform" href="#">
+                        Ver Catálogo <span class="material-symbols-outlined text-base">arrow_forward</span>
+</a>
+</div>
+<div class="bg-surface-container-lowest p-8 shadow-[0px_12px_32px_rgba(13,44,79,0.08)]">
+<span class="material-symbols-outlined text-secondary mb-4 text-3xl">build_circle</span>
+<h3 class="text-primary font-bold text-sm tracking-widest uppercase mb-2">Soporte Técnico</h3>
+<p class="text-on-surface-variant text-sm mb-6">Asistencia directa de especialistas en mecánica y electrónica de buses.</p>
+<a class="text-secondary font-bold text-xs uppercase tracking-widest flex items-center gap-2 hover:translate-x-1 transition-transform" href="#">
+                        Solicitar Ayuda <span class="material-symbols-outlined text-base">arrow_forward</span>
+</a>
+</div>
+<div class="bg-surface-container-lowest p-8 shadow-[0px_12px_32px_rgba(13,44,79,0.08)]">
+<span class="material-symbols-outlined text-secondary mb-4 text-3xl">history</span>
+<h3 class="text-primary font-bold text-sm tracking-widest uppercase mb-2">Garantía Saldivia</h3>
+<p class="text-on-surface-variant text-sm mb-6">Información detallada sobre coberturas y procesos de reclamo técnico.</p>
+<a class="text-secondary font-bold text-xs uppercase tracking-widest flex items-center gap-2 hover:translate-x-1 transition-transform" href="#">
+                        Consultar Cobertura <span class="material-symbols-outlined text-base">arrow_forward</span>
+</a>
+</div>
+<div class="bg-surface-container-lowest p-8 shadow-[0px_12px_32px_rgba(13,44,79,0.08)]">
+<span class="material-symbols-outlined text-secondary mb-4 text-3xl">location_on</span>
+<h3 class="text-primary font-bold text-sm tracking-widest uppercase mb-2">Red Nacional</h3>
+<p class="text-on-surface-variant text-sm mb-6">Encuentre su punto de asistencia oficial más cercano en todo el territorio.</p>
+<a class="text-secondary font-bold text-xs uppercase tracking-widest flex items-center gap-2 hover:translate-x-1 transition-transform" href="#">
+                        Ver Mapa <span class="material-symbols-outlined text-base">arrow_forward</span>
+</a>
+</div>
+</div>
+<div class="mt-24 grid grid-cols-1 lg:grid-cols-3 gap-12">
+<div class="lg:col-span-2">
+<div class="mb-12">
+<h2 class="text-3xl font-black text-primary tracking-tighter mb-2">SOLICITUD DE ASISTENCIA TÉCNICA</h2>
+<div class="w-12 h-1 bg-secondary"></div>
+</div>
+<form class="space-y-6">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div>
+<label class="block text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-2">Modelo del Bus</label>
+<select class="w-full bg-surface-container-low border-none focus:ring-2 focus:ring-secondary text-on-surface text-sm py-3 px-4 rounded">
+<option>Seleccione un modelo</option>
+<option>Aries 325</option>
+<option>Aries 345</option>
+<option>Aries 365</option>
+</select>
+</div>
+<div>
+<label class="block text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-2">Número de Chasis (VIN)</label>
+<input class="w-full bg-surface-container-low border-none focus:ring-2 focus:ring-secondary text-on-surface text-sm py-3 px-4 rounded placeholder:text-outline-variant" placeholder="Ej: 9BW AA0123 456789" type="text"/>
+</div>
+</div>
+<div>
+<label class="block text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-2">Descripción del Requerimiento</label>
+<textarea class="w-full bg-surface-container-low border-none focus:ring-2 focus:ring-secondary text-on-surface text-sm py-3 px-4 rounded placeholder:text-outline-variant" placeholder="Describa el problema o el repuesto solicitado con el mayor detalle posible..." rows="4"></textarea>
+</div>
+<div class="flex justify-end">
+<button class="technical-gradient text-white px-10 py-4 font-bold uppercase text-xs tracking-[0.2em] hover:opacity-90 transition-opacity rounded">
+                                Enviar Requerimiento
+                            </button>
+</div>
+</form>
+</div>
+<div class="space-y-8">
+<div class="bg-surface-container-high p-8 rounded">
+<h3 class="text-primary font-black text-xl tracking-tighter mb-4">CANALES DIRECTOS</h3>
+<div class="space-y-6">
+<div class="flex items-start gap-4">
+<div class="w-10 h-10 machined-gradient flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-white text-xl">phone_in_talk</span>
+</div>
+<div>
+<p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Atención 24/7</p>
+<p class="text-primary font-bold text-lg">+54 0800 222 7253</p>
+</div>
+</div>
+<div class="flex items-start gap-4">
+<div class="w-10 h-10 machined-gradient flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-white text-xl" data-weight="fill" style="font-variation-settings: 'FILL' 1;">mail</span>
+</div>
+<div>
+<p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Email Corporativo</p>
+<p class="text-primary font-bold text-lg">postventa@saldivia.com</p>
+</div>
+</div>
+</div>
+</div>
+<div class="relative h-[250px] machined-gradient p-8 overflow-hidden">
+<div class="absolute top-0 right-0 opacity-10 scale-150 translate-x-1/4 -translate-y-1/4">
+<span class="material-symbols-outlined text-[200px]">engineering</span>
+</div>
+<div class="relative z-10">
+<h4 class="text-white font-black text-2xl tracking-tighter mb-4 leading-none">BIBLIOTECA TÉCNICA</h4>
+<p class="text-on-primary-container text-sm mb-6 leading-relaxed">Acceda a manuales de usuario, esquemas eléctricos y guías de mantenimiento preventivo.</p>
+<button class="bg-secondary-container text-on-secondary-container px-6 py-2 font-bold uppercase text-[10px] tracking-widest hover:bg-white transition-colors rounded">
+                                Area de Clientes
+                            </button>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-24">
+<div class="flex items-center justify-between mb-8">
+<div>
+<h2 class="text-3xl font-black text-primary tracking-tighter mb-2">REPUESTOS DESTACADOS</h2>
+<div class="w-12 h-1 bg-secondary"></div>
+</div>
+<div class="flex gap-2">
+<button class="p-2 border border-outline-variant hover:bg-surface-container-low text-primary">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="p-2 border border-outline-variant hover:bg-surface-container-low text-primary">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+<div class="group bg-surface-container-low rounded overflow-hidden">
+<div class="h-48 overflow-hidden bg-white">
+<img alt="Optical component" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Modern high performance LED headlight unit for industrial vehicle against clean white background with technical reflections" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCl_HZ3zzCVkOM0EieXCw54FzYrlpEww6hEURsJX-hVb31L3aPHk0Z0a1DIJbkFrEnbYTaKvxxGG55nb-pZSvGsqA6Nx8Ru8THY1k-roJ4SCuHzwQ7OSRq2GqI_-THL0FmtXWX_b3uQAssDEbvUfqhVxB7klzhZ2zo2aJDVMNBwDOb9Rxt9ufFNodMjsPuhKA4Ssopa5nr5QfqGhttTwHgdOmdFiGa5FZbWcGg5yMk-z2dM_6bZTmRlGxGC3X5FFC5_MqG_bdk0sIGa"/>
+</div>
+<div class="p-4">
+<div class="flex justify-between items-start mb-2">
+<h4 class="text-primary font-bold text-sm tracking-tight">Conjunto Óptico LED</h4>
+<span class="bg-primary-fixed text-on-primary-fixed text-[8px] font-black px-2 py-1 uppercase">Aries 365</span>
+</div>
+<p class="text-on-surface-variant text-[10px] uppercase font-bold tracking-widest">Código: SLD-4452</p>
+</div>
+</div>
+<div class="group bg-surface-container-low rounded overflow-hidden">
+<div class="h-48 overflow-hidden bg-white">
+<img alt="Filters" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Heavy duty air filter component for industrial engine clean studio shot with metallic and mesh details" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDxbpeQg_eswjH_HuZE2ZDYaaZg7lTi4L6Tx5jlR4VcDLJmZtAVqMkX4KAJTmbKMujj_bz80X8K9WbzNPPoyM4e3tJC7THzrA44jyRmqruj_re8D6EDXEfD0QvfKjMU6HSXBTR1X7nNBPuNwxi16tmAm1u9D-uBSGU9Ry0sYQHP0g2NG9gp464unP60YQKd_HNe9CMjqITQZiJW6dhjSt0yCE4HNCrFeChzRG55VPgMRqsaAVoFkMJe2C5ouvLBKthGuyssqs5z2rIQ"/>
+</div>
+<div class="p-4">
+<div class="flex justify-between items-start mb-2">
+<h4 class="text-primary font-bold text-sm tracking-tight">Kit Filtros Motor</h4>
+<span class="bg-primary-fixed text-on-primary-fixed text-[8px] font-black px-2 py-1 uppercase">Euro 6</span>
+</div>
+<p class="text-on-surface-variant text-[10px] uppercase font-bold tracking-widest">Código: SLD-7821</p>
+</div>
+</div>
+<div class="group bg-surface-container-low rounded overflow-hidden">
+<div class="h-48 overflow-hidden bg-white">
+<img alt="Brake components" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="Industrial disc brake components high quality steel precision machined automotive parts in studio lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCJr72D-321DVvMYHbZO01Hl_hFaX5Y2dJXCN2JcM1oSUfUkeT0UO3r8YrG4Pbi1RLtwYnXGiapDMncZqhfCInjAmj8kFDIkwaY_liodDi2HmX5aNh-e5YA1QzyjhrZz4WMW_TAkxyRKuNjl2g1VCJNKhZ7wnXrS9gUAAocSASrPb2lXXSZwr3bnl8LlpnIn6nVONWkHEwpf5OUuWntbPj3c5Uu0FA5Ep72OPIjvvENIF97J6WQj4JD_vi3QFzFhqkE6WS6dow9kAQm"/>
+</div>
+<div class="p-4">
+<div class="flex justify-between items-start mb-2">
+<h4 class="text-primary font-bold text-sm tracking-tight">Discos de Freno HD</h4>
+<span class="bg-primary-fixed text-on-primary-fixed text-[8px] font-black px-2 py-1 uppercase">Línea Pesada</span>
+</div>
+<p class="text-on-surface-variant text-[10px] uppercase font-bold tracking-widest">Código: SLD-2309</p>
+</div>
+</div>
+<div class="group bg-surface-container-low rounded overflow-hidden">
+<div class="h-48 overflow-hidden bg-white">
+<img alt="Shock absorbers" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="High performance gas shock absorbers for commercial buses industrial suspension components professional photography" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAuFmcWHwY4bq_t_b7Bx7wXTb6ZMd6fjjOqtHdtSLe5GynEzwX_xnqSZsQ2H_3vw6g37nO08KfDREqkxCWxlFbxZiNbghf3WC8KCaJToIApnAreP1c9afW7dmWganK-7_04a3DLPxjlCJ0EbHjfVvsCT8p4CIXT_NUuQYIY_KIYGfD--qWmvTmBhlMjA1e7oEB4ANIf17BRXwSl9-cJenJXOqDNU8DCWtC893enWMJsiUQRWXcJE5c-v0Tskg_Zu15C7tssPS_WDZhZ"/>
+</div>
+<div class="p-4">
+<div class="flex justify-between items-start mb-2">
+<h4 class="text-primary font-bold text-sm tracking-tight">Amortiguador Neumático</h4>
+<span class="bg-primary-fixed text-on-primary-fixed text-[8px] font-black px-2 py-1 uppercase">Integral</span>
+</div>
+<p class="text-on-surface-variant text-[10px] uppercase font-bold tracking-widest">Código: SLD-5561</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<footer class="bg-[#0D2C4F] dark:bg-[#001732] w-full border-t border-[#ffffff1a]">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8 px-12 py-16 w-full">
+<div>
+<span class="text-xl font-black text-white block mb-6">SALDIVIA</span>
+<p class="text-[#c4c6cf] font-['Plus_Jakarta_Sans'] text-sm leading-relaxed mb-8">
+                    Líderes en fabricación de carrocerías de media y larga distancia, uniendo tecnología y diseño para el transporte del futuro.
+                </p>
+<div class="flex gap-4">
+<div class="w-10 h-10 border border-[#ffffff33] flex items-center justify-center text-white hover:text-[#58bcfd] hover:border-[#58bcfd] transition-all cursor-pointer">
+<span class="material-symbols-outlined text-lg">share</span>
+</div>
+<div class="w-10 h-10 border border-[#ffffff33] flex items-center justify-center text-white hover:text-[#58bcfd] hover:border-[#58bcfd] transition-all cursor-pointer">
+<span class="material-symbols-outlined text-lg">hub</span>
+</div>
+</div>
+</div>
+<div class="flex flex-col gap-4">
+<h4 class="text-white font-['Plus_Jakarta_Sans'] text-sm tracking-wide uppercase font-bold mb-2">Navegación</h4>
+<a class="text-[#c4c6cf] hover:text-[#58bcfd] font-['Plus_Jakarta_Sans'] text-xs uppercase tracking-widest transition-colors duration-200" href="#">Privacidad</a>
+<a class="text-[#c4c6cf] hover:text-[#58bcfd] font-['Plus_Jakarta_Sans'] text-xs uppercase tracking-widest transition-colors duration-200" href="#">Términos</a>
+<a class="text-[#c4c6cf] hover:text-[#58bcfd] font-['Plus_Jakarta_Sans'] text-xs uppercase tracking-widest transition-colors duration-200" href="#">Soporte</a>
+<a class="text-[#c4c6cf] hover:text-[#58bcfd] font-['Plus_Jakarta_Sans'] text-xs uppercase tracking-widest transition-colors duration-200" href="#">Distribuidores</a>
+</div>
+<div>
+<h4 class="text-white font-['Plus_Jakarta_Sans'] text-sm tracking-wide uppercase font-bold mb-4">Newsletter Técnico</h4>
+<p class="text-[#c4c6cf] text-xs mb-4">Reciba actualizaciones sobre piezas y boletines de servicio.</p>
+<div class="flex">
+<input class="bg-[#ffffff0d] border-none text-white text-xs py-3 px-4 w-full focus:ring-1 focus:ring-[#58bcfd]" placeholder="Email" type="email"/>
+<button class="bg-[#58bcfd] text-[#001e30] px-4 font-bold uppercase text-[10px] hover:bg-white transition-colors">OK</button>
+</div>
+</div>
+</div>
+<div class="px-12 py-6 border-t border-[#ffffff0d] flex flex-col md:flex-row justify-between items-center gap-4">
+<span class="text-[#c4c6cf] font-['Plus_Jakarta_Sans'] text-[10px] tracking-wide uppercase font-bold">© 2024 Saldivia Buses. Todos los derechos reservados.</span>
+<div class="flex gap-6">
+<span class="text-[#c4c6cf] text-[10px] font-bold uppercase tracking-widest">ISO 9001 CERTIFIED</span>
+<span class="text-[#c4c6cf] text-[10px] font-bold uppercase tracking-widest">INDUSTRIA ARGENTINA</span>
+</div>
+</div>
+</footer>
+</body></html>

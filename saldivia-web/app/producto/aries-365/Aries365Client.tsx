@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Button, buttonClass } from "@/app/components/ui/Button";
@@ -48,7 +49,7 @@ export default function Aries365Client({ galleryImages }: Props) {
               <a className="text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-primary font-medium transition-colors" href="/contacto">CONTACTO</a>
               <a className="flex items-center text-slate-600 dark:text-slate-300 hover:text-primary font-medium transition-colors" href="/postventa">
                 <span className="material-icons-outlined text-sm mr-1">build</span>POSTVENTA
-              </a>
+              </Link>
             </nav>
             <div className="flex items-center gap-4">
               <button
@@ -63,7 +64,7 @@ export default function Aries365Client({ galleryImages }: Props) {
               </button>
               <a className={buttonClass({ variant: "secondary", size: "sm", className: "px-5 text-sm" })} href="/contacto">
                 COTIZAR
-              </a>
+              </Link>
             </div>
           </div>
         </div>
@@ -74,9 +75,9 @@ export default function Aries365Client({ galleryImages }: Props) {
         <section className="bg-white dark:bg-slate-900 py-12">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <nav className="flex text-sm mb-6 text-slate-500 dark:text-slate-400">
-              <a className="hover:text-primary" href="/flota">Productos</a>
+              <Link className="hover:text-primary" href="/flota">Productos</Link>
               <span className="mx-2">/</span>
-              <a className="hover:text-primary" href="/flota#interprovincial">Larga Distancia</a>
+              <Link className="hover:text-primary" href="/flota#interprovincial">Larga Distancia</Link>
               <span className="mx-2">/</span>
               <span className="text-slate-800 dark:text-white font-semibold">Aries 365 / 1200</span>
             </nav>
@@ -355,7 +356,7 @@ export default function Aries365Client({ galleryImages }: Props) {
                     <a className={buttonClass({ variant: "link-cta", size: "sm", className: "min-h-0 px-0 py-0 text-primary" })} href="/flota">
                       Ver Detalles{" "}
                       <span className="material-icons-outlined text-sm">arrow_forward</span>
-                    </a>
+                    </Link>
                   </div>
                 </div>
               ))}

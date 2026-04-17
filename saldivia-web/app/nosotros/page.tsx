@@ -5,7 +5,7 @@ export default function NosotrosPage() {
   return (
     <div className="bg-surface text-on-surface font-headline">
       <main>
-        <section className="relative h-[614px] flex items-center overflow-hidden asymmetric-gradient pt-16">
+        <section className="relative flex min-h-[420px] items-center overflow-hidden asymmetric-gradient pt-16 md:min-h-[480px]">
           <div className="absolute inset-0 opacity-40 mix-blend-overlay">
             <img
               className="w-full h-full object-cover"
@@ -13,138 +13,18 @@ export default function NosotrosPage() {
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuDy_GWM56dioRQctR5tYKjjSo_grPjzDOsD4QnxY6euQderK2_vK08JC-oc-GGiokQpNdZFzGdQ31ks3ucE_AmwKv6FJM08wiUS3z2FnHfPKNIBTjfKpykewj557aUsk67Z9J-V7hOKuneG7_mN11dMjd1zifKtA4u0baRkfhMtXQyD8VMMRiOhqhlYV1BCkAEoeqnAekz9wo62xMYCHIl5wNa-VDnO0qh08nDKu6NxGIPXiklT9yrLDGfhlECI8fzN2fCLJ3FSoLMt"
             />
           </div>
-          <div className="relative z-10 px-12 max-w-5xl">
-            <span className="text-secondary-container font-bold tracking-[0.2em] uppercase text-sm block mb-4">Nuestra Trayectoria</span>
-            <h1 className="text-white text-6xl md:text-8xl font-black tracking-tighter mb-6 leading-none">
+          <div className="relative z-10 mx-auto w-full max-w-screen-2xl px-6 md:px-8">
+            <span className="mb-4 block text-xs font-bold uppercase tracking-[0.3em] text-secondary-container">Nuestra Trayectoria</span>
+            <h1 className="max-w-4xl text-4xl font-black uppercase leading-[0.95] tracking-tighter text-white md:text-6xl lg:text-7xl">
               DÉCADAS DE<br /><span className="text-secondary-container">PRECISIÓN</span>
             </h1>
-            <p className="text-on-primary-container max-w-xl text-lg font-medium leading-relaxed">
+            <p className="mt-8 max-w-2xl text-base font-medium leading-relaxed text-on-primary-container md:text-lg">
               Desde nuestros orígenes industriales hasta convertirnos en referentes del transporte regional, cada kilómetro recorrido es testimonio de ingeniería y compromiso.
             </p>
           </div>
         </section>
 
-        {/* History Timeline */}
-        <section className="py-24 bg-surface relative">
-          <div className="container mx-auto px-6">
-            <div className="text-center mb-24">
-              <h2 className="text-4xl font-black text-primary tracking-tighter uppercase mb-4">Línea de Tiempo Industrial</h2>
-              <div className="w-24 h-1 technical-gradient mx-auto"></div>
-            </div>
-            <div className="relative">
-              <div className="hidden lg:block absolute left-1/2 top-0 bottom-0 w-10 -ml-5 zigzag-line opacity-20"></div>
-              <div className="space-y-32">
-                {/* 1988 */}
-                <div className="flex flex-col lg:flex-row items-center gap-12 group">
-                  <div className="lg:w-1/2 order-2 lg:order-1 text-right">
-                    <div className="bg-surface-container-low p-8 rounded shadow-sm border-r-4 border-secondary">
-                      <span className="text-secondary font-black text-5xl block mb-2">1988</span>
-                      <h3 className="text-xl font-bold text-primary uppercase tracking-tight mb-4">EL NACIMIENTO DEL GIGANTE</h3>
-                      <p className="text-on-surface-variant leading-relaxed">Fundación de Saldivia como taller especializado en mantenimiento pesado. El inicio de un sueño basado en la robustez estructural.</p>
-                      <div className="mt-6 flex gap-2 justify-end">
-                        <span className="bg-secondary-container text-on-secondary-container px-3 py-1 text-[10px] font-bold uppercase tracking-tighter">ORIGEN</span>
-                        <span className="bg-secondary-container text-on-secondary-container px-3 py-1 text-[10px] font-bold uppercase tracking-tighter">PASIÓN</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="z-10 bg-primary w-16 h-16 rounded flex items-center justify-center text-white font-black shrink-0 shadow-xl ring-8 ring-surface">
-                    <span className="material-symbols-outlined">factory</span>
-                  </div>
-                  <div className="lg:w-1/2 order-3">
-                    <div className="h-64 rounded-lg overflow-hidden grayscale hover:grayscale-0 transition-all duration-500 shadow-2xl">
-                      <img
-                        className="w-full h-full object-cover"
-                        alt="Industrial workshop 1988"
-                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuBUhz9LWXaVud5PgInl9OtqbGeOwEoNB1vcTPQ8MNejdXm1GK7niy2OyQRQ85yueYFGfchvxtLzwCHvzZlZQzFZLD7-zVA6trRFq50kxcYtL4kBNQHMgwjDKqkNPmAvJsc-tCFiEwPMyTSSac0t4Qc3zE_EIo354wRIE-YTcgF1i9rn_ERcPSHGetZbetiC2zL-ckZncIDR7p-xtu0RguPPl5x0qOrAtJ5TNCBRDVBo2KOhndp2Qb2Uj4Y139RyeeVMlMZJ6IM7VJpF"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* 2005 */}
-                <div className="flex flex-col lg:flex-row items-center gap-12 group">
-                  <div className="lg:w-1/2 order-3 lg:order-1">
-                    <div className="h-64 rounded-lg overflow-hidden grayscale hover:grayscale-0 transition-all duration-500 shadow-2xl">
-                      <img
-                        className="w-full h-full object-cover"
-                        alt="Engineering 2005"
-                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuDliWzV3M-UWKH5-1ss4GfBt-T2JaTVHdyQeNz59G_dbJxk2xkb6d1mZlKc1_SP-eXo2_W0vXldYKO0Q63hc_4M22KoC2AuZXog_l3gZidh2S0te39iilEdgXvdPDPi87NL2M81gnvxM_zbypAdn8wTivHeh9fYznw3ED-lAXmAtYT9i08wREhX2RkBoE8XKjT1E7VpJg5NpxSojND74u4BwceTLllKexXclnoD1oliKElkhwNAhH9OiIfWDm9K4rE8KPXXsVuijX9V"
-                      />
-                    </div>
-                  </div>
-                  <div className="z-10 bg-secondary w-16 h-16 rounded flex items-center justify-center text-white font-black shrink-0 shadow-xl ring-8 ring-surface">
-                    <span className="material-symbols-outlined">precision_manufacturing</span>
-                  </div>
-                  <div className="lg:w-1/2 order-2 text-left">
-                    <div className="bg-surface-container-low p-8 rounded shadow-sm border-l-4 border-secondary">
-                      <span className="text-secondary font-black text-5xl block mb-2">2005</span>
-                      <h3 className="text-xl font-bold text-primary uppercase tracking-tight mb-4">INGENIERÍA PROPIA</h3>
-                      <p className="text-on-surface-variant leading-relaxed">Presentación del primer chasis desarrollado íntegramente por Saldivia. Marcamos el inicio de una era de independencia tecnológica.</p>
-                      <div className="mt-6 flex gap-2">
-                        <span className="bg-secondary-container text-on-secondary-container px-3 py-1 text-[10px] font-bold uppercase tracking-tighter">CHASIS</span>
-                        <span className="bg-secondary-container text-on-secondary-container px-3 py-1 text-[10px] font-bold uppercase tracking-tighter">INNOVACIÓN</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* 2015 */}
-                <div className="flex flex-col lg:flex-row items-center gap-12 group">
-                  <div className="lg:w-1/2 order-2 lg:order-1 text-right">
-                    <div className="bg-surface-container-low p-8 rounded shadow-sm border-r-4 border-secondary">
-                      <span className="text-secondary font-black text-5xl block mb-2">2015</span>
-                      <h3 className="text-xl font-bold text-primary uppercase tracking-tight mb-4">LIDERAZGO REGIONAL</h3>
-                      <p className="text-on-surface-variant leading-relaxed">Expansión de la planta industrial a 25,000m². Saldivia se posiciona como el carrocero líder en soluciones personalizadas.</p>
-                      <div className="mt-6 flex gap-2 justify-end">
-                        <span className="bg-secondary-container text-on-secondary-container px-3 py-1 text-[10px] font-bold uppercase tracking-tighter">CRECIMIENTO</span>
-                        <span className="bg-secondary-container text-on-secondary-container px-3 py-1 text-[10px] font-bold uppercase tracking-tighter">CAPACIDAD</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="z-10 bg-primary w-16 h-16 rounded flex items-center justify-center text-white font-black shrink-0 shadow-xl ring-8 ring-surface">
-                    <span className="material-symbols-outlined">public</span>
-                  </div>
-                  <div className="lg:w-1/2 order-3">
-                    <div className="h-64 rounded-lg overflow-hidden grayscale hover:grayscale-0 transition-all duration-500 shadow-2xl">
-                      <img
-                        className="w-full h-full object-cover"
-                        alt="Fleet expansion 2015"
-                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuBiTFG7DhNGyoDqVv6EBvMzw_ImM8oYQZVvZNBxoEwuiBYLD-0C3kb25UwxAErLnyPoce4eHmZItnT2MFLnkGCkN3nrNIAB-G67LKqX3KX-v7Atjf1MVTyLLVnHoEaSeWQD4bULHjUNBtun6FaFrd6mUTYuz2CKSGVwkMjoyDfj6HNlPWWGqmoiYHOUsmuq2g_bmgl_hM2qHX--M29E_husSlCr-IuWC-q36W7Cb4sPQTXmJA4R8_zdbEGceRYGDvufSWripCImM5q"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* 2024 */}
-                <div className="flex flex-col lg:flex-row items-center gap-12 group">
-                  <div className="lg:w-1/2 order-3 lg:order-1">
-                    <div className="h-64 rounded-lg overflow-hidden grayscale hover:grayscale-0 transition-all duration-500 shadow-2xl">
-                      <img
-                        className="w-full h-full object-cover"
-                        alt="Smart systems 2024"
-                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuDOeSF4qyLXEOT_k71T_v1K52ayE4kQASEKIvriTYlHwivddTHVpisPXZ266D7SbPeBndrt6R8jftKMd4sRRzvnsgVb51TCgJWN-yvcaW7uICzMXB7Ztp3b73bJTF826CpA8MZmEZ-vLQ36QXuTznz0W9smFygHbQ-IZWvDEPefzdAYqBAptuanlNoK0qw64Q4AjDlgG1Ak8FCsmjRhujy_QDmNPDv4kXrR6cAV33WE8lDxTP9Q_eoQeBoRmKCeIO3S-d14Uwi33_pz"
-                      />
-                    </div>
-                  </div>
-                  <div className="z-10 technical-gradient w-16 h-16 rounded flex items-center justify-center text-white font-black shrink-0 shadow-xl ring-8 ring-surface">
-                    <span className="material-symbols-outlined">bolt</span>
-                  </div>
-                  <div className="lg:w-1/2 order-2 text-left">
-                    <div className="bg-surface-container-low p-8 rounded shadow-sm border-l-4 border-secondary">
-                      <span className="text-secondary font-black text-5xl block mb-2">2024</span>
-                      <h3 className="text-xl font-bold text-primary uppercase tracking-tight mb-4">SISTEMAS INTELIGENTES</h3>
-                      <p className="text-on-surface-variant leading-relaxed">Integración de telemetría avanzada y sistemas de asistencia al conductor de última generación. El futuro es digital.</p>
-                      <div className="mt-6 flex gap-2">
-                        <span className="bg-secondary-container text-on-secondary-container px-3 py-1 text-[10px] font-bold uppercase tracking-tighter">SMART BUS</span>
-                        <span className="bg-secondary-container text-on-secondary-container px-3 py-1 text-[10px] font-bold uppercase tracking-tighter">DATOS</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
+        <NosotrosTimeline />
 
         {/* Stats Bento Grid */}
         <section className="py-24 bg-surface-container-low">
