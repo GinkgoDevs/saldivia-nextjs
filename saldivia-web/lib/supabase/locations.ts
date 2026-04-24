@@ -77,3 +77,26 @@ export async function getLocations(
   const mapped = rows.map(rowToLocation).filter((x): x is Location => x !== null);
   return { data: mapped, error: null };
 }
+
+export type GetAllLocationsResult =
+  | { data: Location[]; error: null }
+  | { data: null; error: Error };
+
+/** Incluye inactivas; requiere sesión (RLS staff). Uso: dashboard. */
+export async function getAllLocationsForAdmin(
+  supabase: SupabaseClient,
+): Promise<GetAllLocationsResult> {
+  const { data, error } = await supabase
+    .from("locations")
+    .select("id, name, type, province, city, address, phone, hours, lat, lng, active, created_at")
+    .order("province")
+    .order("name");
+
+  if (error) {
+    return { data: null, error: new Error(error.message) };
+  }
+
+  const rows = (data ?? []) as LocationRow[];
+  const mapped = rows.map(rowToLocation).filter((x): x is Location => x !== null);
+  return { data: mapped, error: null };
+}

@@ -1,3 +1,5 @@
+import { LoginForm } from "./LoginForm";
+
 export default function LoginPage() {
   return (
     <main className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-lg flex-col justify-center px-6 py-16 font-headline md:px-8">
@@ -9,13 +11,9 @@ export default function LoginPage() {
           Iniciar sesión
         </h1>
         <p className="mt-4 text-sm leading-relaxed text-on-surface-variant">
-          El formulario de autenticación con Supabase se integrará aquí. Esta ruta es pública y no exige sesión.
+          Ingresá con un usuario creado en Supabase Auth (proyecto de la instancia vinculada a esta web).
         </p>
-        <div className="mt-8 space-y-4">
-          <div className="h-11 w-full rounded-sm bg-surface-container-high/80 motion-safe:animate-pulse motion-reduce:animate-none" />
-          <div className="h-11 w-full rounded-sm bg-surface-container-high/80 motion-safe:animate-pulse motion-reduce:animate-none" />
-          <div className="mt-6 h-12 w-full rounded-sm bg-primary/20" />
-        </div>
+        <LoginForm />
       </div>
     </main>
   );

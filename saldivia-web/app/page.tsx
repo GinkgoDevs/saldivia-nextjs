@@ -1,11 +1,22 @@
+import type { Metadata } from "next";
 import ArgentinaProjectsMap from "./components/ArgentinaProjectsMap";
 import { CountUpStatsRow } from "./components/CountUpStatsRow";
 import HomeHero3 from "./components/HomeHero3";
 import GalleryCarousel from "./components/GalleryCarousel";
+import { MotionReveal } from "./components/home/MotionReveal";
 import Link from "next/link";
 import { Button, buttonClass } from "./components/ui/Button";
-import { Input } from "./components/ui/Input";
 
+export const metadata: Metadata = {
+  title: "Inicio",
+  description:
+    "Carrocerías para transporte de pasajeros. Proyectos por provincia, catálogo ARIES y soluciones urbano, interurbano e interprovincial.",
+  openGraph: {
+    title: "Saldivia — Excelencia en Carrocerías",
+    description:
+      "Más de 40 años de ingeniería industrial: buses, interurbano y larga distancia, con postventa en todo el país.",
+  },
+};
 
 export default function HomePage() {
   return (
@@ -20,6 +31,7 @@ export default function HomePage() {
         <ArgentinaProjectsMap />
 
         {/* Technical Showcase */}
+        <MotionReveal>
         <section className="relative bg-industrial-charcoal overflow-hidden text-white min-h-screen flex flex-col">
           <div className="absolute top-0 left-0 w-full p-8 md:p-12 z-20 flex justify-between items-end bg-gradient-to-b from-industrial-charcoal to-transparent">
             <div>
@@ -95,8 +107,10 @@ export default function HomePage() {
             </div>
           </div>
         </section>
+        </MotionReveal>
 
         {/* Segmentación: tres distancias → anclas del catálogo /flota */}
+        <MotionReveal>
         <section className="bg-surface py-20 md:py-24" aria-labelledby="home-segmentacion-heading">
           <div className="container mx-auto px-4 md:px-6">
             <div className="mb-14 text-center md:mb-16">
@@ -172,42 +186,12 @@ export default function HomePage() {
             </div>
           </div>
         </section>
-
-        {/* After-Sales Box */}
-        <section className="bg-[#081b31] py-12 industrial-grid">
-          <div className="container mx-auto px-4 md:px-6">
-            <div className="max-w-5xl mx-auto bg-primary border border-white/5 rounded-xl overflow-hidden shadow-2xl flex flex-col lg:flex-row items-center">
-              <div className="p-10 lg:w-[45%]">
-                <div className="flex items-center gap-4 mb-3">
-                  <span className="material-symbols-outlined text-accent-blue text-3xl">manufacturing</span>
-                  <h2 className="font-headline text-xl font-bold text-white uppercase">Repuestos y Servicio</h2>
-                </div>
-                <p className="text-slate-300 text-sm opacity-80">Encuentre el Distribuidor de Asistencia Técnica o Repuestos más cercano.</p>
-              </div>
-              <div className="p-10 lg:w-[55%] w-full bg-white/5 backdrop-blur-sm">
-                <form className="flex flex-col sm:flex-row gap-4">
-                  <Input
-                    className="flex-grow bg-[#081b31]/70 border-white/10 text-white placeholder-slate-500 rounded-curve-sm"
-                    placeholder="Ciudad"
-                    type="text"
-                    tone="inverse"
-                  />
-                  <Button
-                    className="px-8"
-                    size="sm"
-                    type="submit"
-                  >
-                    <span className="material-symbols-outlined text-sm">search</span> BUSCAR
-                  </Button>
-                </form>
-              </div>
-            </div>
-          </div>
-        </section>
+        </MotionReveal>
 
         <GalleryCarousel />
 
         {/* Final CTA */}
+        <MotionReveal>
         <section className="relative overflow-hidden bg-slate-900 py-20">
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_20%,rgba(32,149,212,0.18),transparent_60%)]" />
           <div className="container relative mx-auto px-4 md:px-6 text-center">
@@ -242,6 +226,7 @@ export default function HomePage() {
             </div>
           </div>
         </section>
+        </MotionReveal>
       </main>
 
     </div>

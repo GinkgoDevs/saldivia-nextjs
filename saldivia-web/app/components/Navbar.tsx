@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import type { MegaMenuSegment } from "@/lib/supabase/mega-menu-models";
-import { FLEET_SPECIALS_SECTION_ID } from "../data/flota-catalog";
+import { FLEET_ESPECIALES_ANCHOR } from "../data/flota-catalog";
 import ThemeToggle from "./ThemeToggle";
 import { Button, buttonClass } from "./ui/Button";
 
@@ -213,7 +213,7 @@ function ModelosMegaNav({
                 ))}
                 <li>
                   <Link
-                    href={`/flota#${FLEET_SPECIALS_SECTION_ID}`}
+                    href={`/flota#${FLEET_ESPECIALES_ANCHOR}`}
                     onClick={closeNow}
                     className="group/row flex items-center justify-between gap-3 rounded-sm px-2 py-2 font-headline text-base font-semibold leading-snug tracking-normal text-primary transition-colors hover:bg-surface-container-low hover:text-accent-blue dark:text-zinc-100 dark:hover:bg-white/5 dark:hover:text-secondary-container"
                   >
@@ -459,7 +459,7 @@ function MobileNavDrawer({
                   </div>
                 ))}
                 <Link
-                  href={`/flota#${FLEET_SPECIALS_SECTION_ID}`}
+                  href={`/flota#${FLEET_ESPECIALES_ANCHOR}`}
                   onClick={closeAndNavigate}
                   className="flex min-h-[44px] cursor-pointer items-center rounded-md py-2 pl-1 font-headline text-sm font-semibold text-primary transition-colors hover:text-accent-blue focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue dark:text-zinc-200"
                 >

@@ -126,6 +126,55 @@ body {
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
   }
+}
+
+/* Leaflet popup dark-theme overrides */
+.leaflet-popup-content-wrapper {
+  background: #0d2c4f;
+  color: #e2e8f0;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+}
+
+.leaflet-popup-tip {
+  background: #0d2c4f;
+}
+
+.leaflet-popup-close-button {
+  color: #94a3b8 !important;
+  font-size: 18px !important;
+  top: 6px !important;
+  right: 8px !important;
+}
+
+.leaflet-popup-close-button:hover {
+  color: #e2e8f0 !important;
+  background: transparent !important;
+}
+
+.leaflet-control-zoom a {
+  background: #0d2c4f !important;
+  color: #e2e8f0 !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.leaflet-control-zoom a:hover {
+  background: #2095D4 !important;
+  color: #fff !important;
+}
+
+.leaflet-control-attribution {
+  background: rgba(8, 27, 49, 0.75) !important;
+  color: #475569 !important;
+  font-size: 10px !important;
+}
+
+.leaflet-control-attribution a {
+  color: #64748b !important;
+}
+
+@layer utilities {
 
   .tech-card-glow {
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.1), 0 10px 30px -5px rgba(0, 0, 0, 0.2);

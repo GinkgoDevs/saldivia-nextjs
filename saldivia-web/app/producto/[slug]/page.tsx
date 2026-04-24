@@ -1,175 +1,223 @@
-import ProductGalleryCarousel from "../../components/ProductGalleryCarousel";
+import ProductGalleryCarousel from "@/app/components/ProductGalleryCarousel";
+import { ProductJsonLd } from "@/app/components/ProductJsonLd";
 import { getAries305GalleryPaths } from "@/lib/aries-305-gallery";
-import { Button } from "../../components/ui/Button";
+import { getModelBySlug, getActiveModelSlugs } from "@/lib/supabase/model-detail";
+import { createStaticClient } from "@/lib/supabase/static-client";
+import { createClient } from "@/lib/supabase/server";
+import { buttonClass } from "@/app/components/ui/Button";
+import type { Metadata } from "next";
+import Link from "next/link";
+import { notFound } from "next/navigation";
 
-interface Props {
-  params: Promise<{ slug: string }>;
-}
-
-const DEFAULT_GALLERY_IMAGES = [
+const DEFAULT_GALLERY = [
   "https://lh3.googleusercontent.com/aida-public/AB6AXuBl35QlkaqDVVp_W4DopBaNChJ0xBztpjtERM2fPqE7qXeq6XrFgG-NAz_Z790vCf_tvHdNxNcsw2si0Q809vVT2IIxa-8-pKirMysbZzKAixDsgkOk5g7j5L3iq8yhTtVvKPej3zk5x34VHu_8vR_0VpHSHmxWe-rn6BWgBpjvTT18-zXh8NuINlfEXw_HwA7OkiMEZSN15DmNpOgh4EZ1RAYQs5ny5huSEQHDgQhepO64JXKlUw91iyKUzv9fREXJQFYz3a05Mt17",
-  "https://lh3.googleusercontent.com/aida-public/AB6AXuBhEV-y4sRKcJO2BpjLPmabNqqO92WDmJe0grKwAt8QKFpguZ7BxayAwB-4TxyAhi9sQc9G-Ctl0IhlxDBpvnDRfHVLFHUMTTvQOwkzYJ56WGivN9e6uZC_A7IBLvZJeOEV1iLuiKoSsy0LaaZA3od5MAGYqfoaN8u2kaqpoW7FrH2RtQZzJdb3JPtdadzuC2NKn_M9XAOvWPegQ4Li5OxJ7DqPtLnrpFXwDIfB6AB7RLDmcV0wV0U1nZltKjoYxat1aL7wxl32I1ol",
 ] as const;
 
-export default async function ProductoPage({ params }: Props) {
+const DEFAULT_HERO =
+  "https://lh3.googleusercontent.com/aida-public/AB6AXuAa81PkDYDCwb4mk_Oa2HLAVwSfDCyhiRdRijLyE5Hdd_JvlS1LxSySncTX8BZktEgIvF-u7qIUADgsgWMN8vjxHp_4m4_3Nbn_bJ2dMUk7NgcaLizLMXBEcGce77x2gDuLaSJ5rOGs9uQKh3WVc7CERcZxjHGtR9ujp0cQ_Y3xdXquEWDcf5fvULA5ttylFrHRQ5gfrUzSXUztJgI3EulsY-Cud__9SXFvDCruOYAzPDcROn1apERN1wpB5pDNc6vXAhcfWGqly7bX";
+
+export const revalidate = 60;
+
+type Props = { params: Promise<{ slug: string }> };
+
+export async function generateStaticParams() {
+  const supabase = createStaticClient();
+  const slugs = await getActiveModelSlugs(supabase);
+  if (!slugs) return [];
+  return slugs.map((slug) => ({ slug }));
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const slugKey = slug.toLowerCase();
-  const aries305FromDisk =
-    slugKey === "aries-305" ? getAries305GalleryPaths() : null;
-  const galleryImages =
-    aries305FromDisk && aries305FromDisk.length > 0
-      ? aries305FromDisk
-      : DEFAULT_GALLERY_IMAGES;
-  const galleryAltPrefix =
-    aries305FromDisk && aries305FromDisk.length > 0
-      ? "Aries 305"
-      : `Modelo ${slug}`;
-  const heroSrc =
-    aries305FromDisk && aries305FromDisk.length > 0
-      ? aries305FromDisk[0]
-      : undefined;
+  const supabase = await createClient();
+  const detail = await getModelBySlug(supabase, slug);
+  if (!detail) {
+    return { title: "Modelo | Saldivia" };
+  }
+  const { model } = detail;
+  const desc = model.description?.slice(0, 160) ?? `Ficha técnica ${model.name} — Saldivia Carrocerías.`;
+  return {
+    title: `${model.name} | Saldivia Carrocerías`,
+    description: desc,
+    openGraph: {
+      title: model.name,
+      description: desc,
+    },
+  };
+}
+
+function galleryFor(slug: string, detail: Awaited<ReturnType<typeof getModelBySlug>>) {
+  if (!detail) return [...DEFAULT_GALLERY];
+  const fromDb = detail.images.map((i) => i.image_url).filter(Boolean);
+  if (fromDb.length > 0) return fromDb;
+  if (slug === "aries-305") {
+    const disk = getAries305GalleryPaths();
+    if (disk.length > 0) return disk;
+  }
+  if (detail.model.cover_image_url) return [detail.model.cover_image_url];
+  return [...DEFAULT_GALLERY];
+}
+
+export default async function ProductoPage({ params }: Props) {
+  const { slug: raw } = await params;
+  const slug = raw.toLowerCase();
+  const supabase = await createClient();
+  const detail = await getModelBySlug(supabase, slug);
+  if (!detail) {
+    notFound();
+  }
+  const { model, products } = detail;
+  const gallery = galleryFor(slug, detail);
+  const altPrefix = model.name;
+  const hero = model.cover_image_url ?? gallery[0] ?? DEFAULT_HERO;
+  const interiorSrc = gallery[1] ?? gallery[0] ?? DEFAULT_GALLERY[0];
+  const sortedSpecs = [...products].sort(
+    (a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0) || a.spec_key.localeCompare(b.spec_key),
+  );
 
   return (
     <div className="bg-surface text-on-surface font-headline">
+      <ProductJsonLd
+        name={model.name}
+        description={model.description}
+        imageUrl={hero}
+        slug={slug}
+      />
       <main>
-        {/* Hero Section */}
         <section className="relative h-[600px] overflow-hidden bg-primary">
           <div className="absolute inset-0 z-0">
             <img
-              alt="Ultra-modern Aries bus"
-              className="w-full h-full object-cover opacity-60"
-              src={
-                heroSrc ??
-                "https://lh3.googleusercontent.com/aida-public/AB6AXuAa81PkDYDCwb4mk_Oa2HLAVwSfDCyhiRdRijLyE5Hdd_JvlS1LxSySncTX8BZktEgIvF-u7qIUADgsgWMN8vjxHp_4m4_3Nbn_bJ2dMUk7NgcaLizLMXBEcGce77x2gDuLaSJ5rOGs9uQKh3WVc7CERcZxjHGtR9ujp0cQ_Y3xdXquEWDcf5fvULA5ttylFrHRQ5gfrUzSXUztJgI3EulsY-Cud__9SXFvDCruOYAzPDcROn1apERN1wpB5pDNc6vXAhcfWGqly7bX"
-              }
+              alt=""
+              className="h-full w-full object-cover opacity-60"
+              src={hero}
             />
-            <div className="absolute inset-0 bg-gradient-to-r from-primary via-primary/40 to-transparent"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-primary via-primary/40 to-transparent" />
           </div>
-          <div className="relative z-10 container mx-auto px-8 h-full flex flex-col justify-center">
-            <div className="max-w-3xl">
-              <span className="inline-block bg-saldivia-blue text-white px-3 py-1 mb-6 text-[10px] font-bold tracking-[0.1em] uppercase">Familia ARIES</span>
-              <h1 className="text-white text-7xl font-black leading-none tracking-tighter mb-6">
-                Modelo {slug.toUpperCase()}
+          <div className="relative z-10 flex h-full flex-col justify-center px-8">
+            <div className="container mx-auto max-w-3xl">
+              <span className="mb-6 inline-block bg-saldivia-blue px-3 py-1 text-[10px] font-bold uppercase tracking-[0.1em] text-white">
+                Familia ARIES
+              </span>
+              <h1 className="mb-6 text-5xl font-black leading-none tracking-tighter text-white md:text-7xl">
+                {model.name}
               </h1>
-              <p className="text-on-primary-container text-xl font-light mb-8 max-w-2xl leading-relaxed">
-                Uniendo caminos. El estándar de eficiencia para traslados de media y larga distancia. Versatilidad absoluta en configuraciones de 12 y 13.20 metros.
+              <p className="mb-8 max-w-2xl text-xl font-light leading-relaxed text-on-primary-container">
+                {model.description ??
+                  "Uniendo caminos. El estándar de eficiencia para traslados de media y larga distancia, con la precisión Saldivia en cada unidad."}
               </p>
-            </div>
-          </div>
-        </section>
-
-        <ProductGalleryCarousel images={galleryImages} altPrefix={galleryAltPrefix} />
-
-        {/* Model Variants */}
-        <section className="py-24 bg-white border-y border-outline-variant/30">
-          <div className="container mx-auto px-8">
-            <div className="mb-12 text-center">
-              <h3 className="text-saldivia-blue text-sm font-bold tracking-[0.3em] uppercase mb-4">Saldivia Precision</h3>
-              <h2 className="text-primary text-4xl font-black tracking-tighter uppercase">VARIANTES DISPONIBLES</h2>
-              <div className="h-1 w-24 bg-saldivia-blue mt-4 mx-auto"></div>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
-              <div className="variant-card bg-surface-container-low p-8 border-t-4 border-saldivia-blue flex flex-col justify-between">
-                <div>
-                  <h4 className="text-xl font-black text-primary mb-2">Turismo 4x2</h4>
-                  <p className="text-on-surface-variant text-sm font-medium tracking-tight italic opacity-80">Configuración estándar</p>
-                </div>
-                <Button
-                  className="mt-8 w-full border-primary text-primary hover:bg-primary hover:text-white"
-                  size="sm"
-                  variant="outline"
+              <div className="flex flex-wrap gap-4">
+                {model.pdf_url && (
+                  <a
+                    href={model.pdf_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={buttonClass({ variant: "primary", size: "md" })}
+                  >
+                    Descargar ficha (PDF)
+                  </a>
+                )}
+                <Link
+                  href="/contacto"
+                  className={buttonClass({
+                    variant: "outline",
+                    size: "md",
+                    className: "border-white/40 text-white hover:bg-white/10",
+                  })}
                 >
-                  Ver Especificaciones
-                </Button>
-              </div>
-              <div className="variant-card bg-surface-container-low p-8 border-t-4 border-saldivia-blue flex flex-col justify-between">
-                <div>
-                  <h4 className="text-xl font-black text-primary mb-2">4x4</h4>
-                  <p className="text-on-surface-variant text-sm font-medium tracking-tight italic opacity-80">Tracción total</p>
-                </div>
-                <Button
-                  className="mt-8 w-full border-primary text-primary hover:bg-primary hover:text-white"
-                  size="sm"
-                  variant="outline"
-                >
-                  Ver Especificaciones
-                </Button>
-              </div>
-              <div className="variant-card bg-surface-container-low p-8 border-t-4 border-saldivia-blue flex flex-col justify-between">
-                <div>
-                  <h4 className="text-xl font-black text-primary mb-2">Urbano</h4>
-                  <p className="text-on-surface-variant text-sm font-medium tracking-tight italic opacity-80">Uso citadino</p>
-                </div>
-                <Button
-                  className="mt-8 w-full border-primary text-primary hover:bg-primary hover:text-white"
-                  size="sm"
-                  variant="outline"
-                >
-                  Ver Especificaciones
-                </Button>
+                  Cotizar
+                </Link>
               </div>
             </div>
           </div>
         </section>
 
-        {/* General Characteristics */}
-        <section className="py-24 bg-surface-container-low">
-          <div className="container mx-auto px-8 max-w-5xl">
-            <div className="mb-16">
-              <h3 className="text-saldivia-blue text-sm font-bold tracking-[0.3em] uppercase mb-4">Saldivia Precision</h3>
-              <h2 className="text-primary text-4xl font-black tracking-tighter uppercase">CARACTERÍSTICAS GENERALES</h2>
-              <div className="h-1 w-24 bg-saldivia-blue mt-4"></div>
-            </div>
-            <div className="bg-white p-8 md:p-12 shadow-sm border-l-8 border-saldivia-blue">
-              <ul className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6">
-                {[
-                  "Estructura en perfiles tubulares de acero-carbono de alta resistencia.",
-                  "Puerta de ascenso pantográfica con sistema de traba neumática.",
-                  "Revestimiento externo en acero galvanizado y Fiberglass.",
-                  "Bodegas pasantes con acceso lateral y revestimiento galvanizado.",
-                  "Interior climatizado con aire acondicionado y calefacción.",
-                  "Sensores de retroceso y sistema de audio de serie.",
-                  "Asientos reclinables tipo Turismo, Semicama o Ejecutivo.",
-                  "Configuraciones personalizables con o sin sanitario.",
-                ].map((feature, i) => (
-                  <li key={i} className="flex items-start gap-3">
-                    <span className="material-symbols-outlined text-saldivia-blue mt-0.5">check_circle</span>
-                    <span className="text-on-surface-variant font-medium text-sm leading-relaxed">{feature}</span>
-                  </li>
-                ))}
-              </ul>
+        <ProductGalleryCarousel images={gallery} altPrefix={altPrefix} />
+
+        <section className="border-y border-outline-variant/30 bg-white py-24">
+          <div className="container mx-auto max-w-4xl px-8 text-center">
+            <h3 className="mb-4 text-sm font-bold uppercase tracking-[0.3em] text-saldivia-blue">Saldivia Precision</h3>
+            <h2 className="text-4xl font-black uppercase tracking-tighter text-primary">Configuración y asesoramiento</h2>
+            <div className="mx-auto mt-4 h-1 w-24 bg-saldivia-blue" />
+            <p className="mt-6 text-on-surface-variant">
+              Cada unidad se puede dimensionar con orientación comercial y técnica. Solicitá variantes, equipamiento y
+              documentación bajo unidades de su flota.
+            </p>
+            <div className="mt-8 flex justify-center">
+              <Link href="/contacto" className={buttonClass({ variant: "secondary", size: "md" })}>
+                Consultar con un asesor
+              </Link>
             </div>
           </div>
         </section>
 
-        {/* Interior Showcase */}
-        <section className="h-[500px] flex items-center bg-primary relative overflow-hidden">
+        <section className="bg-surface-container-low py-24">
+          <div className="container mx-auto max-w-5xl px-8">
+            <div className="mb-12">
+              <h3 className="mb-4 text-sm font-bold uppercase tracking-[0.3em] text-saldivia-blue">Especificaciones</h3>
+              <h2 className="text-4xl font-black uppercase tracking-tighter text-primary">Ficha resumida</h2>
+              <div className="mt-4 h-1 w-24 bg-saldivia-blue" />
+            </div>
+            {sortedSpecs.length > 0 ? (
+              <div className="overflow-x-auto rounded-sm border border-outline-variant/30 bg-white shadow-sm">
+                <table className="w-full text-left text-sm">
+                  <tbody>
+                    {sortedSpecs.map((row) => (
+                      <tr key={row.id} className="border-b border-outline-variant/20 last:border-0">
+                        <th className="whitespace-nowrap bg-surface-container-low/80 px-6 py-4 font-headline text-xs font-bold uppercase tracking-wider text-primary">
+                          {row.spec_key}
+                        </th>
+                        <td className="px-6 py-4 font-medium text-on-surface-variant">{row.spec_value}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <p className="text-on-surface-variant">
+                Las especificaciones detalladas se publican desde el panel de administración o consulte con nuestro
+                equipo.
+              </p>
+            )}
+
+            <ul className="mt-10 grid list-none grid-cols-1 gap-6 md:grid-cols-2">
+              {[
+                "Estructura en perfiles tubulares de acero al carbono de alta resistencia.",
+                "Revestimiento externo con acabados y procesos de pintura bajo control industrial.",
+                "Interior diseñable según servicio, confort y normativa de aplicación.",
+              ].map((feature, i) => (
+                <li key={i} className="flex items-start gap-3">
+                  <span className="material-symbols-outlined mt-0.5 text-saldivia-blue">check_circle</span>
+                  <span className="text-sm font-medium leading-relaxed text-on-surface-variant">{feature}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+
+        <section className="relative flex h-[500px] items-center overflow-hidden bg-primary">
           <div className="absolute inset-0">
-            <img
-              alt="Interior luxury detail"
-              className="w-full h-full object-cover"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuBl35QlkaqDVVp_W4DopBaNChJ0xBztpjtERM2fPqE7qXeq6XrFgG-NAz_Z790vCf_tvHdNxNcsw2si0Q809vVT2IIxa-8-pKirMysbZzKAixDsgkOk5g7j5L3iq8yhTtVvKPej3zk5x34VHu_8vR_0VpHSHmxWe-rn6BWgBpjvTT18-zXh8NuINlfEXw_HwA7OkiMEZSN15DmNpOgh4EZ1RAYQs5ny5huSEQHDgQhepO64JXKlUw91iyKUzv9fREXJQFYz3a05Mt17"
-            />
-            <div className="absolute inset-0 bg-primary/60 backdrop-blur-sm"></div>
+            <img alt="" className="h-full w-full object-cover" src={interiorSrc} />
+            <div className="absolute inset-0 bg-primary/60 backdrop-blur-sm" />
           </div>
-          <div className="container mx-auto px-8 relative z-10">
-            <div className="max-w-xl bg-white/5 p-12 glass-panel border border-white/10">
-              <h5 className="text-white text-4xl font-black mb-6 uppercase">El Lujo de la Precisión</h5>
-              <p className="text-on-primary-container mb-8">
-                Materiales de alta resistencia y texturas táctiles que elevan la experiencia del viaje en cada una de sus variantes.
+          <div className="container relative z-10 mx-auto px-8">
+            <div className="max-w-xl border border-white/10 bg-white/5 p-12 glass-panel">
+              <h5 className="mb-6 text-4xl font-black uppercase text-white">Diseño y confort a medida</h5>
+              <p className="mb-8 text-on-primary-container">
+                Interior y acabados que refuerzan su marca de transporte. Coordinamos ingeniería, homologación y
+                acompañamiento de postventa.
               </p>
               <div className="space-y-4">
                 <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded bg-saldivia-blue flex items-center justify-center">
+                  <div className="flex h-10 w-10 items-center justify-center rounded bg-saldivia-blue">
                     <span className="material-symbols-outlined text-white">airline_seat_recline_extra</span>
                   </div>
-                  <span className="text-white font-medium">Asientos Ergo-Soft Premium</span>
+                  <span className="font-medium text-white">Asientos y layout según reglamentación y servicio</span>
                 </div>
                 <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded bg-saldivia-blue flex items-center justify-center">
+                  <div className="flex h-10 w-10 items-center justify-center rounded bg-saldivia-blue">
                     <span className="material-symbols-outlined text-white">ac_unit</span>
                   </div>
-                  <span className="text-white font-medium">Climatización Inteligente</span>
+                  <span className="font-medium text-white">Climatización y confort de marcha</span>
                 </div>
               </div>
             </div>

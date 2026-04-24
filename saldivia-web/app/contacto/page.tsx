@@ -1,10 +1,14 @@
-import { Button, buttonClass } from "../components/ui/Button";
-import { Input } from "../components/ui/Input";
-import { Textarea } from "../components/ui/Textarea";
+import { buttonClass } from "../components/ui/Button";
+import { ContactoForm } from "../components/contact/ContactoForm";
+import { getModels } from "@/lib/supabase/models";
+import { createClient } from "@/lib/supabase/server";
 
 const PLANT_ADDRESS =
   "Parque Industrial Alvear, Ruta 21 Km 7, Alvear, Santa Fe, Argentina";
-export default function ContactoPage() {
+export default async function ContactoPage() {
+  const supabase = await createClient();
+  const { data: models } = await getModels(supabase, {});
+  const modelOptions = (models ?? []).map((m) => ({ name: m.name, slug: m.slug }));
   const mapsKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
   const embedQuery = encodeURIComponent(PLANT_ADDRESS);
   const mapEmbedSrc = mapsKey
@@ -96,35 +100,11 @@ export default function ContactoPage() {
               {/* Right: Form */}
               <div className="lg:col-span-7">
                 <div className="ui-surface-card p-8 md:p-12">
-                  <h3 className="text-3xl font-headline font-bold text-primary mb-2">Envíenos un mensaje</h3>
-                  <p className="text-on-surface-variant mb-10">Complete el formulario y un asesor técnico lo contactará a la brevedad.</p>
-                  <form className="space-y-8">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                      <div className="space-y-2">
-                        <label className="text-machined text-[11px] font-bold text-secondary">Nombre Completo</label>
-                        <Input placeholder="Ej: Juan Pérez" type="text" />
-                      </div>
-                      <div className="space-y-2">
-                        <label className="text-machined text-[11px] font-bold text-secondary">Empresa</label>
-                        <Input placeholder="Transporte del Sol" type="text" />
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-machined text-[11px] font-bold text-secondary">Correo Electrónico</label>
-                      <Input placeholder="email@empresa.com" type="email" />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-machined text-[11px] font-bold text-secondary">Mensaje o Consulta</label>
-                      <Textarea placeholder="¿En qué podemos ayudarlo?" rows={5} />
-                    </div>
-                    <Button
-                      className="w-full bg-secondary text-on-secondary hover:bg-secondary"
-                      size="lg"
-                      type="submit"
-                    >
-                      Enviar consulta técnica
-                    </Button>
-                  </form>
+                  <h3 className="text-3xl font-headline font-bold text-primary mb-2">Solicitud de cotización</h3>
+                  <p className="text-on-surface-variant mb-10">
+                    Complete el formulario y un asesor técnico comercial lo contactará a la brevedad.
+                  </p>
+                  <ContactoForm modelOptions={modelOptions} />
                 </div>
               </div>
             </div>

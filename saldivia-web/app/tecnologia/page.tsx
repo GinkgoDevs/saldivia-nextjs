@@ -1,23 +1,4 @@
-const PILARES = [
-  {
-    icon: "architecture",
-    title: "Ingeniería estructural",
-    body:
-      "Chasis, carrocería y cálculos orientados a seguridad, peso y vida útil. Contenido detallado en preparación.",
-  },
-  {
-    icon: "electric_bolt",
-    title: "Sistemas y eficiencia",
-    body:
-      "Integración eléctrica, climatización y soluciones para reducir consumo. Sección en construcción con datos de producto.",
-  },
-  {
-    icon: "shield_lock",
-    title: "Seguridad activa y pasiva",
-    body:
-      "Asistencias al conductor, visibilidad y cumplimiento normativo. Próximos releases con fichas técnicas descargables.",
-  },
-] as const;
+import { TecnologiaPilaresGrid } from "../components/tecnologia/TecnologiaPilaresGrid";
 
 export default function TecnologiaPage() {
   return (
@@ -61,22 +42,7 @@ export default function TecnologiaPage() {
                 cargue narrativas, diagramas y especificaciones.
               </p>
             </header>
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-3 md:gap-8">
-              {PILARES.map((p) => (
-                <article
-                  key={p.title}
-                  className="flex flex-col border border-outline-variant/35 bg-surface-container-lowest p-8 shadow-[0px_12px_32px_rgba(13,44,79,0.08)] transition-colors duration-200 hover:border-accent-blue/35"
-                >
-                  <span className="material-symbols-outlined mb-5 text-4xl text-secondary">{p.icon}</span>
-                  <h3 className="text-lg font-black uppercase tracking-tight text-primary">{p.title}</h3>
-                  <p className="mt-4 flex-1 text-sm leading-relaxed text-on-surface-variant">{p.body}</p>
-                  <div className="mt-6 h-1 w-full bg-surface-container-high" aria-hidden />
-                  <p className="mt-3 text-[10px] font-bold uppercase tracking-[0.2em] text-outline">
-                    Placeholder de contenido
-                  </p>
-                </article>
-              ))}
-            </div>
+            <TecnologiaPilaresGrid />
           </div>
         </section>
 

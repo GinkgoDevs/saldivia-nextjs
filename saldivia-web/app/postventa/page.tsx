@@ -1,9 +1,13 @@
+import { getModels } from "@/lib/supabase/models";
+import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
+import { PostventaSoporteForm } from "../components/postventa/PostventaSoporteForm";
 import { Button, buttonClass } from "../components/ui/Button";
-import { Input } from "../components/ui/Input";
-import { Textarea } from "../components/ui/Textarea";
 
-export default function PostventaPage() {
+export default async function PostventaPage() {
+  const supabase = await createClient();
+  const { data: models } = await getModels(supabase, {});
+  const modelOptions = (models ?? []).map((m) => ({ name: m.name, slug: m.slug }));
   return (
     <div className="bg-surface text-on-surface font-headline">
       <main className="min-h-screen">
@@ -61,45 +65,7 @@ export default function PostventaPage() {
                 <h2 className="text-3xl font-black text-primary tracking-tighter mb-2">SOLICITUD DE ASISTENCIA TÉCNICA</h2>
                 <div className="w-12 h-1 bg-secondary"></div>
               </div>
-              <form className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-2">Modelo del Bus</label>
-                    <select className="w-full bg-surface-container-low border-none focus:ring-2 focus:ring-secondary text-on-surface text-sm py-3 px-4 rounded">
-                      <option>Seleccione un modelo</option>
-                      <option>Aries 325</option>
-                      <option>Aries 345</option>
-                      <option>Aries 365</option>
-                      <option>Aries 405 DD</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-2">Número de Chasis (VIN)</label>
-                    <Input
-                      className="bg-surface-container-low placeholder:text-outline-variant"
-                      placeholder="Ej: 9BW AA0123 456789"
-                      type="text"
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-2">Descripción del Requerimiento</label>
-                  <Textarea
-                    className="bg-surface-container-low placeholder:text-outline-variant"
-                    placeholder="Describa el problema o el repuesto solicitado con el mayor detalle posible..."
-                    rows={4}
-                  />
-                </div>
-                <div className="flex justify-end">
-                  <Button
-                    className="technical-gradient px-10 text-white hover:opacity-95"
-                    size="sm"
-                    type="submit"
-                  >
-                    Enviar Requerimiento
-                  </Button>
-                </div>
-              </form>
+              <PostventaSoporteForm modelOptions={modelOptions} />
             </div>
 
             <div className="space-y-8">

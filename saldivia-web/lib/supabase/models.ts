@@ -37,3 +37,48 @@ export async function getModels(
     error: null,
   };
 }
+
+export type GetModelResult =
+  | { data: Model; error: null }
+  | { data: null; error: Error };
+
+export async function getModelBySlug(
+  supabase: SupabaseClient,
+  slug: string,
+): Promise<GetModelResult> {
+  const { data, error } = await supabase
+    .from("models")
+    .select(
+      "id, slug, name, segment, description, cover_image_url, pdf_url, active, created_at, sort_order",
+    )
+    .eq("slug", slug)
+    .eq("active", true)
+    .maybeSingle();
+
+  if (error) return { data: null, error: new Error(error.message) };
+  if (!data) return { data: null, error: new Error(`Model not found: ${slug}`) };
+
+  return { data: data as Model, error: null };
+}
+
+export async function getAllModelsForAdmin(
+  supabase: SupabaseClient,
+): Promise<GetModelsResult> {
+  const { data, error } = await supabase
+    .from("models")
+    .select(
+      "id, slug, name, segment, description, cover_image_url, pdf_url, active, created_at, sort_order",
+    )
+    .order("segment")
+    .order("sort_order", { ascending: true, nullsFirst: false })
+    .order("name");
+
+  if (error) {
+    return { data: null, error: new Error(error.message) };
+  }
+
+  return {
+    data: (data ?? []) as Model[],
+    error: null,
+  };
+}

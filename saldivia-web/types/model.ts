@@ -1,4 +1,11 @@
-export type ModelSegment = "urbano" | "interurbano" | "interprovincial";
+export type ModelSegment = "urbano" | "interurbano" | "interprovincial" | "especiales";
+
+export type ModelImage = {
+  id: string;
+  model_id: string;
+  image_url: string;
+  sort_order: number | null;
+};
 
 export type Model = {
   id: string;

@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { DashboardFrame } from "./DashboardFrame";
 
 export default async function DashboardProtectedLayout({
   children,
@@ -15,5 +16,5 @@ export default async function DashboardProtectedLayout({
     redirect("/dashboard/login");
   }
 
-  return <>{children}</>;
+  return <DashboardFrame email={session.user.email}>{children}</DashboardFrame>;
 }

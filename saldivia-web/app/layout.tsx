@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import { Inter, Montserrat, Orbitron, JetBrains_Mono, Outfit, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
+import { OrganizationJsonLd } from "./components/OrganizationJsonLd";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import { Providers } from "./providers";
+import { getSiteUrl } from "@/lib/site-url";
 import { getMegaMenuFleet } from "@/lib/supabase/mega-menu-models";
 
 const inter = Inter({
@@ -42,9 +44,28 @@ const plusJakartaSans = Plus_Jakarta_Sans({
   weight: ["300", "400", "500", "600", "700", "800"],
 });
 
+const site = getSiteUrl();
+const defaultDescription =
+  "Líderes en fabricación de carrocerías para el transporte de pasajeros en Argentina. Más de 40 años innovando.";
+
 export const metadata: Metadata = {
-  title: "Saldivia - Excelencia en Carrocerías",
-  description: "Líderes en fabricación de carrocerías para el transporte de pasajeros en Argentina. Más de 40 años innovando.",
+  metadataBase: new URL(site),
+  title: { default: "Saldivia - Excelencia en Carrocerías", template: "%s | Saldivia" },
+  description: defaultDescription,
+  openGraph: {
+    type: "website",
+    locale: "es_AR",
+    siteName: "Saldivia Carrocerías",
+    title: "Saldivia - Excelencia en Carrocerías",
+    description: defaultDescription,
+    url: site,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Saldivia - Excelencia en Carrocerías",
+    description: defaultDescription,
+  },
+  robots: { index: true, follow: true },
 };
 
 export default async function RootLayout({
@@ -69,6 +90,7 @@ export default async function RootLayout({
       <body
         className={`${inter.variable} ${montserrat.variable} ${orbitron.variable} ${jetbrainsMono.variable} ${outfit.variable} ${plusJakartaSans.variable} font-body antialiased`}
       >
+        <OrganizationJsonLd />
         <Providers>
           <Navbar megaMenuFleet={megaMenuFleet} />
           {children}

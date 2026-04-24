@@ -95,23 +95,17 @@ export const FLEET_SEGMENTS: FleetSegment[] = [
       },
     ],
   },
-];
-
-export const SPECIAL_MODELS: (FleetModel & { label: string })[] = [
   {
-    name: "Truck",
-    label: "Heavy duty",
-    href: "#",
-    description:
-      "Soluciones de carga y chasis especializado para aplicaciones industriales y logística pesada.",
-  },
-  {
-    name: "Truck Mini",
-    label: "Urban logistics",
-    href: "#",
-    description:
-      "Formato reducido para última milla y entornos urbanos con restricciones de tamaño y radio de giro.",
+    id: "especiales",
+    eyebrow: "Aplicaciones a medida",
+    title: "Segmento especiales",
+    intro: "Proyectos y derivados para logística, servicios industriales y requerimientos fuera de serie.",
+    variant: "surface",
+    columns: "2",
+    aspect: "video",
+    models: [],
   },
 ];
 
-export const FLEET_SPECIALS_SECTION_ID = "especiales";
+/** Ancla compartida con /flota#especiales (mega menú y CTA) */
+export const FLEET_ESPECIALES_ANCHOR = "especiales";
