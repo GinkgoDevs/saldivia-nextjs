@@ -8,6 +8,7 @@ import { buttonClass } from "@/app/components/ui/Button";
 const nav = [
   { href: "/dashboard", label: "Inicio" },
   { href: "/dashboard/models", label: "Modelos" },
+  { href: "/dashboard/model-images", label: "Imágenes" },
   { href: "/dashboard/home-showcase", label: "Showcase home" },
   { href: "/dashboard/locations", label: "Ubicaciones" },
   { href: "/dashboard/province-projects", label: "Mapa prov." },

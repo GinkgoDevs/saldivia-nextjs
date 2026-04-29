@@ -22,7 +22,7 @@ const SLIDES = [
       "Redefiniendo los estándares del transporte de pasajeros: potencia, seguridad y presencia imponente con el sello industrial Saldivia.",
     primary: { label: "Explorar modelos", href: "/flota" },
     secondary: { label: "Tour industrial", href: "/nosotros" },
-    showSegments: true,
+    showSegments: false,
   },
   {
     id: "soldadura",

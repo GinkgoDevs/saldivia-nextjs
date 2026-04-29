@@ -1,44 +1,45 @@
 import { FadeUp, HeroStagger, TrajectoryRail } from "../components/motion";
 import NosotrosTimeline from "../components/NosotrosTimeline";
-import { NosotrosBentoGrid } from "./NosotrosBentoGrid";
 
 export default function NosotrosPage() {
   return (
     <div className="bg-surface text-on-surface font-headline">
       <main>
-        <section className="relative flex min-h-[min(100svh,520px)] items-center overflow-hidden asymmetric-gradient pt-20 pb-12 sm:min-h-[420px] sm:pt-16 sm:pb-0 md:min-h-[480px]">
-          <div className="absolute inset-0 opacity-40 mix-blend-overlay">
+        <section className="relative flex min-h-screen items-center overflow-hidden asymmetric-gradient pt-24 pb-20">
+          <div className="absolute inset-0">
             <img
               className="h-full w-full object-cover"
               alt="Modern high-tech bus factory"
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuDy_GWM56dioRQctR5tYKjjSo_grPjzDOsD4QnxY6euQderK2_vK08JC-oc-GGiokQpNdZFzGdQ31ks3ucE_AmwKv6FJM08wiUS3z2FnHfPKNIBTjfKpykewj557aUsk67Z9J-V7hOKuneG7_mN11dMjd1zifKtA4u0baRkfhMtXQyD8VMMRiOhqhlYV1BCkAEoeqnAekz9wo62xMYCHIl5wNa-VDnO0qh08nDKu6NxGIPXiklT9yrLDGfhlECI8fzN2fCLJ3FSoLMt"
             />
           </div>
-          <div className="relative z-10 mx-auto w-full max-w-screen-2xl px-4 sm:px-6 md:px-8">
+          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/55 to-black/20" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+          <div className="relative z-10 mx-auto w-full max-w-screen-2xl px-6 sm:px-10 md:px-14">
             <HeroStagger>
-              <span className="mb-0 block text-xs font-bold uppercase tracking-[0.3em] text-secondary-container">
-                Nuestra Trayectoria
-              </span>
-              <h1 className="max-w-4xl text-3xl font-black uppercase leading-[0.95] tracking-tighter text-white sm:text-4xl md:text-6xl lg:text-7xl">
+              <div className="mb-8 flex items-center gap-4">
+                <span className="h-px w-14 bg-secondary-container" />
+                <span className="text-xs font-bold uppercase tracking-[0.45em] text-secondary-container">
+                  Nuestra Trayectoria
+                </span>
+              </div>
+              <h1 className="max-w-5xl text-[clamp(2.5rem,6vw,5.5rem)] font-black uppercase leading-[0.9] tracking-tighter text-white">
                 DÉCADAS DE
                 <br />
                 <span className="text-secondary-container">PRECISIÓN</span>
               </h1>
-              <p className="mt-0 max-w-2xl text-sm font-medium leading-relaxed text-on-primary-container sm:text-base md:text-lg">
-                Desde nuestros orígenes industriales hasta convertirnos en referentes del transporte regional, cada
-                kilómetro recorrido es testimonio de ingeniería y compromiso.
-              </p>
+              <div className="mt-10 flex max-w-2xl items-start gap-5">
+                <span className="mt-1 h-14 w-0.5 shrink-0 bg-secondary-container" />
+                <p className="text-base font-medium leading-relaxed text-white/80 sm:text-lg md:text-xl">
+                  Desde nuestros orígenes industriales hasta convertirnos en referentes del transporte regional, cada
+                  kilómetro recorrido es testimonio de ingeniería y compromiso.
+                </p>
+              </div>
             </HeroStagger>
           </div>
         </section>
 
         <NosotrosTimeline />
-
-        <section className="bg-surface-container-low py-14 sm:py-20 md:py-24">
-          <div className="container mx-auto px-4 sm:px-6">
-            <NosotrosBentoGrid />
-          </div>
-        </section>
 
         <FadeUp>
           <section className="relative overflow-hidden bg-surface py-14 sm:py-20 md:py-24">

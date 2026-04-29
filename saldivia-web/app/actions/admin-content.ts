@@ -326,3 +326,48 @@ export async function deleteHomeShowcaseSlide(id: string) {
   revalidatePath("/dashboard/home-showcase");
   return { ok: true as const };
 }
+
+export async function addModelImage(input: {
+  model_id: string;
+  image_url: string;
+  sort_order: number;
+}) {
+  const { supabase, user } = await requireUser();
+  if (!user) return { ok: false as const, error: "unauthorized" };
+
+  if (!input.model_id || !input.image_url.trim()) {
+    return { ok: false as const, error: "validation" };
+  }
+
+  const { error } = await supabase.from("model_images").insert({
+    model_id: input.model_id,
+    image_url: input.image_url.trim(),
+    sort_order: Number.isFinite(input.sort_order) ? input.sort_order : 0,
+  });
+
+  if (error) return { ok: false as const, error: error.message };
+  revalidateContent();
+  revalidatePath("/dashboard/model-images");
+  return { ok: true as const };
+}
+
+export async function deleteModelImage(id: string) {
+  const { supabase, user } = await requireUser();
+  if (!user) return { ok: false as const, error: "unauthorized" };
+
+  const { error } = await supabase.from("model_images").delete().eq("id", id);
+  if (error) return { ok: false as const, error: error.message };
+  revalidateContent();
+  revalidatePath("/dashboard/model-images");
+  return { ok: true as const };
+}
+
+export async function updateModelImageSortOrder(id: string, sort_order: number) {
+  const { supabase, user } = await requireUser();
+  if (!user) return { ok: false as const, error: "unauthorized" };
+
+  const { error } = await supabase.from("model_images").update({ sort_order }).eq("id", id);
+  if (error) return { ok: false as const, error: error.message };
+  revalidateContent();
+  return { ok: true as const };
+}

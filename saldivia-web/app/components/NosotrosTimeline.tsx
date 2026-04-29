@@ -132,6 +132,56 @@ function TimelineItem({ item }: { item: typeof ITEMS[number] }) {
   );
 }
 
+/* ─── stat card con count-up ────────────────────────── */
+function StatCard({
+  value,
+  prefix = "",
+  suffix = "",
+  label,
+  sublabel,
+  icon,
+  featured = false,
+}: {
+  value: number;
+  prefix?: string;
+  suffix?: string;
+  label: string;
+  sublabel?: string;
+  icon: string;
+  featured?: boolean;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, amount: 0.5 });
+  const count = useCountUp(value, inView);
+
+  if (featured) {
+    return (
+      <div ref={ref} className="relative overflow-hidden bg-primary p-6 sm:p-8">
+        <div className="absolute bottom-0 right-0 translate-x-1/4 translate-y-1/4 opacity-10 pointer-events-none">
+          <span className="material-symbols-outlined" style={{ fontSize: "180px" }}>{icon}</span>
+        </div>
+        <div className="relative z-10">
+          <h4 className="mb-2 text-xs font-black uppercase tracking-widest text-secondary-container">{label}</h4>
+          <div className="mb-3 text-5xl font-black tracking-tighter text-white sm:text-6xl">
+            {prefix}{count.toLocaleString()}{suffix}
+          </div>
+          {sublabel && <p className="text-sm text-on-primary-container">{sublabel}</p>}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div ref={ref} className="flex flex-col justify-center border-t-4 border-secondary bg-surface-container-highest p-6">
+      <span className="material-symbols-outlined mb-3 text-3xl text-secondary">{icon}</span>
+      <div className="mb-1 text-4xl font-black tracking-tighter text-primary">
+        {prefix}{count.toLocaleString()}{suffix}
+      </div>
+      <p className="text-xs font-bold uppercase tracking-wider text-on-surface-variant">{label}</p>
+    </div>
+  );
+}
+
 /* ─── componente principal ──────────────────────────── */
 export default function NosotrosTimeline() {
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -149,22 +199,34 @@ export default function NosotrosTimeline() {
 
         {/* ─── Reflexión introductoria ──────────────────────── */}
         <motion.div
-          initial={{ opacity: 0, y: 32 }}
+          initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.25 }}
-          transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
-          className="mb-16 sm:mb-24 md:mb-32"
+          viewport={{ once: true, amount: 0.15 }}
+          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+          className="mb-20 sm:mb-28 md:mb-36"
         >
-          <div className="relative overflow-hidden rounded-xl border border-outline-variant/20 bg-surface-container-low px-6 py-7 sm:px-10 sm:py-8 md:px-14 md:py-9">
-            <div className="absolute -right-16 -top-16 h-56 w-56 rounded-full opacity-5 blur-3xl technical-gradient pointer-events-none" />
+          <div className="relative flex flex-col gap-12 lg:flex-row lg:items-start lg:gap-16">
 
-            <div className="relative flex flex-col gap-5 sm:flex-row sm:items-center sm:gap-10">
-              {/* Texto */}
-              <div className="flex-1 text-center sm:text-left">
-                <span className="mb-3 block text-base font-black uppercase tracking-[0.2em] text-secondary sm:text-lg">
+            {/* Izquierda: texto */}
+            <div className="relative lg:w-3/5">
+              <div className="absolute -left-6 -top-10 h-72 w-72 rounded-full opacity-5 blur-3xl technical-gradient pointer-events-none" />
+
+              <div className="relative mb-6 flex items-center gap-4">
+                <span className="h-px w-14 bg-secondary" />
+                <span className="text-xs font-bold uppercase tracking-[0.45em] text-secondary">
                   Nuestra Esencia
                 </span>
-                <p className="text-sm leading-relaxed text-on-surface-variant sm:text-base">
+              </div>
+
+              <h2 className="mb-8 text-[clamp(2.2rem,5.5vw,4.5rem)] font-black uppercase leading-[0.9] tracking-tighter text-on-surface">
+                AGILIDAD,<br />
+                <span className="text-primary">CALIDAD</span><br />
+                Y COMPROMISO.
+              </h2>
+
+              <div className="flex max-w-3xl items-start gap-5">
+                <span className="mt-1 h-16 w-0.5 shrink-0 bg-secondary" />
+                <p className="text-lg leading-relaxed text-on-surface-variant sm:text-xl md:text-2xl">
                   Nuestra principal característica radica en la{" "}
                   <strong className="font-bold text-primary">agilidad en todo el proceso</strong>,
                   desde los primeros contactos hasta la entrega de la unidad, obteniendo el{" "}
@@ -176,11 +238,7 @@ export default function NosotrosTimeline() {
                 </p>
               </div>
 
-              {/* Divisor */}
-              <div className="hidden h-16 w-px shrink-0 bg-outline-variant/30 sm:block" />
-
-              {/* Chips */}
-              <div className="flex shrink-0 flex-wrap justify-center gap-2 sm:flex-col sm:justify-start sm:gap-2">
+              <div className="mt-10 flex flex-wrap gap-3">
                 {[
                   { icon: "speed", label: "Fabricación Ágil" },
                   { icon: "support_agent", label: "Atención Intensiva" },
@@ -188,7 +246,7 @@ export default function NosotrosTimeline() {
                 ].map(({ icon, label }) => (
                   <div
                     key={label}
-                    className="flex items-center gap-2 bg-secondary-container px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-on-secondary-container sm:px-4 sm:py-2 sm:text-xs"
+                    className="flex items-center gap-2 bg-secondary-container px-4 py-2 text-xs font-bold uppercase tracking-widest text-on-secondary-container"
                   >
                     <span className="material-symbols-outlined text-sm">{icon}</span>
                     {label}
@@ -196,6 +254,32 @@ export default function NosotrosTimeline() {
                 ))}
               </div>
             </div>
+
+            {/* Derecha: stats */}
+            <div className="flex flex-col gap-4 lg:w-2/5 lg:pt-4">
+              <StatCard
+                value={5000}
+                prefix="+"
+                label="Producción Histórica"
+                sublabel="Unidades fabricadas y rodando por toda la geografía sudamericana."
+                icon="directions_bus"
+                featured
+              />
+              <div className="grid grid-cols-2 gap-4">
+                <StatCard
+                  value={450}
+                  suffix="+"
+                  label="Expertos Industriales"
+                  icon="groups"
+                />
+                <StatCard
+                  value={12}
+                  label="Patentes de Diseño"
+                  icon="military_tech"
+                />
+              </div>
+            </div>
+
           </div>
         </motion.div>
 

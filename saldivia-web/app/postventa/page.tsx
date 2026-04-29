@@ -3,7 +3,6 @@ import { createClient } from "@/lib/supabase/server";
 import { FadeUp, HeroStagger } from "../components/motion";
 import { PostventaSoporteForm } from "../components/postventa/PostventaSoporteForm";
 import { Button } from "../components/ui/Button";
-import { PostventaPartsGrid } from "./PostventaPartsGrid";
 import { PostventaServiceGrid } from "./PostventaServiceGrid";
 
 export default async function PostventaPage() {
@@ -101,24 +100,6 @@ export default async function PostventaPage() {
               </div>
             </FadeUp>
           </div>
-
-          <FadeUp className="mt-12 sm:mt-20 md:mt-24">
-            <div className="mb-6 flex flex-col gap-4 sm:mb-8 sm:flex-row sm:items-end sm:justify-between">
-              <div>
-                <h2 className="mb-2 text-xl font-black tracking-tighter text-primary sm:text-2xl md:text-3xl">REPUESTOS DESTACADOS</h2>
-                <div className="h-1 w-12 bg-secondary"></div>
-              </div>
-              <div className="flex gap-2 self-start sm:self-auto">
-                <Button className="h-10 w-10 border-outline-variant p-0" variant="icon" aria-label="Anterior">
-                  <span className="material-symbols-outlined">chevron_left</span>
-                </Button>
-                <Button className="h-10 w-10 border-outline-variant p-0" variant="icon" aria-label="Siguiente">
-                  <span className="material-symbols-outlined">chevron_right</span>
-                </Button>
-              </div>
-            </div>
-            <PostventaPartsGrid />
-          </FadeUp>
         </section>
       </main>
     </div>

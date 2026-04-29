@@ -576,7 +576,7 @@ export default function Navbar({
   const headerRef = useRef<HTMLElement>(null);
   const [headerH, setHeaderH] = useState(80);
 
-  const solidNav = hasScrolled || mobileNavOpen;
+  const solidNav = hasScrolled || mobileNavOpen || pathname.startsWith("/dashboard");
 
   useLayoutEffect(() => {
     const el = headerRef.current;
