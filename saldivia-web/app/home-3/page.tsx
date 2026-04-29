@@ -1,6 +1,7 @@
 import ArgentinaProjectsMap from "../components/ArgentinaProjectsMap";
 import { CountUpStatsRow } from "../components/CountUpStatsRow";
 import HomeHero3 from "../components/HomeHero3";
+import { TechnicalShowcase } from "../components/home/TechnicalShowcase";
 
 const saldiviaGalleryImages = [
   { src: "/saldivia/buses.jpg", alt: "Flota de buses Saldivia" },
@@ -25,65 +26,7 @@ export default function Home3Page() {
 
         <ArgentinaProjectsMap />
 
-        {/* Technical Showcase */}
-        <section className="relative bg-industrial-charcoal overflow-hidden text-white min-h-screen flex flex-col">
-          <div className="absolute top-0 left-0 w-full p-8 md:p-12 z-20 flex justify-between items-end bg-gradient-to-b from-industrial-charcoal to-transparent">
-            <div>
-              <h2 className="text-accent-blue font-bold text-xs tracking-[0.4em] uppercase mb-2">Ingeniería en Movimiento</h2>
-              <h3 className="font-headline text-4xl md:text-5xl font-extrabold tracking-tight">SHOWCASE TÉCNICO</h3>
-            </div>
-            <div className="flex gap-4">
-              <button className="w-14 h-14 rounded-full border border-white/20 flex items-center justify-center hover:bg-white/10 transition-all">
-                <span className="material-symbols-outlined">chevron_left</span>
-              </button>
-              <button className="w-14 h-14 rounded-full bg-accent-blue flex items-center justify-center hover:bg-accent-blue-alt transition-all shadow-xl">
-                <span className="material-symbols-outlined">chevron_right</span>
-              </button>
-            </div>
-          </div>
-          <div className="flex-grow flex flex-col lg:flex-row relative">
-            <div className="flex flex-col lg:flex-row w-full min-h-screen">
-              <div className="lg:w-2/3 relative h-[50vh] lg:h-full">
-                <img alt="Aries 405 DD Detailed" className="w-full h-full object-cover" src="/ARIES-305/345_1.png" />
-                <div className="absolute inset-0 bg-gradient-to-r from-industrial-charcoal/70 via-transparent to-transparent hidden lg:block"></div>
-              </div>
-              <div className="lg:w-1/3 glass-panel p-8 md:p-12 lg:p-16 flex flex-col justify-center border-l border-white/5">
-                <div className="mb-10">
-                  <span className="bg-white/10 text-metallic-silver px-3 py-1 rounded text-[10px] font-bold tracking-widest uppercase mb-4 inline-block border border-white/10">LONG DISTANCE SERIES</span>
-                  <h4 className="font-headline text-5xl font-bold mb-2">ARIES 405 DD</h4>
-                  <p className="text-slate-400 text-lg leading-snug">Buque insignia de dos pisos diseñado para máxima rentabilidad y confort premium.</p>
-                </div>
-                <div className="space-y-4 mb-12">
-                  <div className="flex justify-between items-center border-b border-white/10 pb-3">
-                    <span className="text-slate-500 text-xs font-bold uppercase tracking-wider">Configuración</span>
-                    <span className="text-metallic-silver font-semibold text-sm">Doble Piso (6x2 / 8x2)</span>
-                  </div>
-                  <div className="flex justify-between items-center border-b border-white/10 pb-3">
-                    <span className="text-slate-500 text-xs font-bold uppercase tracking-wider">Altura Total</span>
-                    <span className="text-metallic-silver font-semibold text-sm">4.05 Metros</span>
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4 mb-12">
-                  <div className="bg-industrial-steel/50 p-5 rounded-lg border border-white/5">
-                    <div className="text-accent-blue text-3xl font-bold mb-1">98%</div>
-                    <div className="text-[10px] text-slate-400 uppercase font-bold tracking-tighter">Aislamiento Acústico</div>
-                  </div>
-                  <div className="bg-industrial-steel/50 p-5 rounded-lg border border-white/5">
-                    <div className="text-accent-blue text-3xl font-bold mb-1">ABS+EBS</div>
-                    <div className="text-[10px] text-slate-400 uppercase font-bold tracking-tighter">Frenado</div>
-                  </div>
-                </div>
-                <a
-                  className="group inline-flex items-center justify-center bg-white text-industrial-charcoal py-5 rounded-full font-bold uppercase tracking-widest text-xs hover:bg-accent-blue hover:text-white transition-all shadow-lg"
-                  href="#"
-                >
-                  Descargar Ficha Técnica
-                  <span className="material-symbols-outlined ml-2 group-hover:translate-x-1 transition-transform">download</span>
-                </a>
-              </div>
-            </div>
-          </div>
-        </section>
+        <TechnicalShowcase />
 
         {/* Segmentación */}
         <section className="bg-surface py-20 md:py-24" aria-labelledby="home3-segmentacion-heading">

@@ -1,5 +1,9 @@
 import ProductGalleryCarousel from "@/app/components/ProductGalleryCarousel";
 import { ProductJsonLd } from "@/app/components/ProductJsonLd";
+import { ProductoFeatureList } from "@/app/components/producto/ProductoFeatureList";
+import { ProductoHeroStagger } from "@/app/components/producto/ProductoHeroStagger";
+import { ProductSpecTable } from "@/app/components/producto/ProductSpecTable";
+import { FadeUp } from "@/app/components/motion";
 import { getAries305GalleryPaths } from "@/lib/aries-305-gallery";
 import { getModelBySlug, getActiveModelSlugs } from "@/lib/supabase/model-detail";
 import { createStaticClient } from "@/lib/supabase/static-client";
@@ -74,6 +78,8 @@ export default async function ProductoPage({ params }: Props) {
   const sortedSpecs = [...products].sort(
     (a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0) || a.spec_key.localeCompare(b.spec_key),
   );
+  const defaultDesc =
+    "Uniendo caminos. El estándar de eficiencia para traslados de media y larga distancia, con la precisión Saldivia en cada unidad.";
 
   return (
     <div className="bg-surface text-on-surface font-headline">
@@ -84,143 +90,111 @@ export default async function ProductoPage({ params }: Props) {
         slug={slug}
       />
       <main>
-        <section className="relative h-[600px] overflow-hidden bg-primary">
+        <section className="relative flex min-h-[min(100svh,640px)] flex-col justify-end overflow-hidden bg-primary pb-10 pt-24 sm:min-h-[480px] sm:justify-center sm:pb-0 sm:pt-0 md:min-h-[600px] md:h-[600px]">
           <div className="absolute inset-0 z-0">
             <img
               alt=""
               className="h-full w-full object-cover opacity-60"
               src={hero}
             />
-            <div className="absolute inset-0 bg-gradient-to-r from-primary via-primary/40 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-primary via-primary/70 to-primary/20 sm:bg-gradient-to-r sm:from-primary sm:via-primary/40 sm:to-transparent" />
           </div>
-          <div className="relative z-10 flex h-full flex-col justify-center px-8">
+          <div className="relative z-10 flex flex-col justify-center px-4 sm:px-6 md:px-8">
             <div className="container mx-auto max-w-3xl">
-              <span className="mb-6 inline-block bg-saldivia-blue px-3 py-1 text-[10px] font-bold uppercase tracking-[0.1em] text-white">
-                Familia ARIES
-              </span>
-              <h1 className="mb-6 text-5xl font-black leading-none tracking-tighter text-white md:text-7xl">
-                {model.name}
-              </h1>
-              <p className="mb-8 max-w-2xl text-xl font-light leading-relaxed text-on-primary-container">
-                {model.description ??
-                  "Uniendo caminos. El estándar de eficiencia para traslados de media y larga distancia, con la precisión Saldivia en cada unidad."}
-              </p>
-              <div className="flex flex-wrap gap-4">
-                {model.pdf_url && (
-                  <a
-                    href={model.pdf_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={buttonClass({ variant: "primary", size: "md" })}
-                  >
-                    Descargar ficha (PDF)
-                  </a>
-                )}
-                <Link
-                  href="/contacto"
-                  className={buttonClass({
-                    variant: "outline",
-                    size: "md",
-                    className: "border-white/40 text-white hover:bg-white/10",
-                  })}
-                >
-                  Cotizar
-                </Link>
-              </div>
+              <ProductoHeroStagger
+                familyLabel="Familia ARIES"
+                name={model.name}
+                description={model.description ?? defaultDesc}
+                pdfUrl={model.pdf_url}
+              />
             </div>
           </div>
         </section>
 
         <ProductGalleryCarousel images={gallery} altPrefix={altPrefix} />
 
-        <section className="border-y border-outline-variant/30 bg-white py-24">
-          <div className="container mx-auto max-w-4xl px-8 text-center">
-            <h3 className="mb-4 text-sm font-bold uppercase tracking-[0.3em] text-saldivia-blue">Saldivia Precision</h3>
-            <h2 className="text-4xl font-black uppercase tracking-tighter text-primary">Configuración y asesoramiento</h2>
-            <div className="mx-auto mt-4 h-1 w-24 bg-saldivia-blue" />
-            <p className="mt-6 text-on-surface-variant">
-              Cada unidad se puede dimensionar con orientación comercial y técnica. Solicitá variantes, equipamiento y
-              documentación bajo unidades de su flota.
-            </p>
-            <div className="mt-8 flex justify-center">
-              <Link href="/contacto" className={buttonClass({ variant: "secondary", size: "md" })}>
-                Consultar con un asesor
-              </Link>
-            </div>
-          </div>
-        </section>
-
-        <section className="bg-surface-container-low py-24">
-          <div className="container mx-auto max-w-5xl px-8">
-            <div className="mb-12">
-              <h3 className="mb-4 text-sm font-bold uppercase tracking-[0.3em] text-saldivia-blue">Especificaciones</h3>
-              <h2 className="text-4xl font-black uppercase tracking-tighter text-primary">Ficha resumida</h2>
-              <div className="mt-4 h-1 w-24 bg-saldivia-blue" />
-            </div>
-            {sortedSpecs.length > 0 ? (
-              <div className="overflow-x-auto rounded-sm border border-outline-variant/30 bg-white shadow-sm">
-                <table className="w-full text-left text-sm">
-                  <tbody>
-                    {sortedSpecs.map((row) => (
-                      <tr key={row.id} className="border-b border-outline-variant/20 last:border-0">
-                        <th className="whitespace-nowrap bg-surface-container-low/80 px-6 py-4 font-headline text-xs font-bold uppercase tracking-wider text-primary">
-                          {row.spec_key}
-                        </th>
-                        <td className="px-6 py-4 font-medium text-on-surface-variant">{row.spec_value}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            ) : (
-              <p className="text-on-surface-variant">
-                Las especificaciones detalladas se publican desde el panel de administración o consulte con nuestro
-                equipo.
+        <FadeUp>
+          <section className="border-y border-outline-variant/30 bg-white py-14 sm:py-20 md:py-24">
+            <div className="container mx-auto max-w-4xl px-4 text-center sm:px-6 md:px-8">
+              <h3 className="mb-3 text-xs font-bold uppercase tracking-[0.3em] text-saldivia-blue sm:mb-4 sm:text-sm">
+                Saldivia Precision
+              </h3>
+              <h2 className="text-2xl font-black uppercase tracking-tighter text-primary sm:text-3xl md:text-4xl">
+                Configuración y asesoramiento
+              </h2>
+              <div className="mx-auto mt-4 h-1 w-20 bg-saldivia-blue sm:w-24" />
+              <p className="mt-5 text-sm text-on-surface-variant sm:mt-6 sm:text-base">
+                Cada unidad se puede dimensionar con orientación comercial y técnica. Solicitá variantes, equipamiento y
+                documentación bajo unidades de su flota.
               </p>
+              <div className="mt-8 flex justify-center">
+                <Link href="/contacto" className={buttonClass({ variant: "secondary", size: "md" })}>
+                  Consultar con un asesor
+                </Link>
+              </div>
+            </div>
+          </section>
+        </FadeUp>
+
+        <section className="bg-surface-container-low py-14 sm:py-20 md:py-24">
+          <div className="container mx-auto max-w-5xl px-4 sm:px-6 md:px-8">
+            <FadeUp size="sm">
+              <div className="mb-8 sm:mb-12">
+                <h3 className="mb-2 text-xs font-bold uppercase tracking-[0.3em] text-saldivia-blue sm:mb-4 sm:text-sm">Especificaciones</h3>
+                <h2 className="text-2xl font-black uppercase tracking-tighter text-primary sm:text-3xl md:text-4xl">Ficha resumida</h2>
+                <div className="mt-3 h-1 w-20 bg-saldivia-blue sm:mt-4 sm:w-24" />
+              </div>
+            </FadeUp>
+            {sortedSpecs.length > 0 ? (
+              <ProductSpecTable
+                rows={sortedSpecs.map((row) => ({
+                  id: row.id,
+                  spec_key: row.spec_key,
+                  spec_value: row.spec_value,
+                }))}
+              />
+            ) : (
+              <FadeUp>
+                <p className="text-on-surface-variant">
+                  Las especificaciones detalladas se publican desde el panel de administración o consulte con nuestro
+                  equipo.
+                </p>
+              </FadeUp>
             )}
 
-            <ul className="mt-10 grid list-none grid-cols-1 gap-6 md:grid-cols-2">
-              {[
-                "Estructura en perfiles tubulares de acero al carbono de alta resistencia.",
-                "Revestimiento externo con acabados y procesos de pintura bajo control industrial.",
-                "Interior diseñable según servicio, confort y normativa de aplicación.",
-              ].map((feature, i) => (
-                <li key={i} className="flex items-start gap-3">
-                  <span className="material-symbols-outlined mt-0.5 text-saldivia-blue">check_circle</span>
-                  <span className="text-sm font-medium leading-relaxed text-on-surface-variant">{feature}</span>
-                </li>
-              ))}
-            </ul>
+            <ProductoFeatureList />
           </div>
         </section>
 
-        <section className="relative flex h-[500px] items-center overflow-hidden bg-primary">
+        <section className="relative flex min-h-[420px] items-center overflow-hidden bg-primary py-12 sm:min-h-[480px] sm:py-0 md:h-[500px]">
           <div className="absolute inset-0">
             <img alt="" className="h-full w-full object-cover" src={interiorSrc} />
             <div className="absolute inset-0 bg-primary/60 backdrop-blur-sm" />
           </div>
-          <div className="container relative z-10 mx-auto px-8">
-            <div className="max-w-xl border border-white/10 bg-white/5 p-12 glass-panel">
-              <h5 className="mb-6 text-4xl font-black uppercase text-white">Diseño y confort a medida</h5>
-              <p className="mb-8 text-on-primary-container">
-                Interior y acabados que refuerzan su marca de transporte. Coordinamos ingeniería, homologación y
-                acompañamiento de postventa.
-              </p>
-              <div className="space-y-4">
-                <div className="flex items-center gap-4">
-                  <div className="flex h-10 w-10 items-center justify-center rounded bg-saldivia-blue">
-                    <span className="material-symbols-outlined text-white">airline_seat_recline_extra</span>
+          <div className="container relative z-10 mx-auto px-4 sm:px-6 md:px-8">
+            <FadeUp size="sm">
+              <div className="glass-panel max-w-xl border border-white/10 bg-white/5 p-6 sm:p-10 md:p-12">
+                <h5 className="mb-4 text-2xl font-black uppercase text-white sm:mb-6 sm:text-3xl md:text-4xl">Diseño y confort a medida</h5>
+                <p className="mb-6 text-sm text-on-primary-container sm:mb-8 sm:text-base">
+                  Interior y acabados que refuerzan su marca de transporte. Coordinamos ingeniería, homologación y
+                  acompañamiento de postventa.
+                </p>
+                <div className="space-y-3 sm:space-y-4">
+                  <div className="flex items-start gap-3 sm:items-center sm:gap-4">
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded bg-saldivia-blue sm:h-10 sm:w-10">
+                      <span className="material-symbols-outlined text-base text-white sm:text-[22px]">airline_seat_recline_extra</span>
+                    </div>
+                    <span className="text-sm font-medium text-white sm:text-base">Asientos y layout según reglamentación y servicio</span>
                   </div>
-                  <span className="font-medium text-white">Asientos y layout según reglamentación y servicio</span>
-                </div>
-                <div className="flex items-center gap-4">
-                  <div className="flex h-10 w-10 items-center justify-center rounded bg-saldivia-blue">
-                    <span className="material-symbols-outlined text-white">ac_unit</span>
+                  <div className="flex items-start gap-3 sm:items-center sm:gap-4">
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded bg-saldivia-blue sm:h-10 sm:w-10">
+                      <span className="material-symbols-outlined text-base text-white sm:text-[22px]">ac_unit</span>
+                    </div>
+                    <span className="text-sm font-medium text-white sm:text-base">Climatización y confort de marcha</span>
                   </div>
-                  <span className="font-medium text-white">Climatización y confort de marcha</span>
                 </div>
               </div>
-            </div>
+            </FadeUp>
           </div>
         </section>
       </main>

@@ -270,3 +270,28 @@ BEGIN
   );
 END
 $seed_province_projects$;
+
+-- Showcase técnico del home (tras migración 007_home_showcase_slides.sql)
+DO $seed_home_showcase$
+BEGIN
+  IF to_regclass('public.home_showcase_slides') IS NULL THEN
+    RETURN;
+  END IF;
+
+  INSERT INTO public.home_showcase_slides (model_id, sort_order, eyebrow, metrics)
+  SELECT
+    m.id,
+    0,
+    'LONG DISTANCE SERIES',
+    '[{"value":"98%","label":"Aislamiento Acústico"},{"value":"ABS+EBS","label":"Frenado"}]'::jsonb
+  FROM public.models m
+  WHERE m.slug = 'aries-405'
+    AND NOT EXISTS (SELECT 1 FROM public.home_showcase_slides s WHERE s.model_id = m.id);
+
+  INSERT INTO public.home_showcase_slides (model_id, sort_order, eyebrow, metrics)
+  SELECT m.id, 1, NULL, NULL
+  FROM public.models m
+  WHERE m.slug = 'aries-365'
+    AND NOT EXISTS (SELECT 1 FROM public.home_showcase_slides s WHERE s.model_id = m.id);
+END
+$seed_home_showcase$;

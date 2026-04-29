@@ -12,7 +12,7 @@ type Props = { activeSegment: string | null };
 
 export function FlotaChips({ activeSegment }: Props) {
   return (
-    <div className="mt-10 flex flex-wrap gap-3">
+    <div className="mt-8 flex flex-wrap gap-2 sm:mt-10 sm:gap-3">
       <Link
         href="/flota"
         className={buttonClass({

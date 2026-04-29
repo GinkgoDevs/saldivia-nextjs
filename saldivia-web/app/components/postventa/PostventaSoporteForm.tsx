@@ -12,7 +12,8 @@ function SubmitButton() {
   const { pending } = useFormStatus();
   return (
     <Button
-      className="technical-gradient px-10 text-white hover:opacity-95"
+      className="technical-gradient px-10 text-white hover:opacity-95 sm:w-auto"
+      fullWidth
       size="sm"
       type="submit"
       disabled={pending}

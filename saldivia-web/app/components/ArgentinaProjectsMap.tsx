@@ -30,14 +30,6 @@ export default function ArgentinaProjectsMap() {
   const { byProvince, loading, error } = useProvinceProjects();
   const projects = useMemo(() => byProvince ?? {}, [byProvince]);
 
-  const provincesWithProjects = useMemo(
-    () =>
-      mapData.provinces.filter(
-        (province) => (projects[province.id] ?? []).length > 0,
-      ),
-    [projects],
-  );
-
   const provinceById = useMemo(
     () => new Map(mapData.provinces.map((province) => [province.id, province])),
     [],
@@ -90,7 +82,7 @@ export default function ArgentinaProjectsMap() {
                   Presencia Nacional
                 </h2>
                 <h3 className="font-headline text-3xl font-extrabold text-primary md:text-4xl">
-                  Proyectos por provincia
+                  Nuestros últimos clientes
                 </h3>
                 <p className="mt-2 text-sm text-slate-500">
                   Las provincias con entregas o proyectos se resaltan en el mapa. Pasá el cursor (o tocá
@@ -206,14 +198,6 @@ export default function ArgentinaProjectsMap() {
                   </div>
                 </div>
               )}
-              <div className="pointer-events-none absolute inset-x-8 top-6 z-10 flex items-center justify-between">
-                <span className="rounded-full border border-slate-200 bg-white/90 px-3 py-1 text-[11px] font-black uppercase tracking-[0.18em] text-slate-500 backdrop-blur">
-                  Hover / tooltip
-                </span>
-                <span className="rounded-full border border-slate-200 bg-white/90 px-3 py-1 text-[11px] font-black uppercase tracking-[0.18em] text-slate-500 backdrop-blur">
-                  Tap móvil
-                </span>
-              </div>
 
               <div className="flex justify-center lg:max-h-[760px] xl:max-h-[820px]">
                 <svg
@@ -290,29 +274,6 @@ export default function ArgentinaProjectsMap() {
                     })}
                   </g>
 
-                  <g>
-                    {provincesWithProjects.map((province) => {
-                      const isActive = province.id === activeProvince.id;
-                      return (
-                        <g
-                          key={`${province.id}-marker`}
-                          transform={`translate(${province.centroid[0]} ${province.centroid[1]})`}
-                        >
-                          <circle
-                            r={isActive ? 13 : 10}
-                            fill="rgba(32,149,212,0.14)"
-                            className="animate-pulse"
-                          />
-                          <circle
-                            r={isActive ? 6 : 5}
-                            fill="#0D2C4F"
-                            stroke="#ffffff"
-                            strokeWidth="2"
-                          />
-                        </g>
-                      );
-                    })}
-                  </g>
                 </svg>
               </div>
             </div>

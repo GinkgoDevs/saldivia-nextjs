@@ -570,36 +570,13 @@ export default function Navbar({
   megaMenuFleet: MegaMenuSegment[];
 }) {
   const pathname = usePathname();
-  /** Hero aún visible (home y variantes): barra transparente y enlaces claros. Fuera del hero o resto de rutas: barra sólida (evita texto blanco sobre secciones claras; estable con html { zoom }). */
-  const isHomePath = pathname === "/" || pathname === "/home-2" || pathname === "/home-3";
-  const [heroIntersects, setHeroIntersects] = useState(isHomePath);
   const [hasScrolled, setHasScrolled] = useState(false);
   const [megaMenuOpen, setMegaMenuOpen] = useState(false);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const headerRef = useRef<HTMLElement>(null);
   const [headerH, setHeaderH] = useState(80);
 
-  useEffect(() => {
-    if (!isHomePath) {
-      setHeroIntersects(false);
-      return;
-    }
-    const hero = document.getElementById("saldivia-home-hero");
-    if (!hero) {
-      setHeroIntersects(false);
-      return;
-    }
-    setHeroIntersects(true);
-    const io = new IntersectionObserver(
-      ([e]) => setHeroIntersects(e.isIntersecting),
-      { root: null, rootMargin: "-72px 0px 0px 0px", threshold: 0 }
-    );
-    io.observe(hero);
-    return () => io.disconnect();
-  }, [isHomePath, pathname]);
-
-  const solidNav =
-    !isHomePath || !heroIntersects || mobileNavOpen || hasScrolled;
+  const solidNav = hasScrolled || mobileNavOpen;
 
   useLayoutEffect(() => {
     const el = headerRef.current;

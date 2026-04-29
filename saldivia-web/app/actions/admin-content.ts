@@ -247,3 +247,82 @@ export async function deleteProvinceProject(id: string) {
   revalidatePath("/");
   return { ok: true as const };
 }
+
+function showcaseMetricsFromForm(input: {
+  stat1_value: string;
+  stat1_label: string;
+  stat2_value: string;
+  stat2_label: string;
+}) {
+  const metrics: { value: string; label: string }[] = [];
+  const a = input.stat1_value.trim();
+  const b = input.stat1_label.trim();
+  if (a && b) metrics.push({ value: a, label: b });
+  const c = input.stat2_value.trim();
+  const d = input.stat2_label.trim();
+  if (c && d) metrics.push({ value: c, label: d });
+  return metrics.length ? metrics : null;
+}
+
+type SaveHomeShowcaseSlideInput = {
+  id: string | null;
+  model_id: string;
+  sort_order: number;
+  hero_image_url: string;
+  eyebrow: string;
+  lead: string;
+  stat1_value: string;
+  stat1_label: string;
+  stat2_value: string;
+  stat2_label: string;
+};
+
+export async function saveHomeShowcaseSlide(input: SaveHomeShowcaseSlideInput) {
+  const { supabase, user } = await requireUser();
+  if (!user) {
+    return { ok: false as const, error: "unauthorized" };
+  }
+
+  const modelId = input.model_id.trim();
+  if (!modelId) {
+    return { ok: false as const, error: "validation" };
+  }
+
+  const row = {
+    model_id: modelId,
+    sort_order: Number.isFinite(input.sort_order) ? input.sort_order : 0,
+    hero_image_url: input.hero_image_url.trim() || null,
+    eyebrow: input.eyebrow.trim() || null,
+    lead: input.lead.trim() || null,
+    metrics: showcaseMetricsFromForm({
+      stat1_value: input.stat1_value,
+      stat1_label: input.stat1_label,
+      stat2_value: input.stat2_value,
+      stat2_label: input.stat2_label,
+    }),
+  };
+
+  if (input.id) {
+    const { error } = await supabase.from("home_showcase_slides").update(row).eq("id", input.id);
+    if (error) return { ok: false as const, error: error.message };
+  } else {
+    const { error } = await supabase.from("home_showcase_slides").insert(row);
+    if (error) return { ok: false as const, error: error.message };
+  }
+
+  revalidateContent();
+  revalidatePath("/dashboard/home-showcase");
+  return { ok: true as const };
+}
+
+export async function deleteHomeShowcaseSlide(id: string) {
+  const { supabase, user } = await requireUser();
+  if (!user) {
+    return { ok: false as const, error: "unauthorized" };
+  }
+  const { error } = await supabase.from("home_showcase_slides").delete().eq("id", id);
+  if (error) return { ok: false as const, error: error.message };
+  revalidateContent();
+  revalidatePath("/dashboard/home-showcase");
+  return { ok: true as const };
+}

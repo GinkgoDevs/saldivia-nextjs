@@ -1,6 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
+import { BRAND_DURATION, BRAND_EASE } from "../motion/brand-ease";
 
 const pilares = [
   {
@@ -32,24 +33,47 @@ const list = {
 };
 
 const item = {
-  hidden: { opacity: 0, y: 22 },
-  show: { opacity: 1, y: 0, transition: { type: "spring" as const, stiffness: 320, damping: 28 } },
+  hidden: { opacity: 0, y: 20 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: BRAND_DURATION.base, ease: BRAND_EASE },
+  },
 };
 
 export function TecnologiaPilaresGrid() {
+  const reduce = useReducedMotion();
+  if (reduce) {
+    return (
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-3 md:gap-8">
+        {pilares.map((p) => (
+          <article
+            key={p.title}
+            className="flex flex-col border border-outline-variant/35 bg-surface-container-lowest p-6 shadow-[0px_12px_32px_rgba(13,44,79,0.08)] transition-colors duration-200 hover:border-accent-blue/35 sm:p-8"
+          >
+            <span className="material-symbols-outlined mb-5 text-4xl text-secondary">{p.icon}</span>
+            <h3 className="text-lg font-black uppercase tracking-tight text-primary">{p.title}</h3>
+            <p className="mt-4 flex-1 text-sm leading-relaxed text-on-surface-variant">{p.body}</p>
+            <div className="mt-6 h-1 w-full bg-surface-container-high" aria-hidden />
+            <p className="mt-3 text-[10px] font-bold uppercase tracking-[0.2em] text-outline">Contenido ampliado próximamente</p>
+          </article>
+        ))}
+      </div>
+    );
+  }
   return (
     <motion.div
       className="grid grid-cols-1 gap-6 md:grid-cols-3 md:gap-8"
       variants={list}
       initial="hidden"
       whileInView="show"
-      viewport={{ once: true, margin: "-48px" }}
+      viewport={{ once: true, margin: "-8% 0px" }}
     >
       {pilares.map((p) => (
         <motion.article
           key={p.title}
           variants={item}
-          className="flex flex-col border border-outline-variant/35 bg-surface-container-lowest p-8 shadow-[0px_12px_32px_rgba(13,44,79,0.08)] transition-colors duration-200 hover:border-accent-blue/35"
+          className="flex flex-col border border-outline-variant/35 bg-surface-container-lowest p-6 shadow-[0px_12px_32px_rgba(13,44,79,0.08)] transition-colors duration-200 hover:border-accent-blue/35 sm:p-8"
         >
           <span className="material-symbols-outlined mb-5 text-4xl text-secondary">{p.icon}</span>
           <h3 className="text-lg font-black uppercase tracking-tight text-primary">{p.title}</h3>
