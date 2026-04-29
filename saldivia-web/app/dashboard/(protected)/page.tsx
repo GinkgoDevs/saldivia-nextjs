@@ -22,6 +22,14 @@ export default function DashboardPage() {
           <p className="mt-2 text-sm text-on-surface-variant">Alta, edición, activar/desactivar y subida a Storage.</p>
         </Link>
         <Link
+          href="/dashboard/model-images"
+          className="ui-surface-card block p-8 transition hover:border-secondary-container/40"
+        >
+          <span className="material-symbols-outlined text-3xl text-secondary">photo_library</span>
+          <h2 className="mt-3 text-lg font-bold text-primary">Imágenes de modelos</h2>
+          <p className="mt-2 text-sm text-on-surface-variant">Galería de imágenes por modelo: subir, ordenar y eliminar.</p>
+        </Link>
+        <Link
           href="/dashboard/locations"
           className="ui-surface-card block p-8 transition hover:border-secondary-container/40"
         >
