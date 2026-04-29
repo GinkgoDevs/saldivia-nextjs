@@ -17,7 +17,7 @@ export default async function PostventaPage() {
             <img
               alt="Technical support facility"
               className="h-full w-full object-cover"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuD93K-U-tuqyy5pO_2gimujh3MAeZV1bIYRYw-Ezk4VbGX1XWWZtp0DvmIXli57Sm-WF4Du0cQmRny9_VI7crVJyMY372GchuvTYpI6psWPoeYCsNa6k1zJntrTH0wMtGUhrYgpBWVCLNWXLt6mtf3m3IEohDHT9IJwx9NjGAy-4pqMKtlAfnn573Szbrvm1FCpjKJgyHKnFICTowCeh8w2ifByxHQ78BgwJQlK8fpjIi6_c4XU5lnhdVglTnva13uNtPiRn6FQAXKv"
+              src="/hero-soldadura.png"
             />
             <div className="absolute inset-0 machined-gradient opacity-80"></div>
           </div>
