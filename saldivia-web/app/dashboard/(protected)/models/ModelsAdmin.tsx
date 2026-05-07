@@ -2,7 +2,8 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { deleteModel, saveModel, uploadMediaToBucket } from "@/app/actions/admin-content";
+import { GripVertical } from "lucide-react";
+import { deleteModel, reorderModels, saveModel, uploadMediaToBucket } from "@/app/actions/admin-content";
 import type { Model, ModelSegment } from "@/types/model";
 import { Button } from "@/app/components/ui/Button";
 import { Input } from "@/app/components/ui/Input";
@@ -30,16 +31,34 @@ const empty: Omit<Model, "id" | "created_at"> & { id: string | null } = {
 
 type Props = { initial: Model[] };
 
+function reorderList<T>(items: T[], fromIndex: number, toIndex: number): T[] {
+  if (fromIndex === toIndex) return items;
+  const next = [...items];
+  const [removed] = next.splice(fromIndex, 1);
+  next.splice(toIndex, 0, removed);
+  return next;
+}
+
 export function ModelsAdmin({ initial }: Props) {
   const router = useRouter();
   const [list, setList] = useState<Model[]>(initial);
   const [form, setForm] = useState(empty);
   const [message, setMessage] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [draggingId, setDraggingId] = useState<string | null>(null);
+  const [dropTargetIndex, setDropTargetIndex] = useState<number | null>(null);
 
   useEffect(() => {
     setList(initial);
   }, [initial]);
+
+  const sortedList = useMemo(
+    () =>
+      [...list].sort(
+        (a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0) || a.name.localeCompare(b.name),
+      ),
+    [list],
+  );
 
   const editing = useMemo(() => form.id, [form.id]);
 
@@ -60,6 +79,35 @@ export function ModelsAdmin({ initial }: Props) {
 
   function newModel() {
     setForm({ ...empty, sort_order: list.length });
+  }
+
+  async function onReorderDrop(fromIndex: number, toIndex: number) {
+    if (fromIndex === toIndex) return;
+    const reordered = reorderList(sortedList, fromIndex, toIndex);
+    const orderedIds = reordered.map((m) => m.id);
+    setBusy(true);
+    setMessage(null);
+    const r = await reorderModels(orderedIds);
+    setBusy(false);
+    if (!r.ok) {
+      setMessage(r.error === "validation" ? "No se pudo guardar el orden." : r.error);
+      return;
+    }
+    setList((prev) =>
+      prev.map((m) => {
+        const idx = orderedIds.indexOf(m.id);
+        if (idx === -1) return m;
+        return { ...m, sort_order: idx };
+      }),
+    );
+    setForm((f) => {
+      if (!f.id) return f;
+      const idx = orderedIds.indexOf(f.id);
+      if (idx === -1) return f;
+      return { ...f, sort_order: idx };
+    });
+    setMessage("Orden actualizado.");
+    router.refresh();
   }
 
   async function onSave(e: React.FormEvent) {
@@ -130,13 +178,63 @@ export function ModelsAdmin({ initial }: Props) {
     <div className="grid gap-10 lg:grid-cols-2">
       <section>
         <h2 className="text-sm font-bold uppercase tracking-widest text-primary">Listado</h2>
+        <p className="mt-1 text-xs text-on-surface-variant">
+          Ordenados por <code className="text-[10px]">sort_order</code> (flota, menú, home). Arrastrá con el asa para
+          reordenar.
+        </p>
         <ul className="mt-4 max-h-[480px] space-y-2 overflow-y-auto rounded-sm border border-outline-variant/30 p-2">
-          {list.map((m) => (
-            <li key={m.id}>
+          {sortedList.map((m, index) => (
+            <li
+              key={m.id}
+              className={`flex overflow-hidden rounded-sm border transition-shadow ${
+                dropTargetIndex === index
+                  ? "border-primary ring-2 ring-primary/30"
+                  : "border-transparent"
+              } ${draggingId === m.id ? "opacity-50" : ""}`}
+              onDragOver={(e) => {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = "move";
+                setDropTargetIndex(index);
+              }}
+              onDrop={(e) => {
+                e.preventDefault();
+                setDropTargetIndex(null);
+                setDraggingId(null);
+                const plain = e.dataTransfer.getData("text/plain");
+                const pipe = plain.indexOf("|");
+                const from = pipe > 0 ? Number.parseInt(plain.slice(0, pipe), 10) : Number.NaN;
+                if (!Number.isFinite(from)) return;
+                void onReorderDrop(from, index);
+              }}
+            >
+              <div
+                role="button"
+                tabIndex={busy ? -1 : 0}
+                draggable={!busy}
+                aria-label="Arrastrar para reordenar modelo"
+                title="Arrastrar para reordenar"
+                className="flex shrink-0 cursor-grab touch-none items-center border-r border-outline-variant/25 bg-surface-container-high px-1.5 text-on-surface-variant outline-none hover:bg-surface-container focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary active:cursor-grabbing [&[aria-disabled=true]]:cursor-not-allowed [&[aria-disabled=true]]:opacity-50"
+                aria-disabled={busy}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") e.preventDefault();
+                }}
+                onDragStart={(e) => {
+                  e.stopPropagation();
+                  setDraggingId(m.id);
+                  e.dataTransfer.effectAllowed = "move";
+                  e.dataTransfer.setData("text/plain", `${index}|${m.id}`);
+                }}
+                onDragEnd={() => {
+                  setDraggingId(null);
+                  setDropTargetIndex(null);
+                }}
+              >
+                <GripVertical className="size-5" aria-hidden />
+              </div>
               <button
                 type="button"
                 onClick={() => load(m)}
-                className={`w-full rounded-sm px-3 py-2 text-left text-sm transition ${
+                className={`min-w-0 flex-1 rounded-r-sm px-3 py-2 text-left text-sm transition ${
                   form.id === m.id
                     ? "bg-secondary-container/25 text-primary"
                     : "hover:bg-surface-container-high"
@@ -144,7 +242,7 @@ export function ModelsAdmin({ initial }: Props) {
               >
                 <span className="block font-bold">{m.name}</span>
                 <span className="text-xs text-on-surface-variant">
-                  {m.slug} · {m.segment} {m.active ? "" : "· inactivo"}
+                  orden {m.sort_order ?? 0} · {m.slug} · {m.segment} {m.active ? "" : "· inactivo"}
                 </span>
               </button>
             </li>

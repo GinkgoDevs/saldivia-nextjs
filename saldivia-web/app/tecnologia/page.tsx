@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { TecnologiaPilaresGrid } from "../components/tecnologia/TecnologiaPilaresGrid";
 import { FadeUp, HeroStagger, TrajectoryRail } from "../components/motion";
 
@@ -5,9 +6,17 @@ export default function TecnologiaPage() {
   return (
     <div className="min-h-screen bg-surface font-headline text-on-surface">
       <main>
-        <section className="relative flex min-h-[min(100svh,520px)] items-center overflow-hidden asymmetric-gradient pt-20 pb-12 sm:min-h-[420px] sm:pt-16 sm:pb-0 md:min-h-[480px]">
-          <div className="pointer-events-none absolute inset-0 industrial-grid-light opacity-[0.12]" />
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-primary/10 to-transparent" />
+        <section className="relative flex min-h-[min(100svh,520px)] items-center overflow-hidden pt-20 pb-12 sm:min-h-[420px] sm:pt-16 sm:pb-0 md:min-h-[480px]">
+          <Image
+            src="/hero-bus.png"
+            alt=""
+            fill
+            className="object-cover object-center"
+            priority
+          />
+          <div className="pointer-events-none absolute inset-0 bg-black/60" />
+          <div className="pointer-events-none absolute inset-0 industrial-grid-light opacity-[0.08]" />
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-black/40 to-transparent" />
           <div className="relative z-10 mx-auto w-full max-w-screen-2xl px-4 sm:px-6 md:px-8">
             <HeroStagger>
               <span className="mb-0 block text-xs font-bold uppercase tracking-[0.3em] text-secondary-container">
@@ -19,12 +28,7 @@ export default function TecnologiaPage() {
                 <span className="text-secondary-container">en cada sistema</span>
               </h1>
               <p className="mt-0 max-w-2xl text-sm font-medium leading-relaxed text-on-primary-container sm:text-base md:text-lg">
-                Pilares de diseño, manufactura y validación que definen cada unidad Saldivia. Esta página es un
-                esqueleto editorial: aquí se publicarán whitepapers, fichas y recorridos técnicos.
-              </p>
-              <p className="mt-0 inline-flex max-w-full flex-wrap items-center gap-2 rounded-sm border border-white/20 bg-white/5 px-3 py-2 text-[11px] font-bold uppercase tracking-wider text-white/90 backdrop-blur-sm sm:px-4 sm:text-xs">
-                <span className="material-symbols-outlined text-base text-accent-blue">progress_activity</span>
-                Contenido en desarrollo
+                Pilares de diseño, manufactura y validación que definen cada unidad Saldivia.
               </p>
             </HeroStagger>
           </div>

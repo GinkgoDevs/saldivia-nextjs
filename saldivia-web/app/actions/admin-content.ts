@@ -123,6 +123,47 @@ export async function deleteModel(id: string) {
   return { ok: true as const };
 }
 
+export async function reorderModels(ordered_model_ids: string[]) {
+  const { supabase, user } = await requireUser();
+  if (!user) return { ok: false as const, error: "unauthorized" };
+
+  if (ordered_model_ids.length === 0) {
+    return { ok: false as const, error: "validation" };
+  }
+
+  if (new Set(ordered_model_ids).size !== ordered_model_ids.length) {
+    return { ok: false as const, error: "validation" };
+  }
+
+  const { data: existing, error: fetchError } = await supabase.from("models").select("id");
+
+  if (fetchError) return { ok: false as const, error: fetchError.message };
+  if (!existing || existing.length !== ordered_model_ids.length) {
+    return { ok: false as const, error: "validation" };
+  }
+
+  const existingSet = new Set(existing.map((r) => r.id));
+  for (const id of ordered_model_ids) {
+    if (!existingSet.has(id)) {
+      return { ok: false as const, error: "validation" };
+    }
+  }
+
+  const updates = ordered_model_ids.map((id, sort_order) =>
+    supabase.from("models").update({ sort_order }).eq("id", id),
+  );
+
+  const results = await Promise.all(updates);
+  const failed = results.find((r) => r.error);
+  if (failed?.error) {
+    return { ok: false as const, error: failed.error.message };
+  }
+
+  revalidateContent();
+  revalidatePath("/dashboard/models");
+  return { ok: true as const };
+}
+
 type SaveLocationInput = {
   id: string | null;
   name: string;
@@ -371,5 +412,49 @@ export async function updateModelImageSortOrder(id: string, sort_order: number) 
   const { error } = await supabase.from("model_images").update({ sort_order }).eq("id", id);
   if (error) return { ok: false as const, error: error.message };
   revalidateContent();
+  return { ok: true as const };
+}
+
+export async function reorderModelImages(model_id: string, ordered_image_ids: string[]) {
+  const { supabase, user } = await requireUser();
+  if (!user) return { ok: false as const, error: "unauthorized" };
+
+  if (!model_id || ordered_image_ids.length === 0) {
+    return { ok: false as const, error: "validation" };
+  }
+
+  if (new Set(ordered_image_ids).size !== ordered_image_ids.length) {
+    return { ok: false as const, error: "validation" };
+  }
+
+  const { data: existing, error: fetchError } = await supabase
+    .from("model_images")
+    .select("id")
+    .eq("model_id", model_id);
+
+  if (fetchError) return { ok: false as const, error: fetchError.message };
+  if (!existing || existing.length !== ordered_image_ids.length) {
+    return { ok: false as const, error: "validation" };
+  }
+
+  const existingSet = new Set(existing.map((r) => r.id));
+  for (const id of ordered_image_ids) {
+    if (!existingSet.has(id)) {
+      return { ok: false as const, error: "validation" };
+    }
+  }
+
+  const updates = ordered_image_ids.map((id, sort_order) =>
+    supabase.from("model_images").update({ sort_order }).eq("id", id).eq("model_id", model_id),
+  );
+
+  const results = await Promise.all(updates);
+  const failed = results.find((r) => r.error);
+  if (failed?.error) {
+    return { ok: false as const, error: failed.error.message };
+  }
+
+  revalidateContent();
+  revalidatePath("/dashboard/model-images");
   return { ok: true as const };
 }
