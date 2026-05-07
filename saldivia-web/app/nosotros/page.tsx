@@ -5,12 +5,12 @@ export default function NosotrosPage() {
   return (
     <div className="bg-surface text-on-surface font-headline">
       <main>
-        <section className="relative flex min-h-screen items-center overflow-hidden asymmetric-gradient pt-24 pb-20">
+        <section className="relative flex min-h-[min(52svh,380px)] items-center overflow-hidden asymmetric-gradient pt-24 pb-12 sm:min-h-[400px] sm:pb-10 md:min-h-[440px] md:pb-14 lg:min-h-[460px]">
           <div className="absolute inset-0">
             <img
-              className="h-full w-full object-cover"
-              alt="Modern high-tech bus factory"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuDy_GWM56dioRQctR5tYKjjSo_grPjzDOsD4QnxY6euQderK2_vK08JC-oc-GGiokQpNdZFzGdQ31ks3ucE_AmwKv6FJM08wiUS3z2FnHfPKNIBTjfKpykewj557aUsk67Z9J-V7hOKuneG7_mN11dMjd1zifKtA4u0baRkfhMtXQyD8VMMRiOhqhlYV1BCkAEoeqnAekz9wo62xMYCHIl5wNa-VDnO0qh08nDKu6NxGIPXiklT9yrLDGfhlECI8fzN2fCLJ3FSoLMt"
+              className="h-full w-full object-cover object-center"
+              alt="Armado de la estructura de carrocería en planta industrial"
+              src="/saldivia/carroceria.jpg"
             />
           </div>
           <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/55 to-black/20" />

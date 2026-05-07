@@ -3,6 +3,7 @@
 import dynamic from "next/dynamic";
 import { useMemo, useState } from "react";
 import type { Location, LocationType } from "@/types/location";
+import { formatArgentinaProvince } from "@/lib/argentina-map-provinces";
 import { useLocations } from "@/hooks/useLocations";
 import { MapFilters } from "./MapFilters";
 import { LocationCard } from "./LocationCard";
@@ -30,7 +31,9 @@ export default function NetworkMapSection() {
 
   const provinces = useMemo(() => {
     if (!allLocations) return [];
-    return Array.from(new Set(allLocations.map((l) => l.province))).sort();
+    return Array.from(new Set(allLocations.map((l) => l.province))).sort((a, b) =>
+      formatArgentinaProvince(a).localeCompare(formatArgentinaProvince(b), "es"),
+    );
   }, [allLocations]);
 
   const displayedLocations = useMemo(() => {

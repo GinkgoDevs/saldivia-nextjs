@@ -24,11 +24,11 @@ export default async function ContactoPage() {
         <section className="relative flex min-h-[min(100svh,480px)] items-center overflow-hidden bg-primary-container pt-20 pb-10 sm:h-[450px] sm:min-h-0 sm:pt-16 sm:pb-0">
           <div className="absolute inset-0 z-0">
             <img
-              className="h-full w-full object-cover opacity-30 mix-blend-overlay"
-              alt="Bus manufacturing facility"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuDhYxKqaSFEx2SsOSyf72IupxQSTraxx3mVoYdLimkg6EsBaSSN9kbBKtpdDr0oNGTrWJRA08OV7DqUV3XEIbgizHY7IMwE-nheke7fg1f9MnzzR19ctpuzs2bwa2gplghpgiKz2oGmAYppmydPOHjqRSipRZUyr_y7CGyXFSHVzwPsNDG8XwJ85JhexXLQzpelA-5wbk_VHJZF2K3VaSYn6dTQNqJcHW2BWHhgyqu4DeEHlKHBNODwg9JcyjzudtjJA4j7mbcWE_rz"
+              className="h-full w-full object-cover object-left opacity-50 sm:object-center"
+              alt="Planta industrial con unidades en taller y línea de ensamble"
+              src="/hero-buses2.png"
             />
-            <div className="absolute inset-0 bg-gradient-to-r from-primary-container via-primary-container/80 to-transparent"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-primary-container/92 via-primary-container/45 to-transparent" />
           </div>
           <div className="container relative z-10 mx-auto px-4 sm:px-6 md:px-8">
             <div className="max-w-2xl">

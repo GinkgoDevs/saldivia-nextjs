@@ -4,6 +4,11 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { deleteLocation, saveLocation } from "@/app/actions/admin-content";
 import type { Location, LocationType } from "@/types/location";
+import {
+  ARGENTINA_MAP_PROVINCES,
+  ARGENTINA_MAP_PROVINCE_IDS,
+  formatArgentinaProvince,
+} from "@/lib/argentina-map-provinces";
 import { Button } from "@/app/components/ui/Button";
 import { Input } from "@/app/components/ui/Input";
 import { Textarea } from "@/app/components/ui/Textarea";
@@ -132,7 +137,7 @@ export function LocationsAdmin({ initial }: Props) {
               >
                 <span className="block font-bold">{l.name}</span>
                 <span className="text-xs text-on-surface-variant">
-                  {l.province} — {l.type} {l.active ? "" : "· oculto"}
+                  {formatArgentinaProvince(l.province)} — {l.type} {l.active ? "" : "· oculto"}
                 </span>
               </button>
             </li>
@@ -192,12 +197,28 @@ export function LocationsAdmin({ initial }: Props) {
             <label className="text-xs font-bold text-secondary" htmlFor="prov">
               Provincia
             </label>
-            <Input
+            <select
               id="prov"
+              className="h-11 w-full rounded-curve-sm border border-outline-variant/40 bg-surface-container-lowest px-2 text-sm"
               value={form.province}
               onChange={(e) => setForm((f) => ({ ...f, province: e.target.value }))}
               required
-            />
+            >
+              <option value="">Seleccioná provincia</option>
+              {form.province && !ARGENTINA_MAP_PROVINCE_IDS.has(form.province) ? (
+                <option value={form.province}>
+                  {form.province} — valor actual (elegí una del mapa al guardar)
+                </option>
+              ) : null}
+              {ARGENTINA_MAP_PROVINCES.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.name}
+                </option>
+              ))}
+            </select>
+            <p className="text-[11px] text-on-surface-variant">
+              Coincide con el identificador del mapa (p. ej. province_projects y SVG de nuestro sitio).
+            </p>
           </div>
           <div className="space-y-1">
             <label className="text-xs font-bold text-secondary" htmlFor="city">
@@ -225,7 +246,7 @@ export function LocationsAdmin({ initial }: Props) {
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1">
               <label className="text-xs font-bold text-secondary" htmlFor="lat">
-                Lat
+                Latitud
               </label>
               <Input
                 id="lat"
@@ -238,7 +259,7 @@ export function LocationsAdmin({ initial }: Props) {
             </div>
             <div className="space-y-1">
               <label className="text-xs font-bold text-secondary" htmlFor="lng">
-                Lng
+                Longitud
               </label>
               <Input
                 id="lng"
@@ -250,6 +271,10 @@ export function LocationsAdmin({ initial }: Props) {
               />
             </div>
           </div>
+          <p className="text-[11px] text-on-surface-variant">
+            Para el mapa del home (por provincia) no se usan; sí para un mapa con marcadores (p. ej. Leaflet).
+            Podés usar 0 y 0 si solo te interesa la presencia en el SVG del inicio.
+          </p>
           <div className="space-y-1">
             <label className="text-xs font-bold text-secondary" htmlFor="phone">
               Teléfono

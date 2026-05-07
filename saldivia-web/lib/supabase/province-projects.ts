@@ -1,5 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
+import type { LocationPresenceRow } from "@/lib/supabase/locations";
+import type { LocationType } from "@/types/location";
 import type { ProvinceProjectRow } from "@/types/province-project";
 
 /** Tipo usado por el mapa SVG (ArgentinaProjectsMap) */
@@ -10,6 +12,25 @@ export type ProvinceProjectCard = {
   segment: string;
   year: string;
 };
+
+const LOCATION_TYPE_LABEL: Record<LocationType, string> = {
+  taller: "Taller",
+  distribuidor: "Distribuidor",
+  concesionario: "Concesionario",
+};
+
+function locationPresenceToCard(loc: LocationPresenceRow): ProvinceProjectCard {
+  const bits = [LOCATION_TYPE_LABEL[loc.type], loc.address];
+  if (loc.phone) bits.push(`Tel. ${loc.phone}`);
+  if (loc.hours) bits.push(loc.hours);
+  return {
+    title: loc.name,
+    location: loc.city,
+    description: bits.filter(Boolean).join(" · "),
+    segment: LOCATION_TYPE_LABEL[loc.type],
+    year: "—",
+  };
+}
 
 export function groupByProvince(
   rows: ProvinceProjectRow[],
@@ -29,6 +50,30 @@ export function groupByProvince(
       segment: r.segment?.trim() || "—",
       year: r.year?.trim() || "—",
     });
+  }
+  return out;
+}
+
+/** Combina casos de `province_projects` con puntos de `locations` (misma clave = slug de provincia del mapa). */
+export function mergeProjectsAndLocations(
+  projectRows: ProvinceProjectRow[],
+  locations: LocationPresenceRow[],
+): Partial<Record<string, ProvinceProjectCard[]>> {
+  const fromProjects = groupByProvince(projectRows);
+  const fromLocs: Partial<Record<string, ProvinceProjectCard[]>> = {};
+  const sorted = [...locations].sort((a, b) => a.name.localeCompare(b.name, "es"));
+  for (const loc of sorted) {
+    const slug = loc.province.trim().toLowerCase();
+    if (!slug) continue;
+    if (!fromLocs[slug]) fromLocs[slug] = [];
+    fromLocs[slug]!.push(locationPresenceToCard(loc));
+  }
+  const keys = new Set([...Object.keys(fromProjects), ...Object.keys(fromLocs)]);
+  const out: Partial<Record<string, ProvinceProjectCard[]>> = {};
+  for (const k of keys) {
+    const a = fromProjects[k] ?? [];
+    const b = fromLocs[k] ?? [];
+    out[k] = [...a, ...b];
   }
   return out;
 }

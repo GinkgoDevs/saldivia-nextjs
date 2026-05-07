@@ -27,7 +27,12 @@ function ModelCardInner({
 }) {
   const href = `/producto/${model.slug}`;
   const src = model.cover_image_url ?? CATALOG_IMG;
-  const aspectClass = aspect === "video" ? "aspect-[4/3]" : "aspect-square md:aspect-[4/5]";
+  const aspectClass =
+    variant === "grid"
+      ? "aspect-[4/5] sm:aspect-[4/3] lg:aspect-[3/4]"
+      : aspect === "video"
+        ? "aspect-[4/3]"
+        : "aspect-square md:aspect-[4/5]";
 
   const wrapClass =
     variant === "grid"

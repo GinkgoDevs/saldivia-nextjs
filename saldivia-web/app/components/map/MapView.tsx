@@ -4,6 +4,7 @@ import "leaflet/dist/leaflet.css";
 import { useEffect, useRef } from "react";
 import L from "leaflet";
 import type { Location, LocationType } from "@/types/location";
+import { formatArgentinaProvince } from "@/lib/argentina-map-provinces";
 
 const ARGENTINA_CENTER: [number, number] = [-38.4161, -63.6167];
 const DEFAULT_ZOOM = 4;
@@ -61,7 +62,7 @@ function buildPopupHtml(loc: Location): string {
         ${esc(loc.name)}
       </p>
       <p class="text-xs text-gray-600 mt-1">${esc(loc.address)}</p>
-      <p class="text-xs text-gray-500">${esc(loc.city)}, ${esc(loc.province)}</p>
+      <p class="text-xs text-gray-500">${esc(loc.city)}, ${esc(formatArgentinaProvince(loc.province))}</p>
       ${loc.phone ? `<p class="text-xs mt-1.5 text-gray-700">📞 ${esc(loc.phone)}</p>` : ""}
       ${loc.hours ? `<p class="text-xs text-gray-500 mt-0.5">🕐 ${esc(loc.hours)}</p>` : ""}
     </div>

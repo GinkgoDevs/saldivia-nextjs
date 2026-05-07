@@ -24,24 +24,20 @@ export function FlotaGrid({ models }: { models: FlotaModel[] }) {
   );
 
   return (
-    <section className="bg-surface py-10 sm:py-14 md:py-16">
-      <div className="mx-auto max-w-screen-2xl px-4 sm:px-6 md:px-8">
-        {reduce ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-            {inner}
-          </div>
-        ) : (
-          <motion.div
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, amount: 0.04 }}
-            variants={gridList}
-          >
-            {inner}
-          </motion.div>
-        )}
-      </div>
+    <section className="w-full bg-surface">
+      {reduce ? (
+        <div className="grid grid-cols-1 gap-0 sm:grid-cols-2 lg:grid-cols-3">{inner}</div>
+      ) : (
+        <motion.div
+          className="grid grid-cols-1 gap-0 sm:grid-cols-2 lg:grid-cols-3"
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, amount: 0.04 }}
+          variants={gridList}
+        >
+          {inner}
+        </motion.div>
+      )}
     </section>
   );
 }

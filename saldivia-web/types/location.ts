@@ -5,6 +5,7 @@ export type Location = {
   id: string;
   name: string;
   type: LocationType;
+  /** Slug del mapa Argentina (`argentinaProvinceMapData.json`); ej. `buenos-aires`. */
   province: string;
   city: string;
   address: string;

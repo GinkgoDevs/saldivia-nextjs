@@ -281,3 +281,14 @@ body {
   from { transform: scale(1) translateZ(0); }
   to   { transform: scale(1.07) translateZ(0); }
 }
+
+@keyframes saldivia-pin-halo {
+  0%, 100% {
+    opacity: 0.35;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.12;
+    transform: scale(1.85);
+  }
+}

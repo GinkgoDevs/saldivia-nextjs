@@ -73,7 +73,8 @@ export default async function ProductoPage({ params }: Props) {
   const { model, products } = detail;
   const gallery = galleryFor(slug, detail);
   const altPrefix = model.name;
-  const hero = model.cover_image_url ?? gallery[0] ?? DEFAULT_HERO;
+  const hero =
+    model.hero_background_image_url ?? model.cover_image_url ?? gallery[0] ?? DEFAULT_HERO;
   const interiorSrc = gallery[1] ?? gallery[0] ?? DEFAULT_GALLERY[0];
   const sortedSpecs = [...products].sort(
     (a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0) || a.spec_key.localeCompare(b.spec_key),

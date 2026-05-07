@@ -17,7 +17,7 @@ export async function getModels(
   let q = supabase
     .from("models")
     .select(
-      "id, slug, name, segment, description, cover_image_url, pdf_url, active, created_at, sort_order",
+      "id, slug, name, segment, description, cover_image_url, hero_background_image_url, pdf_url, active, created_at, sort_order",
     )
     .eq("active", true);
 
@@ -49,7 +49,7 @@ export async function getModelBySlug(
   const { data, error } = await supabase
     .from("models")
     .select(
-      "id, slug, name, segment, description, cover_image_url, pdf_url, active, created_at, sort_order",
+      "id, slug, name, segment, description, cover_image_url, hero_background_image_url, pdf_url, active, created_at, sort_order",
     )
     .eq("slug", slug)
     .eq("active", true)
@@ -67,7 +67,7 @@ export async function getAllModelsForAdmin(
   const { data, error } = await supabase
     .from("models")
     .select(
-      "id, slug, name, segment, description, cover_image_url, pdf_url, active, created_at, sort_order",
+      "id, slug, name, segment, description, cover_image_url, hero_background_image_url, pdf_url, active, created_at, sort_order",
     )
     .order("segment")
     .order("sort_order", { ascending: true, nullsFirst: false })

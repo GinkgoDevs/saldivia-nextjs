@@ -1,6 +1,7 @@
 "use client";
 
 import type { LocationType } from "@/types/location";
+import { formatArgentinaProvince } from "@/lib/argentina-map-provinces";
 
 const TYPES: { value: LocationType; label: string; color: string }[] = [
   { value: "taller", label: "Talleres", color: "#f97316" },
@@ -60,7 +61,7 @@ export function MapFilters({
           <option value="">Todas las provincias</option>
           {provinces.map((p) => (
             <option key={p} value={p} className="bg-[#0d1f35] text-slate-200">
-              {p}
+              {formatArgentinaProvince(p)}
             </option>
           ))}
         </select>

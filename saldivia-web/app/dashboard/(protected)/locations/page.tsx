@@ -15,9 +15,11 @@ export default async function DashboardLocationsPage() {
 
   return (
     <main className="mx-auto max-w-screen-2xl px-6 py-10 md:px-8 md:py-12">
-      <h1 className="text-2xl font-black uppercase tracking-tighter text-primary">Puntos de red (mapa)</h1>
+      <h1 className="text-2xl font-black uppercase tracking-tighter text-primary">Proyectos destacados (mapa del inicio)</h1>
       <p className="mt-2 max-w-2xl text-sm text-on-surface-variant">
-        Talleres, distribuidores y concesionarios. El desactivado oculta el punto en el sitio sin borrarlo.
+        Cada fila se agrupa por provincia en el mapa SVG de la home. Elegí la provincia del listado (slug del
+        mapa). Inactivo oculta el punto público sin borrarlo. La red Leaflet u otros usos pueden seguir usando
+        coordenadas cuando las agregues.
       </p>
       <div className="mt-8">
         <LocationsAdmin initial={data} />

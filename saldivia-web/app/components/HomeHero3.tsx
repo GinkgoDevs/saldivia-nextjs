@@ -52,8 +52,8 @@ const SLIDES = [
   },
 ] as const;
 
-const INTERVAL_MS = 6500;
-const TRANSITION_MS = 1300;
+const INTERVAL_MS = 11_000;
+const TRANSITION_MS = 1800;
 
 export default function HomeHero3({ fullHeight = false }: { fullHeight?: boolean }) {
   const [active, setActive] = useState(0);
@@ -66,7 +66,7 @@ export default function HomeHero3({ fullHeight = false }: { fullHeight?: boolean
     if (!el) return;
     el.style.animation = "none";
     void el.offsetHeight; // force reflow to restart animation
-    el.style.animation = "heroKenBurns 11s ease-out forwards";
+    el.style.animation = "heroKenBurns 12s ease-out forwards";
   }, [active]);
 
   const advance = useCallback(() => {

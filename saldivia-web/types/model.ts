@@ -13,7 +13,10 @@ export type Model = {
   name: string;
   segment: ModelSegment;
   description: string | null;
+  /** Portada en tarjetas /flota y mega menú visual cuando aplique */
   cover_image_url: string | null;
+  /** Fondo del hero en la ficha /producto/[slug]; si falta, se usa cover_image_url */
+  hero_background_image_url: string | null;
   pdf_url: string | null;
   active: boolean;
   created_at: string;

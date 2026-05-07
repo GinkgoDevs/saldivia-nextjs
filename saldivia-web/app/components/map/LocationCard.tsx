@@ -1,4 +1,5 @@
 import type { Location, LocationType } from "@/types/location";
+import { formatArgentinaProvince } from "@/lib/argentina-map-provinces";
 
 const TYPE_LABELS: Record<LocationType, string> = {
   taller: "Taller Autorizado",
@@ -38,7 +39,7 @@ export function LocationCard({ location, selected, onClick }: Props) {
         {location.name}
       </p>
       <p className="text-slate-400 text-xs mt-0.5">
-        {location.city}, {location.province}
+        {location.city}, {formatArgentinaProvince(location.province)}
       </p>
       <p className="text-slate-500 text-xs mt-1 line-clamp-1">{location.address}</p>
       {location.phone && (

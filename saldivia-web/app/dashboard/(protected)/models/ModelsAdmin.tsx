@@ -22,6 +22,7 @@ const empty: Omit<Model, "id" | "created_at"> & { id: string | null } = {
   segment: "urbano",
   description: null,
   cover_image_url: null,
+  hero_background_image_url: null,
   pdf_url: null,
   active: true,
   sort_order: 0,
@@ -50,6 +51,7 @@ export function ModelsAdmin({ initial }: Props) {
       segment: m.segment,
       description: m.description,
       cover_image_url: m.cover_image_url,
+      hero_background_image_url: m.hero_background_image_url,
       pdf_url: m.pdf_url,
       active: m.active,
       sort_order: m.sort_order ?? 0,
@@ -71,6 +73,7 @@ export function ModelsAdmin({ initial }: Props) {
       segment: form.segment,
       description: form.description ?? "",
       cover_image_url: form.cover_image_url ?? "",
+      hero_background_image_url: form.hero_background_image_url ?? "",
       pdf_url: form.pdf_url ?? "",
       sort_order: form.sort_order ?? 0,
       active: form.active,
@@ -101,7 +104,7 @@ export function ModelsAdmin({ initial }: Props) {
     setForm(empty);
   }
 
-  async function onFile(which: "cover" | "pdf", file: File | null) {
+  async function onFile(which: "cover" | "hero" | "pdf", file: File | null) {
     if (!file) return;
     setBusy(true);
     const fd = new FormData();
@@ -116,6 +119,8 @@ export function ModelsAdmin({ initial }: Props) {
     }
     if (which === "cover") {
       setForm((f) => ({ ...f, cover_image_url: r.publicUrl }));
+    } else if (which === "hero") {
+      setForm((f) => ({ ...f, hero_background_image_url: r.publicUrl }));
     } else {
       setForm((f) => ({ ...f, pdf_url: r.publicUrl }));
     }
@@ -212,8 +217,11 @@ export function ModelsAdmin({ initial }: Props) {
           </div>
           <div className="space-y-1">
             <label className="text-xs font-bold text-secondary" htmlFor="cover_image_url">
-              Imagen de portada (URL)
+              Portada en /flota (URL o archivo)
             </label>
+            <p className="text-[11px] text-on-surface-variant">
+              Tarjetas del catálogo de flota; si falta, se usa una imagen por defecto del sitio.
+            </p>
             <Input
               id="cover_image_url"
               value={form.cover_image_url ?? ""}
@@ -224,6 +232,26 @@ export function ModelsAdmin({ initial }: Props) {
               accept="image/jpeg,image/png,image/webp"
               className="text-xs"
               onChange={(e) => void onFile("cover", e.target.files?.[0] ?? null)}
+            />
+          </div>
+          <div className="space-y-1">
+            <label className="text-xs font-bold text-secondary" htmlFor="hero_background_image_url">
+              Fondo del hero en la ficha del producto (URL o archivo)
+            </label>
+            <p className="text-[11px] text-on-surface-variant">
+              Imagen amplia detrás del título en <code className="text-xs">/producto/[slug]</code>. Si está vacío, se
+              usa la portada de flota y luego la galería.
+            </p>
+            <Input
+              id="hero_background_image_url"
+              value={form.hero_background_image_url ?? ""}
+              onChange={(e) => setForm((f) => ({ ...f, hero_background_image_url: e.target.value }))}
+            />
+            <input
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              className="text-xs"
+              onChange={(e) => void onFile("hero", e.target.files?.[0] ?? null)}
             />
           </div>
           <div className="space-y-1">

@@ -33,7 +33,9 @@ export async function getModelBySlug(
 
   const { data: modelRow, error: modelError } = await supabase
     .from("models")
-    .select("id, slug, name, segment, description, cover_image_url, pdf_url, active, created_at, sort_order")
+    .select(
+      "id, slug, name, segment, description, cover_image_url, hero_background_image_url, pdf_url, active, created_at, sort_order",
+    )
     .eq("slug", normalized)
     .eq("active", true)
     .maybeSingle();

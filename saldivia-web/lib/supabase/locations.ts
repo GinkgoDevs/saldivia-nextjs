@@ -53,6 +53,50 @@ export type GetLocationsResult =
   | { data: Location[]; error: null }
   | { data: null; error: Error };
 
+/** Fila mínima para mapa SVG del home (no requiere lat/lng). */
+export type LocationPresenceRow = {
+  name: string;
+  type: LocationType;
+  province: string;
+  city: string;
+  address: string;
+  phone: string | null;
+  hours: string | null;
+};
+
+export type GetLocationPresenceResult =
+  | { data: LocationPresenceRow[]; error: null }
+  | { data: null; error: Error };
+
+/** Ubicaciones activas para agrupar por provincia en ArgentinaProjectsMap. */
+export async function getActiveLocationsForHomeMap(
+  supabase: SupabaseClient,
+): Promise<GetLocationPresenceResult> {
+  const { data, error } = await supabase
+    .from("locations")
+    .select("name, type, province, city, address, phone, hours")
+    .eq("active", true)
+    .order("province")
+    .order("name");
+
+  if (error) {
+    return { data: null, error: new Error(error.message) };
+  }
+
+  const rows = data ?? [];
+  const out: LocationPresenceRow[] = rows.map((row) => ({
+    name: String((row as { name: string }).name ?? ""),
+    type: (row as { type: string }).type as LocationType,
+    province: String((row as { province: string }).province ?? ""),
+    city: String((row as { city: string }).city ?? ""),
+    address: String((row as { address: string }).address ?? ""),
+    phone: (row as { phone: string | null }).phone ?? null,
+    hours: (row as { hours: string | null }).hours ?? null,
+  }));
+
+  return { data: out, error: null };
+}
+
 export async function getLocations(
   supabase: SupabaseClient,
   filters: LocationFilters = {},
