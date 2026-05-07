@@ -1,12 +1,13 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-import type { Model, ModelImage } from "@/types/model";
+import type { Model, ModelGeneralFeature, ModelImage } from "@/types/model";
 import type { Product } from "@/types/product";
 
 export type ModelDetail = {
   model: Model;
   products: Product[];
   images: ModelImage[];
+  general_features: ModelGeneralFeature[];
 };
 
 export async function getActiveModelSlugs(
@@ -49,7 +50,7 @@ export async function getModelBySlug(
   const model = modelRow as Model;
   const modelId = model.id;
 
-  const [{ data: products, error: pErr }, { data: images, error: iErr }] =
+  const [{ data: products, error: pErr }, { data: images, error: iErr }, { data: general_features, error: fErr }] =
     await Promise.all([
       supabase
         .from("products")
@@ -63,14 +64,22 @@ export async function getModelBySlug(
         .select("id, model_id, image_url, sort_order")
         .eq("model_id", modelId)
         .order("sort_order", { ascending: true, nullsFirst: false }),
+      supabase
+        .from("model_general_features")
+        .select("id, model_id, body, sort_order")
+        .eq("model_id", modelId)
+        .order("sort_order", { ascending: true, nullsFirst: false })
+        .limit(120),
     ]);
 
   if (pErr) console.error("[getModelBySlug] products", pErr.message);
   if (iErr) console.error("[getModelBySlug] images", iErr.message);
+  if (fErr) console.error("[getModelBySlug] model_general_features", fErr.message);
 
   return {
     model,
     products: (products ?? []) as Product[],
     images: (images ?? []) as ModelImage[],
+    general_features: (general_features ?? []) as ModelGeneralFeature[],
   };
 }

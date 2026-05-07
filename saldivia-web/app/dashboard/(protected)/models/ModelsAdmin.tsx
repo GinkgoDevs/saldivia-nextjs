@@ -2,9 +2,9 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { GripVertical } from "lucide-react";
+import { GripVertical, Plus, Trash2 } from "lucide-react";
 import { deleteModel, reorderModels, saveModel, uploadMediaToBucket } from "@/app/actions/admin-content";
-import type { Model, ModelSegment } from "@/types/model";
+import type { Model, ModelAdmin, ModelSegment } from "@/types/model";
 import { Button } from "@/app/components/ui/Button";
 import { Input } from "@/app/components/ui/Input";
 import { Textarea } from "@/app/components/ui/Textarea";
@@ -29,7 +29,24 @@ const empty: Omit<Model, "id" | "created_at"> & { id: string | null } = {
   sort_order: 0,
 };
 
-type Props = { initial: Model[] };
+type SpecRow = { spec_key: string; spec_value: string };
+
+const specRowEmpty = (): SpecRow => ({ spec_key: "", spec_value: "" });
+
+function specsFromModel(m: ModelAdmin): SpecRow[] {
+  const rows = [...(m.products ?? [])].sort(
+    (a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0) || a.spec_key.localeCompare(b.spec_key),
+  );
+  return rows.map((p) => ({ spec_key: p.spec_key, spec_value: p.spec_value }));
+}
+
+function featuresFromModel(m: ModelAdmin): string[] {
+  return [...(m.model_general_features ?? [])]
+    .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))
+    .map((f) => f.body);
+}
+
+type Props = { initial: ModelAdmin[] };
 
 function reorderList<T>(items: T[], fromIndex: number, toIndex: number): T[] {
   if (fromIndex === toIndex) return items;
@@ -41,8 +58,10 @@ function reorderList<T>(items: T[], fromIndex: number, toIndex: number): T[] {
 
 export function ModelsAdmin({ initial }: Props) {
   const router = useRouter();
-  const [list, setList] = useState<Model[]>(initial);
+  const [list, setList] = useState<ModelAdmin[]>(initial);
   const [form, setForm] = useState(empty);
+  const [specRows, setSpecRows] = useState<SpecRow[]>([specRowEmpty()]);
+  const [featureBodies, setFeatureBodies] = useState<string[]>([""]);
   const [message, setMessage] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [draggingId, setDraggingId] = useState<string | null>(null);
@@ -62,7 +81,7 @@ export function ModelsAdmin({ initial }: Props) {
 
   const editing = useMemo(() => form.id, [form.id]);
 
-  function load(m: Model) {
+  function load(m: ModelAdmin) {
     setForm({
       id: m.id,
       slug: m.slug,
@@ -75,10 +94,16 @@ export function ModelsAdmin({ initial }: Props) {
       active: m.active,
       sort_order: m.sort_order ?? 0,
     });
+    const specs = specsFromModel(m);
+    setSpecRows(specs.length > 0 ? specs : [specRowEmpty()]);
+    const feats = featuresFromModel(m);
+    setFeatureBodies(feats.length > 0 ? feats : [""]);
   }
 
   function newModel() {
     setForm({ ...empty, sort_order: list.length });
+    setSpecRows([specRowEmpty()]);
+    setFeatureBodies([""]);
   }
 
   async function onReorderDrop(fromIndex: number, toIndex: number) {
@@ -125,6 +150,8 @@ export function ModelsAdmin({ initial }: Props) {
       pdf_url: form.pdf_url ?? "",
       sort_order: form.sort_order ?? 0,
       active: form.active,
+      tech_specs: specRows,
+      general_feature_bodies: featureBodies,
     });
     setBusy(false);
     if (!r.ok) {
@@ -138,7 +165,7 @@ export function ModelsAdmin({ initial }: Props) {
 
   async function onDelete() {
     if (!form.id) return;
-    if (!window.confirm("¿Eliminar este modelo? Se eliminan también sus especificaciones e imágenes vinculadas.")) {
+    if (!window.confirm("¿Eliminar este modelo? Se eliminan también sus imágenes, especificaciones y características vinculadas.")) {
       return;
     }
     setBusy(true);
@@ -312,6 +339,125 @@ export function ModelsAdmin({ initial }: Props) {
               value={form.description ?? ""}
               onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
             />
+          </div>
+          <div className="space-y-3 rounded-sm border border-outline-variant/25 bg-surface-container-low/40 p-4">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-wide text-secondary">Especificaciones técnicas</p>
+                <p className="mt-0.5 text-[11px] text-on-surface-variant">
+                  Tabla de la ficha (<code className="text-[10px]">products</code> en Supabase). Se guarda el orden de
+                  las filas.
+                </p>
+              </div>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                disabled={busy}
+                onClick={() => setSpecRows((rows) => [...rows, specRowEmpty()])}
+                className="gap-1"
+              >
+                <Plus className="size-4" aria-hidden />
+                Fila
+              </Button>
+            </div>
+            <div className="space-y-2">
+              {specRows.map((row, i) => (
+                <div key={i} className="flex flex-col gap-2 sm:flex-row sm:items-start">
+                  <Input
+                    aria-label={`Parámetro fila ${i + 1}`}
+                    className="sm:flex-1"
+                    placeholder="Parámetro"
+                    value={row.spec_key}
+                    onChange={(e) =>
+                      setSpecRows((rows) =>
+                        rows.map((r, j) => (j === i ? { ...r, spec_key: e.target.value } : r)),
+                      )
+                    }
+                  />
+                  <Input
+                    aria-label={`Detalle fila ${i + 1}`}
+                    className="sm:flex-[2]"
+                    placeholder="Detalle / valor"
+                    value={row.spec_value}
+                    onChange={(e) =>
+                      setSpecRows((rows) =>
+                        rows.map((r, j) => (j === i ? { ...r, spec_value: e.target.value } : r)),
+                      )
+                    }
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="shrink-0 text-on-surface-variant"
+                    disabled={busy || specRows.length <= 1}
+                    aria-label={`Quitar fila ${i + 1}`}
+                    onClick={() =>
+                      setSpecRows((rows) => {
+                        const next = rows.filter((_, j) => j !== i);
+                        return next.length > 0 ? next : [specRowEmpty()];
+                      })
+                    }
+                  >
+                    <Trash2 className="size-4" aria-hidden />
+                  </Button>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="space-y-3 rounded-sm border border-outline-variant/25 bg-surface-container-low/40 p-4">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-wide text-secondary">Características generales</p>
+                <p className="mt-0.5 text-[11px] text-on-surface-variant">
+                  Listado con viñetas bajo la ficha (<code className="text-[10px]">model_general_features</code>).
+                </p>
+              </div>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                disabled={busy}
+                onClick={() => setFeatureBodies((rows) => [...rows, ""])}
+                className="gap-1"
+              >
+                <Plus className="size-4" aria-hidden />
+                Ítem
+              </Button>
+            </div>
+            <div className="space-y-2">
+              {featureBodies.map((body, i) => (
+                <div key={i} className="flex gap-2">
+                  <Textarea
+                    aria-label={`Característica ${i + 1}`}
+                    rows={2}
+                    className="min-h-[2.75rem] flex-1"
+                    placeholder="Texto del ítem"
+                    value={body}
+                    onChange={(e) =>
+                      setFeatureBodies((rows) => rows.map((b, j) => (j === i ? e.target.value : b)))
+                    }
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="shrink-0 self-start text-on-surface-variant"
+                    disabled={busy || featureBodies.length <= 1}
+                    aria-label={`Quitar característica ${i + 1}`}
+                    onClick={() =>
+                      setFeatureBodies((rows) => {
+                        const next = rows.filter((_, j) => j !== i);
+                        return next.length > 0 ? next : [""];
+                      })
+                    }
+                  >
+                    <Trash2 className="size-4" aria-hidden />
+                  </Button>
+                </div>
+              ))}
+            </div>
           </div>
           <div className="space-y-1">
             <label className="text-xs font-bold text-secondary" htmlFor="cover_image_url">

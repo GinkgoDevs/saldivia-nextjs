@@ -92,6 +92,25 @@ body {
     backdrop-filter: blur(12px);
   }
 
+  @keyframes product-hero-image-drift {
+    0% {
+      transform: scale(1) translate3d(0, 0, 0);
+    }
+    100% {
+      transform: scale(1.07) translate3d(-1.25%, 0.35%, 0);
+    }
+  }
+
+  .animate-product-hero-image {
+    animation: product-hero-image-drift 32s ease-in-out infinite alternate;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .animate-product-hero-image {
+      animation: none;
+    }
+  }
+
   .hub-card:hover .hub-bg {
     transform: scale(1.05);
   }

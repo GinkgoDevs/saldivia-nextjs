@@ -60,6 +60,8 @@ export async function uploadMediaToBucket(formData: FormData) {
   return { ok: true as const, publicUrl: pub.publicUrl };
 }
 
+type TechSpecRow = { spec_key: string; spec_value: string };
+
 type SaveModelInput = {
   id: string | null;
   slug: string;
@@ -71,7 +73,15 @@ type SaveModelInput = {
   pdf_url: string;
   sort_order: number;
   active: boolean;
+  /** Si viene definido, reemplaza todas las filas de `products` del modelo. */
+  tech_specs?: TechSpecRow[];
+  /** Si viene definido, reemplaza todas las filas de `model_general_features`. */
+  general_feature_bodies?: string[];
 };
+
+const MAX_SPEC_ROWS = 80;
+const MAX_FEATURE_ROWS = 80;
+const MAX_SPEC_FIELD_LEN = 2000;
 
 export async function saveModel(input: SaveModelInput) {
   const { supabase, user } = await requireUser();
@@ -100,16 +110,68 @@ export async function saveModel(input: SaveModelInput) {
     return { ok: false as const, error: "validation" };
   }
 
+  let modelId: string;
+
   if (input.id) {
-    const { error } = await supabase.from("models").update(row).eq("id", input.id);
+    modelId = input.id;
+    const { error } = await supabase.from("models").update(row).eq("id", modelId);
     if (error) return { ok: false as const, error: error.message };
   } else {
-    const { error } = await supabase.from("models").insert(row);
+    const { data, error } = await supabase.from("models").insert(row).select("id").single();
     if (error) return { ok: false as const, error: error.message };
+    if (!data?.id) return { ok: false as const, error: "validation" };
+    modelId = data.id;
+  }
+
+  if (input.tech_specs !== undefined) {
+    const specs = input.tech_specs
+      .map((s) => ({
+        spec_key: s.spec_key.trim(),
+        spec_value: s.spec_value.trim(),
+      }))
+      .filter((s) => s.spec_key.length > 0 && s.spec_value.length > 0)
+      .slice(0, MAX_SPEC_ROWS)
+      .map((s, i) => ({
+        model_id: modelId,
+        spec_key: s.spec_key.slice(0, MAX_SPEC_FIELD_LEN),
+        spec_value: s.spec_value.slice(0, MAX_SPEC_FIELD_LEN),
+        sort_order: i,
+      }));
+
+    const { error: delErr } = await supabase.from("products").delete().eq("model_id", modelId);
+    if (delErr) return { ok: false as const, error: delErr.message };
+
+    if (specs.length > 0) {
+      const { error: insErr } = await supabase.from("products").insert(specs);
+      if (insErr) return { ok: false as const, error: insErr.message };
+    }
+  }
+
+  if (input.general_feature_bodies !== undefined) {
+    const bodies = input.general_feature_bodies
+      .map((b) => b.trim())
+      .filter((b) => b.length > 0)
+      .slice(0, MAX_FEATURE_ROWS)
+      .map((body, i) => ({
+        model_id: modelId,
+        body: body.slice(0, MAX_SPEC_FIELD_LEN),
+        sort_order: i,
+      }));
+
+    const { error: delFErr } = await supabase
+      .from("model_general_features")
+      .delete()
+      .eq("model_id", modelId);
+    if (delFErr) return { ok: false as const, error: delFErr.message };
+
+    if (bodies.length > 0) {
+      const { error: insFErr } = await supabase.from("model_general_features").insert(bodies);
+      if (insFErr) return { ok: false as const, error: insFErr.message };
+    }
   }
 
   revalidateContent();
-  return { ok: true as const };
+  return { ok: true as const, id: modelId };
 }
 
 export async function deleteModel(id: string) {

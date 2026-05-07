@@ -1,6 +1,18 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-import type { Model, ModelSegment } from "@/types/model";
+import type { Model, ModelAdmin, ModelGeneralFeature, ModelSegment } from "@/types/model";
+import type { Product } from "@/types/product";
+
+function groupRowsByModelId<T extends { model_id: string | null }>(rows: T[]): Map<string, T[]> {
+  const map = new Map<string, T[]>();
+  for (const row of rows) {
+    if (!row.model_id) continue;
+    const list = map.get(row.model_id);
+    if (list) list.push(row);
+    else map.set(row.model_id, [row]);
+  }
+  return map;
+}
 
 export type ModelFilters = {
   segment?: ModelSegment;
@@ -8,6 +20,10 @@ export type ModelFilters = {
 
 export type GetModelsResult =
   | { data: Model[]; error: null }
+  | { data: null; error: Error };
+
+export type GetModelsAdminResult =
+  | { data: ModelAdmin[]; error: null }
   | { data: null; error: Error };
 
 export async function getModels(
@@ -63,8 +79,8 @@ export async function getModelBySlug(
 
 export async function getAllModelsForAdmin(
   supabase: SupabaseClient,
-): Promise<GetModelsResult> {
-  const { data, error } = await supabase
+): Promise<GetModelsAdminResult> {
+  const { data: models, error: modelsError } = await supabase
     .from("models")
     .select(
       "id, slug, name, segment, description, cover_image_url, hero_background_image_url, pdf_url, active, created_at, sort_order",
@@ -73,12 +89,47 @@ export async function getAllModelsForAdmin(
     .order("sort_order", { ascending: true, nullsFirst: false })
     .order("name");
 
-  if (error) {
-    return { data: null, error: new Error(error.message) };
+  if (modelsError) {
+    return { data: null, error: new Error(modelsError.message) };
   }
 
-  return {
-    data: (data ?? []) as Model[],
-    error: null,
-  };
+  const modelList = (models ?? []) as Model[];
+  if (modelList.length === 0) {
+    return { data: [], error: null };
+  }
+
+  const ids = modelList.map((m) => m.id);
+
+  const [prodRes, featRes] = await Promise.all([
+    supabase
+      .from("products")
+      .select("id, model_id, spec_key, spec_value, sort_order")
+      .in("model_id", ids),
+    supabase
+      .from("model_general_features")
+      .select("id, model_id, body, sort_order")
+      .in("model_id", ids),
+  ]);
+
+  if (prodRes.error) {
+    return { data: null, error: new Error(prodRes.error.message) };
+  }
+  if (featRes.error) {
+    return { data: null, error: new Error(featRes.error.message) };
+  }
+
+  const productsByModel = groupRowsByModelId((prodRes.data ?? []) as Product[]);
+  const featuresByModel = groupRowsByModelId((featRes.data ?? []) as ModelGeneralFeature[]);
+
+  const data: ModelAdmin[] = modelList.map((m) => {
+    const products = [...(productsByModel.get(m.id) ?? [])].sort(
+      (a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0) || a.spec_key.localeCompare(b.spec_key),
+    );
+    const model_general_features = [...(featuresByModel.get(m.id) ?? [])].sort(
+      (a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0),
+    );
+    return { ...m, products, model_general_features };
+  });
+
+  return { data, error: null };
 }
