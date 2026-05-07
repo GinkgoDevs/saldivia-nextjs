@@ -97,17 +97,18 @@ export default function GalleryCarousel() {
 
   return (
     <section
-      className="overflow-hidden bg-industrial-charcoal py-16"
+      aria-labelledby="home-gallery-heading"
+      className="relative overflow-hidden py-16"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
       <div className="container mx-auto px-4 md:px-6">
-        {/* Header */}
-        <div className="mb-10 flex flex-col items-center">
-          <h3 className="font-headline text-xl font-light uppercase tracking-[0.2em] text-metallic-silver">
-            Galería de Innovación
-          </h3>
-          <div className="mt-4 h-[1px] w-12 bg-accent-blue" />
+        {/* Header — alineado a HomeFAQ (ui-section-title + misma barra) */}
+        <div className="mb-14 text-center md:mb-16">
+          <h2 id="home-gallery-heading" className="ui-section-title !text-white">
+            Galería de innovación
+          </h2>
+          <div className="technical-gradient mx-auto mt-5 h-1 w-24" />
         </div>
 
         {/* Viewport – overflow hidden, shows exactly N items */}
