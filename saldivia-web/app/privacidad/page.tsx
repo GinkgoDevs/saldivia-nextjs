@@ -40,7 +40,7 @@ export default function PrivacidadPage() {
           <h2 className="mt-8 text-lg font-bold text-primary">Tus derechos</h2>
           <p>
             Podés solicitar acceso, rectificación o baja de tus datos escribiendo a través de{" "}
-            <Link href="/contacto" className="font-semibold text-accent-blue hover:underline">
+            <Link href="/trabaja-con-nosotros" className="font-semibold text-accent-blue hover:underline">
               contacto
             </Link>
             .

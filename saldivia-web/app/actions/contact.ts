@@ -68,6 +68,7 @@ export async function submitContactQuote(
     }
   }
 
+  revalidatePath("/trabaja-con-nosotros");
   revalidatePath("/contacto");
   return { ok: true };
 }

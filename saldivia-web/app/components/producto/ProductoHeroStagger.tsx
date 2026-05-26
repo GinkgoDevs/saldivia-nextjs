@@ -45,7 +45,7 @@ export function ProductoHeroStagger({ familyLabel, name, description, pdfUrl }: 
             </a>
           )}
           <Link
-            href="/contacto"
+            href="/trabaja-con-nosotros"
             className={buttonClass({
               variant: "outline",
               size: "lg",
@@ -53,7 +53,7 @@ export function ProductoHeroStagger({ familyLabel, name, description, pdfUrl }: 
                 "border-white/45 bg-white/[0.04] text-white backdrop-blur-sm hover:border-secondary-container/70 hover:bg-white/[0.12]",
             })}
           >
-            Cotizar unidad
+            Contacto comercial
           </Link>
         </div>
       </div>

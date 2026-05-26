@@ -71,13 +71,13 @@ export default function Footer() {
           </p>
           <div className="flex gap-2">
             <SocialLink
-              href={instagramHref || "/contacto"}
+              href={instagramHref || "/trabaja-con-nosotros"}
               external={Boolean(instagramHref)}
               ariaLabel={instagramHref ? "Instagram (se abre en una pestaña nueva)" : "Contacto"}
               icon={<span className="material-symbols-outlined">photo_camera</span>}
             />
             <SocialLink
-              href={linkedinHref || "/contacto"}
+              href={linkedinHref || "/trabaja-con-nosotros"}
               external={Boolean(linkedinHref)}
               ariaLabel={linkedinHref ? "LinkedIn (se abre en una pestaña nueva)" : "Contacto"}
               icon={<span className="material-symbols-outlined">work</span>}

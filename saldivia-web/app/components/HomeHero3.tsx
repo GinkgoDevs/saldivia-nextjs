@@ -4,12 +4,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect, useRef, useCallback } from "react";
 
-const SEGMENT_LINKS = [
-  { label: "Urbano", href: "/flota#urbano" },
-  { label: "Interurbano", href: "/flota#interurbano" },
-  { label: "Interprovincial", href: "/flota#interprovincial" },
-] as const;
-
 const SLIDES = [
   {
     id: "aries-405",
@@ -22,7 +16,6 @@ const SLIDES = [
       "Redefiniendo los estándares del transporte de pasajeros: potencia, seguridad y presencia imponente con el sello industrial Saldivia.",
     primary: { label: "Explorar modelos", href: "/flota" },
     secondary: { label: "Tour industrial", href: "/nosotros" },
-    showSegments: false,
   },
   {
     id: "soldadura",
@@ -34,8 +27,7 @@ const SLIDES = [
     subtitle:
       "Procesos de manufactura controlados, materiales de primera calidad y estrictos estándares industriales en cada etapa de producción.",
     primary: { label: "Conocer la empresa", href: "/nosotros" },
-    secondary: { label: "Solicitar visita", href: "/contacto" },
-    showSegments: false,
+    secondary: { label: "Solicitar visita", href: "/trabaja-con-nosotros" },
   },
   {
     id: "buses",
@@ -45,10 +37,9 @@ const SLIDES = [
     title: "De la ciudad",
     highlight: "a la ruta",
     subtitle:
-      "Urbano, interurbano e interprovincial: una solución para cada segmento, con el mismo compromiso de ingeniería y durabilidad.",
+      "Soluciones para cada tipo de operación, con el mismo compromiso de ingeniería y durabilidad en cada carrocería.",
     primary: { label: "Ver catálogo completo", href: "/flota" },
-    secondary: { label: "Consultar presupuesto", href: "/contacto" },
-    showSegments: true,
+    secondary: { label: "Contacto", href: "/trabaja-con-nosotros" },
   },
 ] as const;
 
@@ -195,25 +186,6 @@ export default function HomeHero3({ fullHeight = false }: { fullHeight?: boolean
                   </Link>
                 </div>
 
-                {slide.showSegments && (
-                  <nav aria-label="Accesos rápidos a segmentos" className="mt-8 md:mt-10">
-                    <p className="mb-3 font-headline text-[10px] font-bold uppercase tracking-[0.2em] text-white/50">
-                      Segmentos
-                    </p>
-                    <ul className="flex flex-wrap gap-2">
-                      {SEGMENT_LINKS.map((item) => (
-                        <li key={item.href}>
-                          <Link
-                            href={item.href}
-                            className="inline-flex min-h-[44px] cursor-pointer items-center rounded-sm border border-white/20 bg-primary/30 px-4 py-2.5 font-headline text-xs font-bold uppercase tracking-wider text-white backdrop-blur-sm transition-colors duration-200 hover:border-secondary-container/60 hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue focus-visible:ring-offset-2 focus-visible:ring-offset-primary"
-                          >
-                            {item.label}
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
-                  </nav>
-                )}
               </div>
             ))}
           </div>

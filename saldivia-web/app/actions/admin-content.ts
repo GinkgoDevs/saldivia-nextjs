@@ -30,6 +30,7 @@ function revalidateContent() {
   revalidatePath("/flota");
   revalidatePath("/producto");
   revalidatePath("/");
+  revalidatePath("/trabaja-con-nosotros");
   revalidatePath("/contacto");
 }
 

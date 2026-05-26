@@ -103,9 +103,12 @@ export default function GalleryCarousel() {
       onMouseLeave={() => setPaused(false)}
     >
       <div className="container mx-auto px-4 md:px-6">
-        {/* Header — alineado a HomeFAQ (ui-section-title + misma barra) */}
+        {/* Header — mismo patrón visual de secciones del home */}
         <div className="mb-14 text-center md:mb-16">
-          <h2 id="home-gallery-heading" className="ui-section-title !text-white">
+          <h2
+            id="home-gallery-heading"
+            className="ui-section-title text-primary dark:!text-white"
+          >
             Galería de innovación
           </h2>
           <div className="technical-gradient mx-auto mt-5 h-1 w-24" />

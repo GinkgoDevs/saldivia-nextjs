@@ -41,7 +41,7 @@ function ModelCardInner({
 
   return (
     <a href={href} className={wrapClass}>
-      <div className={`relative ${aspectClass} w-full overflow-hidden bg-surface-container-high`}>
+      <div className={`relative ${aspectClass} w-full overflow-hidden bg-white`}>
         <img
           alt=""
           className="h-full w-full object-cover transition-[transform,filter] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.06] group-hover:brightness-[0.55]"

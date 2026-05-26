@@ -233,8 +233,8 @@ export default async function ProductoPage({ params }: Props) {
                     Cada unidad se puede dimensionar con orientación comercial y técnica. Solicitá variantes, equipamiento y
                     documentación bajo unidades de su flota.
                   </p>
-                  <Link href="/contacto" className={buttonClass({ variant: "primary", size: "md", className: "self-start" })}>
-                    Consultar con un asesor
+                  <Link href="/trabaja-con-nosotros" className={buttonClass({ variant: "primary", size: "md", className: "self-start" })}>
+                    Contacto comercial
                   </Link>
                 </div>
               </div>
