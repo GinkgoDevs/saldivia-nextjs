@@ -30,7 +30,7 @@ export function PostventaServiceGrid() {
               size: "sm",
               className: "min-h-0 px-0 py-0 text-secondary hover:text-primary",
             })}
-            href="/contacto"
+            href="/trabaja-con-nosotros"
           >
             {item.link} <span className="material-symbols-outlined text-base">arrow_forward</span>
           </Link>

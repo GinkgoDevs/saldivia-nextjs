@@ -96,7 +96,7 @@ function TimelineItem({ item }: { item: typeof ITEMS[number] }) {
         }`}
       >
         <div
-          className={`rounded bg-surface-container-low p-5 shadow-sm sm:p-8 border-l-4 border-secondary ${
+          className={`rounded bg-surface-container-lowest p-5 shadow-sm sm:p-8 border-l-4 border-secondary ${
             isLeft ? "lg:border-l-0 lg:border-r-4" : ""
           }`}
         >
@@ -117,7 +117,7 @@ function TimelineItem({ item }: { item: typeof ITEMS[number] }) {
 
       {/* Nodo central */}
       <div
-        className={`order-1 z-10 flex h-14 w-14 shrink-0 items-center justify-center rounded font-black text-white shadow-xl ring-4 ring-surface sm:h-16 sm:w-16 sm:ring-8 ${item.nodeColor} lg:order-2`}
+        className={`order-1 z-10 flex h-14 w-14 shrink-0 items-center justify-center rounded font-black text-white shadow-xl ring-4 ring-surface-container-lowest sm:h-16 sm:w-16 sm:ring-8 ${item.nodeColor} lg:order-2`}
       >
         <span className="material-symbols-outlined text-2xl sm:text-[28px]">{item.icon}</span>
       </div>
@@ -194,7 +194,14 @@ export default function NosotrosTimeline() {
   const lineScaleY = useTransform(scrollYProgress, [0, 1], [0, 1]);
 
   return (
-    <section className="relative bg-surface py-14 sm:py-20 md:py-24" ref={sectionRef}>
+    <section
+      className="relative border-y border-outline-variant/30 bg-surface-container-high py-16 sm:py-20 md:py-24"
+      ref={sectionRef}
+    >
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_12%,rgba(32,149,212,0.12),transparent_42%),radial-gradient(circle_at_82%_88%,rgba(13,44,79,0.16),transparent_48%)]"
+      />
       <div className="container mx-auto px-4 sm:px-6">
 
         {/* ─── Reflexión introductoria ──────────────────────── */}
@@ -283,27 +290,29 @@ export default function NosotrosTimeline() {
           </div>
         </motion.div>
 
-        <div className="mb-12 text-center sm:mb-16 md:mb-24">
-          <h2 className="mb-3 text-2xl font-black uppercase tracking-tighter text-primary sm:mb-4 sm:text-3xl md:text-4xl">
-            Línea de Tiempo Industrial
-          </h2>
-          <div className="mx-auto h-1 w-20 technical-gradient sm:w-24" />
-        </div>
-
-        <div className="relative">
-          {/* Línea vertical animada */}
-          <div className="absolute bottom-0 left-1/2 top-0 hidden w-[2px] -translate-x-1/2 overflow-hidden lg:block">
-            <div className="absolute inset-0 bg-outline-variant/20" />
-            <motion.div
-              className="absolute left-0 right-0 top-0 origin-top technical-gradient"
-              style={{ scaleY: lineScaleY, height: "100%" }}
-            />
+        <div className="relative rounded-xl border border-outline-variant/35 bg-surface-container-low/95 shadow-sm px-4 py-12 sm:px-6 sm:py-14 md:px-8 md:py-16">
+          <div className="mb-12 text-center sm:mb-16 md:mb-20">
+            <h2 className="mb-3 text-2xl font-black uppercase tracking-tighter text-primary sm:mb-4 sm:text-3xl md:text-4xl">
+              Línea de Tiempo Industrial
+            </h2>
+            <div className="mx-auto h-1 w-20 technical-gradient sm:w-24" />
           </div>
 
-          <div className="space-y-16 sm:space-y-24 md:space-y-28 lg:space-y-32">
-            {ITEMS.map((item) => (
-              <TimelineItem key={item.year} item={item} />
-            ))}
+          <div className="relative">
+            {/* Línea vertical animada */}
+            <div className="absolute bottom-0 left-1/2 top-0 hidden w-[2px] -translate-x-1/2 overflow-hidden lg:block">
+              <div className="absolute inset-0 bg-outline-variant/20" />
+              <motion.div
+                className="absolute left-0 right-0 top-0 origin-top technical-gradient"
+                style={{ scaleY: lineScaleY, height: "100%" }}
+              />
+            </div>
+
+            <div className="space-y-16 sm:space-y-24 md:space-y-28 lg:space-y-32">
+              {ITEMS.map((item) => (
+                <TimelineItem key={item.year} item={item} />
+              ))}
+            </div>
           </div>
         </div>
       </div>

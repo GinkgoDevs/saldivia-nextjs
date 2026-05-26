@@ -75,7 +75,9 @@ function CountCell({
         {display.toLocaleString("es-AR")}
         {suffix}
       </div>
-      <div className="text-xs font-bold uppercase tracking-widest text-slate-400">{label}</div>
+      <div className="text-xs font-bold uppercase tracking-widest text-on-surface-variant dark:text-slate-400">
+        {label}
+      </div>
     </motion.div>
   );
 }
@@ -102,7 +104,9 @@ function IsoCell({
       }
     >
       <div className="mb-2 font-headline text-5xl font-extrabold text-accent-blue">ISO</div>
-      <div className="text-xs font-bold uppercase tracking-widest text-slate-400">Certificación 9001</div>
+      <div className="text-xs font-bold uppercase tracking-widest text-on-surface-variant dark:text-slate-400">
+        Certificación 9001
+      </div>
     </motion.div>
   );
 }
@@ -113,13 +117,16 @@ export function CountUpStatsRow() {
   const reduceMotion = useReducedMotion();
 
   return (
-    <section ref={ref} className="bg-primary py-20 text-white">
+    <section
+      ref={ref}
+      className="bg-surface-container py-20 text-on-surface dark:bg-primary dark:text-white"
+    >
       <div className="container mx-auto px-4 md:px-6">
         <header className="mb-14 text-center md:mb-16">
-          <p className="ui-section-eyebrow text-secondary-container">
+          <p className="ui-section-eyebrow text-secondary dark:text-secondary-container">
             Indicadores clave
           </p>
-          <h2 className="ui-section-title text-white md:text-3xl">
+          <h2 className="ui-section-title text-primary md:text-3xl dark:text-white">
             Trayectoria en números
           </h2>
           <div className="technical-gradient mx-auto mt-4 h-1 w-20 rounded-full" />

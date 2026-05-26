@@ -6,7 +6,6 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import { Providers } from "./providers";
 import { getSiteUrl } from "@/lib/site-url";
-import { getMegaMenuFleet } from "@/lib/supabase/mega-menu-models";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -73,8 +72,6 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const megaMenuFleet = await getMegaMenuFleet();
-
   return (
     <html lang="es" suppressHydrationWarning>
       <head>
@@ -92,7 +89,7 @@ export default async function RootLayout({
       >
         <OrganizationJsonLd />
         <Providers>
-          <Navbar megaMenuFleet={megaMenuFleet} />
+          <Navbar />
           {children}
           <Footer />
         </Providers>

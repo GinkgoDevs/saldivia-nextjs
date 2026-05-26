@@ -7,10 +7,9 @@ import { getSiteUrl } from "@/lib/site-url";
 const STATIC = [
   { path: "", priority: 1, changeFrequency: "weekly" as const },
   { path: "/flota", priority: 0.9, changeFrequency: "weekly" as const },
-  { path: "/tecnologia", priority: 0.75, changeFrequency: "monthly" as const },
   { path: "/nosotros", priority: 0.75, changeFrequency: "monthly" as const },
   { path: "/postventa", priority: 0.75, changeFrequency: "monthly" as const },
-  { path: "/contacto", priority: 0.85, changeFrequency: "monthly" as const },
+  { path: "/trabaja-con-nosotros", priority: 0.85, changeFrequency: "monthly" as const },
   { path: "/privacidad", priority: 0.4, changeFrequency: "yearly" as const },
   { path: "/terminos", priority: 0.4, changeFrequency: "yearly" as const },
 ];

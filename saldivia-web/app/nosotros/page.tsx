@@ -42,7 +42,7 @@ export default function NosotrosPage() {
         <NosotrosTimeline />
 
         <FadeUp>
-          <section className="relative overflow-hidden bg-surface py-14 sm:py-20 md:py-24">
+          <section className="relative overflow-hidden border-t border-outline-variant/20 bg-surface py-14 sm:py-20 md:py-24">
             <TrajectoryRail side="left" height="58%" />
             <div className="container mx-auto px-4 sm:px-6">
               <div className="flex flex-col items-center gap-10 lg:flex-row lg:gap-16">
@@ -96,6 +96,7 @@ export default function NosotrosPage() {
             </div>
           </section>
         </FadeUp>
+
       </main>
     </div>
   );

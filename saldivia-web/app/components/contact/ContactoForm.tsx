@@ -17,7 +17,7 @@ function SubmitButton() {
       size="lg"
       type="submit"
     >
-      {pending ? "Enviando…" : "Enviar consulta de cotización"}
+      {pending ? "Enviando…" : "Enviar mensaje"}
     </Button>
   );
 }

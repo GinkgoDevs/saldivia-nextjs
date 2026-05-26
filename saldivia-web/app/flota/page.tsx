@@ -3,7 +3,6 @@ import { createClient } from "@/lib/supabase/server";
 import Image from "next/image";
 import Link from "next/link";
 import { buttonClass } from "../components/ui/Button";
-import { FLEET_SEGMENTS } from "../data/flota-catalog";
 import { FlotaGrid } from "./FlotaGrid";
 import { FadeUp, HeroStagger } from "../components/motion";
 
@@ -11,22 +10,13 @@ import type { Model } from "@/types/model";
 
 type FlotaModel = Pick<Model, "slug" | "name" | "description" | "cover_image_url">;
 
-type SearchParams = { segment?: string | string[] };
-
-export default async function FlotaPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
-  const sp = await searchParams;
-  const raw = sp.segment;
-  const segmentParam = (Array.isArray(raw) ? raw[0] : raw) ?? null;
-  const activeSegment = segmentParam && FLEET_SEGMENTS.some((s) => s.id === segmentParam) ? segmentParam : null;
-
+export default async function FlotaPage() {
   const supabase = await createClient();
   const { data: allModels, error } = await getModels(supabase, {});
 
   const models: FlotaModel[] = [];
   if (!error && allModels) {
     for (const m of allModels) {
-      if (!FLEET_SEGMENTS.some((s) => s.id === m.segment)) continue;
-      if (activeSegment && m.segment !== activeSegment) continue;
       models.push({
         slug: m.slug,
         name: m.name,
@@ -56,13 +46,13 @@ export default async function FlotaPage({ searchParams }: { searchParams: Promis
                 Catálogo de productos
               </span>
               <h1 className="max-w-4xl font-headline text-3xl font-black uppercase leading-[0.95] tracking-tighter text-white sm:text-4xl md:text-6xl lg:text-7xl">
-                Arquitectura
+                Nuestros
                 <br />
-                <span className="text-secondary-container">de flota</span>
+                <span className="text-secondary-container">modelos</span>
               </h1>
               <p className="mt-0 max-w-2xl font-headline text-sm font-medium leading-relaxed text-on-primary-container sm:mt-2 sm:text-base md:text-lg">
-                Soluciones de transporte para entorno urbano, interurbano y larga distancia, con la precisión
-                industrial y el estándar de calidad Saldivia en cada carrocería.
+                Todas las unidades del catálogo Saldivia en un solo lugar, con la precisión industrial y el estándar de
+                calidad de cada carrocería.
               </p>
               {error && (
                 <p className="mt-2 text-sm text-red-200 sm:mt-4">

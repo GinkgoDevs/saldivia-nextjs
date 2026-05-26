@@ -2,18 +2,17 @@
 
 export const footerMainLinks = [
   { label: "Inicio", href: "/" },
-  { label: "Modelos", href: "/flota" },
-  { label: "Tecnología", href: "/tecnologia" },
   { label: "Nosotros", href: "/nosotros" },
+  { label: "Modelos", href: "/flota" },
   { label: "Postventa", href: "/postventa" },
-  { label: "Contacto", href: "/contacto" },
+  { label: "Trabajá con nosotros", href: "/trabaja-con-nosotros" },
 ] as const;
 
 export const footerLegalLinks = [
   { label: "Privacidad", href: "/privacidad" },
   { label: "Términos", href: "/terminos" },
   { label: "Soporte", href: "/postventa" },
-  { label: "Distribuidores", href: "/contacto" },
+  { label: "Distribuidores", href: "/trabaja-con-nosotros" },
 ] as const;
 
 export function getSocialInstagramHref(): string {
