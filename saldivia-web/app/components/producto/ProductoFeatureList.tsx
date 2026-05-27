@@ -8,9 +8,9 @@ const defaultFeatures = [
   "Interior diseñable según servicio, confort y normativa de aplicación.",
 ] as const;
 
-type Props = { items?: string[] };
+type Props = { items?: string[]; columns?: 1 | 2 };
 
-export function ProductoFeatureList({ items }: Props) {
+export function ProductoFeatureList({ items, columns = 2 }: Props) {
   const list = items && items.length > 0 ? items : [...defaultFeatures];
   if (items && items.length === 0) {
     return null;
@@ -18,14 +18,17 @@ export function ProductoFeatureList({ items }: Props) {
   return (
     <>
       <FadeUp size="sm">
-        <div className="mb-8 mt-12 sm:mt-14 sm:mb-10 md:mb-12">
-          <h2 className="text-2xl font-black uppercase tracking-tighter text-primary sm:text-3xl md:text-4xl">
+        <div className="mb-6 mt-10 sm:mb-8">
+          <h2 className="text-xl font-black uppercase tracking-tighter text-primary sm:text-2xl md:text-3xl">
             Características
           </h2>
-          <div className="mt-3 h-1 w-20 bg-saldivia-blue sm:mt-4 sm:w-24" />
+          <div className="mt-3 h-1 w-16 bg-saldivia-blue sm:w-20" />
         </div>
       </FadeUp>
-      <StaggerInView className="grid list-none grid-cols-1 gap-6 md:grid-cols-2" stagger={0.08}>
+      <StaggerInView
+        className={`grid list-none gap-4 ${columns === 1 ? "grid-cols-1" : "grid-cols-1 md:grid-cols-2"}`}
+        stagger={0.08}
+      >
       {list.map((feature) => (
         <StaggerItem key={feature} className="flex items-start gap-3">
           <span className="material-symbols-outlined mt-0.5 text-saldivia-blue">check_circle</span>
