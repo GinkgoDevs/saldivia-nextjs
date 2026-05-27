@@ -152,35 +152,48 @@ export default async function ProductoPage({ params }: Props) {
           </div>
         </section>
 
-        <ProductGalleryCarousel images={gallery} altPrefix={altPrefix} />
-
-        <section className="bg-surface-container-low py-14 sm:py-20 md:py-24">
-          <div className="container mx-auto max-w-5xl px-4 sm:px-6 md:px-8">
-            <FadeUp size="sm">
-              <div className="mb-8 sm:mb-12">
-                <h3 className="mb-2 text-xs font-bold uppercase tracking-[0.3em] text-saldivia-blue sm:mb-4 sm:text-sm">Especificaciones</h3>
-                <h2 className="text-2xl font-black uppercase tracking-tighter text-primary sm:text-3xl md:text-4xl">Ficha resumida</h2>
-                <div className="mt-3 h-1 w-20 bg-saldivia-blue sm:mt-4 sm:w-24" />
+        <section className="bg-surface-container-low py-12 sm:py-16 md:py-20">
+          <div className="container mx-auto max-w-screen-xl px-4 sm:px-6 md:px-8">
+            <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-12 lg:gap-12 xl:gap-14">
+              {/* Galería — columna izquierda */}
+              <div className="lg:col-span-5 xl:col-span-5 lg:sticky lg:top-28">
+                <ProductGalleryCarousel images={gallery} altPrefix={altPrefix} embedded />
               </div>
-            </FadeUp>
-            {sortedSpecs.length > 0 ? (
-              <ProductSpecTable
-                rows={sortedSpecs.map((row) => ({
-                  id: row.id,
-                  spec_key: row.spec_key,
-                  spec_value: row.spec_value,
-                }))}
-              />
-            ) : (
-              <FadeUp>
-                <p className="text-on-surface-variant">
-                  Las especificaciones detalladas se publican desde el panel de administración o consulte con nuestro
-                  equipo.
-                </p>
-              </FadeUp>
-            )}
 
-            <ProductoFeatureList items={generalFeatureTexts} />
+              {/* Ficha técnica — columna derecha */}
+              <div className="min-w-0 lg:col-span-7 xl:col-span-7">
+                <FadeUp size="sm">
+                  <div className="mb-6 sm:mb-8">
+                    <p className="mb-2 text-xs font-bold uppercase tracking-[0.28em] text-saldivia-blue">
+                      Especificaciones
+                    </p>
+                    <h2 className="text-2xl font-black uppercase tracking-tighter text-primary sm:text-3xl md:text-4xl">
+                      Ficha resumida
+                    </h2>
+                    <div className="mt-3 h-1 w-20 bg-saldivia-blue sm:w-24" />
+                  </div>
+                </FadeUp>
+
+                {sortedSpecs.length > 0 ? (
+                  <ProductSpecTable
+                    rows={sortedSpecs.map((row) => ({
+                      id: row.id,
+                      spec_key: row.spec_key,
+                      spec_value: row.spec_value,
+                    }))}
+                  />
+                ) : (
+                  <FadeUp>
+                    <p className="text-on-surface-variant">
+                      Las especificaciones detalladas se publican desde el panel de administración o consulte con
+                      nuestro equipo.
+                    </p>
+                  </FadeUp>
+                )}
+
+                <ProductoFeatureList items={generalFeatureTexts} columns={1} />
+              </div>
+            </div>
           </div>
         </section>
 
