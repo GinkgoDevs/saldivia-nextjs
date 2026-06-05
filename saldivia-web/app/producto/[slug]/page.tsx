@@ -9,7 +9,6 @@ import { getModelBySlug, getActiveModelSlugs } from "@/lib/supabase/model-detail
 import { createStaticClient } from "@/lib/supabase/static-client";
 import { createClient } from "@/lib/supabase/server";
 import { buttonClass } from "@/app/components/ui/Button";
-import type { ModelSegment } from "@/types/model";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -20,13 +19,6 @@ const DEFAULT_GALLERY = [
 
 const DEFAULT_HERO =
   "https://lh3.googleusercontent.com/aida-public/AB6AXuAa81PkDYDCwb4mk_Oa2HLAVwSfDCyhiRdRijLyE5Hdd_JvlS1LxSySncTX8BZktEgIvF-u7qIUADgsgWMN8vjxHp_4m4_3Nbn_bJ2dMUk7NgcaLizLMXBEcGce77x2gDuLaSJ5rOGs9uQKh3WVc7CERcZxjHGtR9ujp0cQ_Y3xdXquEWDcf5fvULA5ttylFrHRQ5gfrUzSXUztJgI3EulsY-Cud__9SXFvDCruOYAzPDcROn1apERN1wpB5pDNc6vXAhcfWGqly7bX";
-
-const SEGMENT_LABEL: Record<ModelSegment, string> = {
-  urbano: "Urbano",
-  interurbano: "Interurbano",
-  interprovincial: "Interprovincial",
-  especiales: "Operaciones especiales",
-};
 
 export const revalidate = 60;
 
@@ -83,7 +75,6 @@ export default async function ProductoPage({ params }: Props) {
   const altPrefix = model.name;
   const hero =
     model.hero_background_image_url ?? model.cover_image_url ?? gallery[0] ?? DEFAULT_HERO;
-  const interiorSrc = gallery[1] ?? gallery[0] ?? DEFAULT_GALLERY[0];
   const sortedSpecs = [...products].sort(
     (a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0) || a.spec_key.localeCompare(b.spec_key),
   );
@@ -143,7 +134,6 @@ export default async function ProductoPage({ params }: Props) {
           <div className="relative z-10 flex flex-col justify-center px-4 sm:px-6 md:px-8 lg:px-10">
             <div className="container mx-auto max-w-7xl">
               <ProductoHeroStagger
-                familyLabel={`${SEGMENT_LABEL[model.segment]} · Saldivia Carrocerías`}
                 name={model.name}
                 description={model.description ?? defaultDesc}
                 pdfUrl={model.pdf_url}
@@ -152,104 +142,103 @@ export default async function ProductoPage({ params }: Props) {
           </div>
         </section>
 
+        <ProductGalleryCarousel images={gallery} altPrefix={altPrefix} showcase />
+
         <section className="bg-surface-container-low py-12 sm:py-16 md:py-20">
           <div className="container mx-auto max-w-screen-xl px-4 sm:px-6 md:px-8">
-            <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-12 lg:gap-12 xl:gap-14">
-              {/* Galería — columna izquierda */}
-              <div className="lg:col-span-5 xl:col-span-5 lg:sticky lg:top-28">
-                <ProductGalleryCarousel images={gallery} altPrefix={altPrefix} embedded />
+            <FadeUp size="sm">
+              <div className="mb-8 sm:mb-10">
+                <p className="ui-section-eyebrow mb-2 text-saldivia-blue">Especificaciones</p>
+                <h2 className="ui-section-title text-primary">Ficha resumida</h2>
+                <div className="mt-4 h-1 w-20 bg-saldivia-blue sm:w-24" />
               </div>
+            </FadeUp>
 
-              {/* Ficha técnica — columna derecha */}
-              <div className="min-w-0 lg:col-span-7 xl:col-span-7">
-                <FadeUp size="sm">
-                  <div className="mb-6 sm:mb-8">
-                    <p className="mb-2 text-xs font-bold uppercase tracking-[0.28em] text-saldivia-blue">
-                      Especificaciones
-                    </p>
-                    <h2 className="text-2xl font-black uppercase tracking-tighter text-primary sm:text-3xl md:text-4xl">
-                      Ficha resumida
-                    </h2>
-                    <div className="mt-3 h-1 w-20 bg-saldivia-blue sm:w-24" />
-                  </div>
-                </FadeUp>
+            {sortedSpecs.length > 0 ? (
+              <ProductSpecTable
+                rows={sortedSpecs.map((row) => ({
+                  id: row.id,
+                  spec_key: row.spec_key,
+                  spec_value: row.spec_value,
+                }))}
+              />
+            ) : (
+              <FadeUp>
+                <p className="text-base text-on-surface-variant md:text-lg">
+                  Las especificaciones detalladas se publican desde el panel de administración o consulte con
+                  nuestro equipo.
+                </p>
+              </FadeUp>
+            )}
 
-                {sortedSpecs.length > 0 ? (
-                  <ProductSpecTable
-                    rows={sortedSpecs.map((row) => ({
-                      id: row.id,
-                      spec_key: row.spec_key,
-                      spec_value: row.spec_value,
-                    }))}
-                  />
-                ) : (
-                  <FadeUp>
-                    <p className="text-on-surface-variant">
-                      Las especificaciones detalladas se publican desde el panel de administración o consulte con
-                      nuestro equipo.
-                    </p>
-                  </FadeUp>
-                )}
-
-                <ProductoFeatureList items={generalFeatureTexts} columns={1} />
-              </div>
-            </div>
+            <ProductoFeatureList items={generalFeatureTexts} columns={1} />
           </div>
         </section>
 
-        <section className="relative flex min-h-[420px] items-center overflow-hidden bg-primary py-12 sm:min-h-[480px] sm:py-0 md:min-h-[500px] md:py-14 lg:h-auto lg:min-h-[500px] lg:py-16 xl:py-20">
-          <div className="absolute inset-0">
-            <img alt="" className="h-full w-full object-cover" src={interiorSrc} />
-            <div className="absolute inset-0 bg-primary/60 backdrop-blur-sm" />
-          </div>
+        <section
+          className="relative overflow-hidden bg-primary py-16 md:py-20 lg:py-24"
+          aria-labelledby="producto-cta-heading"
+        >
+          <div
+            className="pointer-events-none absolute inset-0 bg-gradient-to-br from-[#0d2c4f] via-[#081b31] to-[#020817]"
+            aria-hidden
+          />
+          <div
+            className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_18%_40%,rgba(32,149,212,0.22)_0%,transparent_52%)]"
+            aria-hidden
+          />
+          <div
+            className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_88%_72%,rgba(56,189,248,0.12)_0%,transparent_48%)]"
+            aria-hidden
+          />
+          <svg className="pointer-events-none absolute inset-0 h-full w-full opacity-[0.14]" aria-hidden>
+            <defs>
+              <pattern id="productoCtaCircuit" width="72" height="72" patternUnits="userSpaceOnUse">
+                <path
+                  d="M36 8v56M8 36h56M52 52L20 20M52 20L20 52"
+                  fill="none"
+                  stroke="#38bdf8"
+                  strokeWidth="0.45"
+                />
+                <circle cx="36" cy="36" r="1" fill="#38bdf8" />
+              </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#productoCtaCircuit)" />
+          </svg>
+          <div
+            className="pointer-events-none absolute -right-24 top-1/2 h-[min(420px,70vw)] w-[min(420px,70vw)] -translate-y-1/2 rounded-full border border-cyan-400/15"
+            aria-hidden
+          />
+          <div
+            className="pointer-events-none absolute -left-16 bottom-0 h-48 w-48 border-l-2 border-t-2 border-accent-blue/25"
+            aria-hidden
+          />
+
           <div className="container relative z-10 mx-auto px-4 sm:px-6 md:px-8">
             <FadeUp size="sm">
-              <div className="grid gap-8 md:grid-cols-2 md:items-stretch md:gap-8 lg:gap-10 xl:gap-12">
-                <div className="glass-panel rounded-curve-lg border border-white/10 bg-white/5 p-6 sm:p-10 md:p-12">
-                  <h5 className="mb-4 text-2xl font-black uppercase text-white sm:mb-6 sm:text-3xl md:text-4xl">
-                    Diseño y confort a medida
-                  </h5>
-                  <p className="mb-6 text-sm text-on-primary-container sm:mb-8 sm:text-base">
-                    Interior y acabados que refuerzan su marca de transporte. Coordinamos ingeniería, homologación y
-                    acompañamiento de postventa.
-                  </p>
-                  <div className="space-y-3 sm:space-y-4">
-                    <div className="flex items-start gap-3 sm:items-center sm:gap-4">
-                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded bg-saldivia-blue sm:h-10 sm:w-10">
-                        <span className="material-symbols-outlined text-base text-white sm:text-[22px]">
-                          airline_seat_recline_extra
-                        </span>
-                      </div>
-                      <span className="text-sm font-medium text-white sm:text-base">
-                        Asientos y layout según reglamentación y servicio
-                      </span>
-                    </div>
-                    <div className="flex items-start gap-3 sm:items-center sm:gap-4">
-                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded bg-saldivia-blue sm:h-10 sm:w-10">
-                        <span className="material-symbols-outlined text-base text-white sm:text-[22px]">ac_unit</span>
-                      </div>
-                      <span className="text-sm font-medium text-white sm:text-base">
-                        Climatización y confort de marcha
-                      </span>
-                    </div>
-                  </div>
-                </div>
-                <div className="flex flex-col rounded-curve-lg border border-white/50 bg-white/90 p-6 shadow-elev-1 backdrop-blur-md sm:p-10 md:p-12">
-                  <h3 className="mb-3 text-xs font-bold uppercase tracking-[0.3em] text-saldivia-blue sm:mb-4 sm:text-sm">
-                    Saldivia Precision
-                  </h3>
-                  <h2 className="mb-4 text-2xl font-black uppercase tracking-tighter text-primary sm:mb-5 sm:text-3xl md:text-4xl">
-                    Configuración y asesoramiento
-                  </h2>
-                  <div className="mb-5 h-1 w-20 bg-saldivia-blue sm:mb-6 sm:w-24" />
-                  <p className="mb-8 flex-1 text-sm text-on-surface-variant sm:text-base">
-                    Cada unidad se puede dimensionar con orientación comercial y técnica. Solicitá variantes, equipamiento y
-                    documentación bajo unidades de su flota.
-                  </p>
-                  <Link href="/trabaja-con-nosotros" className={buttonClass({ variant: "primary", size: "md", className: "self-start" })}>
-                    Contacto comercial
-                  </Link>
-                </div>
+              <div className="mx-auto flex max-w-2xl flex-col rounded-curve-lg border border-white/15 bg-white p-8 shadow-[0px_32px_80px_rgba(0,0,0,0.35)] sm:p-10 md:p-12">
+                <p className="ui-section-eyebrow mb-3 text-saldivia-blue">Saldivia Precision</p>
+                <h2
+                  id="producto-cta-heading"
+                  className="ui-section-title mb-4 text-primary sm:mb-5"
+                >
+                  Configuración y asesoramiento
+                </h2>
+                <div className="technical-gradient mb-6 h-1 w-24" />
+                <p className="mb-8 text-base leading-relaxed text-on-surface-variant md:text-lg">
+                  Cada unidad se puede dimensionar con orientación comercial y técnica. Solicitá variantes,
+                  equipamiento y documentación bajo unidades de su flota.
+                </p>
+                <Link
+                  href="/trabaja-con-nosotros"
+                  className={buttonClass({
+                    variant: "primary",
+                    size: "lg",
+                    className: "self-start rounded-curve-md px-8",
+                  })}
+                >
+                  Contacto comercial
+                </Link>
               </div>
             </FadeUp>
           </div>

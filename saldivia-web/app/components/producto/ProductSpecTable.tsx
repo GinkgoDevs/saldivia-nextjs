@@ -28,7 +28,7 @@ export function ProductSpecTable({ rows }: { rows: Row[] }) {
           <tbody>
             {rows.map((row) => (
               <tr key={row.id} className="border-b border-outline-variant/20 last:border-0">
-                <th className="w-[40%] max-w-[11rem] bg-surface-container-low/80 px-3 py-3 font-headline text-[11px] font-bold uppercase leading-snug tracking-wider text-primary sm:w-auto sm:max-w-none sm:px-6 sm:py-4 sm:text-xs md:whitespace-nowrap">
+                <th className="w-[40%] max-w-[11rem] bg-surface-container-low/80 px-3 py-3 font-headline text-sm font-bold uppercase leading-snug tracking-wider text-primary sm:w-auto sm:max-w-none sm:px-6 sm:py-4 md:whitespace-nowrap">
                   {row.spec_key}
                 </th>
                 <td className="px-3 py-3 text-sm font-medium leading-snug text-on-surface-variant sm:px-6 sm:py-4 sm:text-sm">
@@ -47,7 +47,7 @@ export function ProductSpecTable({ rows }: { rows: Row[] }) {
         <motion.tbody initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.15 }} variants={bodyV}>
           {rows.map((row) => (
             <motion.tr key={row.id} className="border-b border-outline-variant/20 last:border-0" variants={rowV}>
-              <th className="w-[40%] max-w-[11rem] bg-surface-container-low/80 px-3 py-3 font-headline text-[11px] font-bold uppercase leading-snug tracking-wider text-primary sm:w-auto sm:max-w-none sm:px-6 sm:py-4 sm:text-xs md:whitespace-nowrap">
+              <th className="w-[40%] max-w-[11rem] bg-surface-container-low/80 px-3 py-3 font-headline text-sm font-bold uppercase leading-snug tracking-wider text-primary sm:w-auto sm:max-w-none sm:px-6 sm:py-4 md:whitespace-nowrap">
                 {row.spec_key}
               </th>
               <td className="px-3 py-3 text-sm font-medium leading-snug text-on-surface-variant sm:px-6 sm:py-4 sm:text-sm">

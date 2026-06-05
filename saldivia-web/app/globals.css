@@ -15,8 +15,8 @@
 }
 
 html {
-  /* Densidad visual cercana al 80% de zoom del navegador, con zoom del navegador al 100% */
-  zoom: 0.8;
+  /* Densidad visual: 0.9 mejora legibilidad sin romper layouts (antes 0.8 ≈ -20% tipografía) */
+  zoom: 0.9;
 }
 
 html.dark {
@@ -37,15 +37,24 @@ body {
 
 @layer utilities {
   .ui-section-eyebrow {
-    @apply mb-3 block font-headline text-xs font-bold uppercase tracking-[0.26em] text-secondary;
+    @apply mb-3 block font-headline text-sm font-bold uppercase tracking-[0.22em] text-secondary;
   }
 
   .ui-section-title {
-    @apply font-headline text-3xl font-black uppercase tracking-tighter text-primary md:text-5xl;
+    @apply font-headline text-3xl font-black uppercase tracking-tighter text-primary md:text-5xl lg:text-6xl;
   }
 
   .ui-section-intro {
-    @apply mt-6 max-w-2xl font-headline text-sm leading-relaxed text-on-surface-variant md:text-base;
+    @apply mt-6 max-w-2xl font-headline text-base leading-relaxed text-on-surface-variant md:text-lg md:leading-relaxed;
+  }
+
+  /* Etiquetas en mayúsculas (stats, badges, mapa) — mínimo ~12px, preferir 14px en desktop */
+  .ui-caption-caps {
+    @apply font-headline text-xs font-bold uppercase tracking-[0.18em] sm:text-sm sm:tracking-[0.16em];
+  }
+
+  .ui-badge-caps {
+    @apply font-headline text-xs font-black uppercase tracking-[0.14em] sm:text-sm;
   }
 
   .ui-surface-card {
@@ -253,10 +262,10 @@ body {
     background: linear-gradient(135deg, #0d2c4f 0%, #001732 100%);
   }
   .hero-gradient-home {
-    background: linear-gradient(to right, rgba(8, 27, 49, 0.38) 0%, rgba(8, 27, 49, 0.18) 45%, rgba(8, 27, 49, 0) 100%);
+    background: linear-gradient(to right, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.22) 45%, rgba(0, 0, 0, 0) 100%);
   }
   .hero-overlay-home {
-    background: radial-gradient(circle at 20% 50%, rgba(8, 27, 49, 0.12) 0%, rgba(13, 44, 79, 0.02) 100%);
+    background: radial-gradient(circle at 20% 50%, rgba(0, 0, 0, 0.18) 0%, rgba(0, 0, 0, 0.02) 100%);
   }
   .hide-scrollbar::-webkit-scrollbar { display: none; }
   .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }

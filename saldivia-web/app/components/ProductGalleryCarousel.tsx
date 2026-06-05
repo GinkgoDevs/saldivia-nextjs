@@ -12,6 +12,8 @@ type Props = {
   altPrefix?: string;
   /** Sin section/container propio: para layout de dos columnas en ficha de producto */
   embedded?: boolean;
+  /** Banda a ancho completo bajo el hero (ficha de producto) */
+  showcase?: boolean;
 };
 
 const GALLERY_BG = "#EAEAEA";
@@ -50,6 +52,10 @@ function GalleryStage({
   autoPlayProgress,
   stageClass,
   fillMode,
+  imageClassName,
+  imageSizes,
+  stageBackground,
+  showcase,
 }: {
   list: string[];
   index: number;
@@ -65,6 +71,10 @@ function GalleryStage({
   autoPlayProgress: boolean;
   stageClass: string;
   fillMode: "contain" | "cover";
+  imageClassName: string;
+  imageSizes: string;
+  stageBackground?: string;
+  showcase?: boolean;
 }) {
   const variants = embedded || reduce ? fadeVariants : slideVariants;
   const transition = embedded || reduce
@@ -77,7 +87,7 @@ function GalleryStage({
   return (
     <div
       className={`relative ${stageClass}`}
-      style={{ backgroundColor: embedded ? undefined : GALLERY_BG }}
+      style={{ backgroundColor: stageBackground }}
     >
       <AnimatePresence initial={false} custom={direction} mode="wait">
         <motion.div
@@ -94,8 +104,8 @@ function GalleryStage({
             src={list[index]}
             alt={`${altPrefix} — imagen ${index + 1} de ${n}`}
             fill
-            className={fillMode === "contain" ? "object-contain p-3" : "object-cover"}
-            sizes={embedded ? "(max-width: 1024px) 100vw, 40vw" : "100vw"}
+            className={imageClassName}
+            sizes={imageSizes}
             priority={index === 0}
             draggable={false}
           />
@@ -135,15 +145,23 @@ function GalleryStage({
           <button
             type="button"
             onClick={onPrev}
-            className="absolute left-3 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border border-white/20 bg-primary/75 text-white shadow-md backdrop-blur-sm transition-colors hover:bg-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-saldivia-blue md:left-4"
+            className={`absolute top-1/2 z-10 flex -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border border-white/20 bg-primary/75 text-white shadow-md backdrop-blur-sm transition-colors hover:bg-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-saldivia-blue ${
+              showcase
+                ? "left-2 h-12 w-12 sm:left-4 md:left-6 md:h-14 md:w-14"
+                : "left-3 h-11 w-11 md:left-4"
+            }`}
             aria-label="Imagen anterior"
           >
-            <span className="material-symbols-outlined text-2xl text-white">chevron_left</span>
+            <span className="material-symbols-outlined text-2xl text-white md:text-3xl">chevron_left</span>
           </button>
           <button
             type="button"
             onClick={onNext}
-            className="absolute right-3 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border border-white/20 bg-primary/75 text-white shadow-md backdrop-blur-sm transition-colors hover:bg-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-saldivia-blue md:right-4"
+            className={`absolute top-1/2 z-10 flex -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border border-white/20 bg-primary/75 text-white shadow-md backdrop-blur-sm transition-colors hover:bg-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-saldivia-blue ${
+              showcase
+                ? "right-2 h-12 w-12 sm:right-4 md:right-6 md:h-14 md:w-14"
+                : "right-3 h-11 w-11 md:right-4"
+            }`}
             aria-label="Imagen siguiente"
           >
             <span className="material-symbols-outlined text-2xl text-white">chevron_right</span>
@@ -159,11 +177,13 @@ function ThumbnailRail({
   index,
   onSelect,
   altPrefix,
+  showcase = false,
 }: {
   list: string[];
   index: number;
   onSelect: (i: number) => void;
   altPrefix: string;
+  showcase?: boolean;
 }) {
   const railRef = useRef<HTMLDivElement>(null);
   const thumbRefs = useRef<(HTMLButtonElement | null)[]>([]);
@@ -176,7 +196,9 @@ function ThumbnailRail({
   return (
     <div
       ref={railRef}
-      className="mt-3 flex gap-2 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+      className={`flex gap-2 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden ${
+        showcase ? "mt-0 justify-start sm:justify-center" : "mt-3"
+      }`}
       role="tablist"
       aria-label="Miniaturas de la galería"
     >
@@ -193,7 +215,11 @@ function ThumbnailRail({
             aria-selected={active}
             aria-label={`${altPrefix} — miniatura ${i + 1}`}
             onClick={() => onSelect(i)}
-            className={`relative h-[4.5rem] w-[5.5rem] shrink-0 cursor-pointer snap-center overflow-hidden rounded-curve-sm border-2 bg-white transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-saldivia-blue focus-visible:ring-offset-2 ${
+            className={`relative shrink-0 cursor-pointer snap-center overflow-hidden rounded-curve-sm border-2 bg-white transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-saldivia-blue focus-visible:ring-offset-2 ${
+              showcase
+                ? "h-16 w-20 sm:h-[4.5rem] sm:w-24 md:h-20 md:w-28"
+                : "h-[4.5rem] w-[5.5rem]"
+            } ${
               active
                 ? "border-saldivia-blue shadow-elev-1 ring-1 ring-saldivia-blue/30"
                 : "border-outline-variant/25 opacity-75 hover:border-saldivia-blue/50 hover:opacity-100"
@@ -357,6 +383,7 @@ export default function ProductGalleryCarousel({
   images,
   altPrefix = "Galería",
   embedded = false,
+  showcase = false,
 }: Props) {
   const reduce = useReducedMotion();
   const list = [...images];
@@ -382,7 +409,7 @@ export default function ProductGalleryCarousel({
   const prev = useCallback(() => go(index - 1, -1), [go, index]);
   const next = useCallback(() => go(index + 1, 1), [go, index]);
 
-  const autoPlayEnabled = !embedded && !lightboxOpen && n > 1;
+  const autoPlayEnabled = (showcase || !embedded) && !lightboxOpen && n > 1;
 
   useEffect(() => {
     if (!autoPlayEnabled || paused) return;
@@ -420,11 +447,21 @@ export default function ProductGalleryCarousel({
 
   if (n === 0) return null;
 
-  const stageClass = embedded
-    ? "aspect-[4/3] w-full overflow-hidden rounded-curve-md border border-outline-variant/25 bg-white shadow-elev-1 sm:aspect-[3/4] lg:aspect-[4/5]"
-    : "aspect-[4/3] w-full overflow-hidden rounded-sm sm:aspect-video md:aspect-[21/9] md:rounded-md";
+  const stageClass = showcase
+    ? "h-[min(70vh,820px)] min-h-[420px] w-full max-w-none overflow-hidden sm:h-[min(74vh,880px)] md:h-[min(78vh,920px)]"
+    : embedded
+      ? "aspect-[4/3] w-full overflow-hidden rounded-curve-md border border-outline-variant/25 bg-white shadow-elev-1 sm:aspect-[3/4] lg:aspect-[4/5]"
+      : "aspect-[4/3] w-full overflow-hidden rounded-sm sm:aspect-video md:aspect-[21/9] md:rounded-md";
 
-  const fillMode = embedded ? "contain" : "cover";
+  const fillMode = embedded || showcase ? "contain" : "cover";
+  const imageClassName =
+    fillMode === "cover"
+      ? "object-cover"
+      : showcase
+        ? "object-contain object-center p-0 scale-[1.14] sm:scale-[1.18] md:scale-[1.22]"
+        : "object-contain p-3";
+  const imageSizes = embedded ? "(max-width: 1024px) 100vw, 40vw" : "100vw";
+  const stageBackground = embedded ? undefined : showcase ? "#ffffff" : GALLERY_BG;
   const showControls = n > 1;
   const autoPlayProgress = autoPlayEnabled && !paused;
 
@@ -457,18 +494,31 @@ export default function ProductGalleryCarousel({
         autoPlayProgress={autoPlayProgress}
         stageClass={stageClass}
         fillMode={fillMode}
+        imageClassName={imageClassName}
+        imageSizes={imageSizes}
+        stageBackground={stageBackground}
+        showcase={showcase}
       />
 
       {showControls && (
-        <ThumbnailRail
-          list={list}
-          index={index}
-          altPrefix={altPrefix}
-          onSelect={(i) => go(i, i > index ? 1 : -1)}
-        />
+        <div
+          className={
+            showcase
+              ? "w-full border-t border-outline-variant/15 bg-[#f0f1f3] px-2 py-4 sm:px-4 md:py-5"
+              : undefined
+          }
+        >
+          <ThumbnailRail
+            list={list}
+            index={index}
+            altPrefix={altPrefix}
+            showcase={showcase}
+            onSelect={(i) => go(i, i > index ? 1 : -1)}
+          />
+        </div>
       )}
 
-      {!embedded && showControls && (
+      {!embedded && !showcase && showControls && (
         <div className="mt-4 flex justify-center gap-2" role="presentation" aria-hidden>
           {list.map((_, i) => (
             <span
@@ -482,6 +532,30 @@ export default function ProductGalleryCarousel({
       )}
     </motion.div>
   );
+
+  if (showcase) {
+    return (
+      <>
+        <section className="w-full max-w-none bg-white" aria-label={`Galería ${altPrefix}`}>
+          {carousel}
+        </section>
+        {mounted && lightboxOpen && (
+          <Lightbox
+            list={list}
+            index={index}
+            direction={direction}
+            altPrefix={altPrefix}
+            n={n}
+            reduce={!!reduce}
+            onClose={() => setLightboxOpen(false)}
+            onPrev={prev}
+            onNext={next}
+            onGo={(i) => go(i, i > index ? 1 : -1)}
+          />
+        )}
+      </>
+    );
+  }
 
   return (
     <>

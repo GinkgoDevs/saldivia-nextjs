@@ -49,7 +49,7 @@ function ModelCardInner({
         />
 
         <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-primary/95 via-primary/45 to-transparent px-5 pb-4 pt-20 transition-all duration-500 group-hover:translate-y-4 group-hover:opacity-0">
-          <p className="font-headline text-[10px] font-bold uppercase tracking-[0.2em] text-secondary-container">
+          <p className="ui-caption-caps text-secondary-container">
             {model.name}
           </p>
         </div>
@@ -80,7 +80,7 @@ function ModelCardInner({
             <p className="mt-4 font-headline text-sm font-medium leading-relaxed text-white/90 md:text-[0.95rem]">
               {model.description ?? ""}
             </p>
-            <div className="mx-auto mt-6 flex items-center justify-center gap-2 font-headline text-[11px] font-bold uppercase tracking-[0.2em] text-accent-blue">
+            <div className="ui-caption-caps mx-auto mt-6 flex items-center justify-center gap-2 text-accent-blue">
               <span className="h-px w-6 bg-accent-blue/80" />
               Ver modelo
               <span className="material-symbols-outlined text-base transition-transform duration-300 group-hover:translate-x-1">

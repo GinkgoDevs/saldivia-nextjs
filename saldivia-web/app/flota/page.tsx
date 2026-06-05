@@ -42,7 +42,7 @@ export default async function FlotaPage() {
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-black/40 to-transparent" />
           <div className="relative z-10 mx-auto w-full max-w-screen-2xl px-4 sm:px-6 md:px-8">
             <HeroStagger>
-              <span className="mb-4 block font-headline text-xs font-bold uppercase tracking-[0.3em] text-secondary-container">
+              <span className="ui-section-eyebrow mb-4 block text-secondary-container">
                 Catálogo de productos
               </span>
               <h1 className="max-w-4xl font-headline text-3xl font-black uppercase leading-[0.95] tracking-tighter text-white sm:text-4xl md:text-6xl lg:text-7xl">

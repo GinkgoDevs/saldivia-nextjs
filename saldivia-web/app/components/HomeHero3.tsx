@@ -84,7 +84,7 @@ export default function HomeHero3({ fullHeight = false }: { fullHeight?: boolean
   return (
     <section
       id="saldivia-home-hero"
-      className="relative overflow-hidden bg-primary"
+      className="relative overflow-hidden bg-slate-950"
       style={{ height: fullHeight ? "125dvh" : "93.75dvh" }}
       aria-labelledby="home-hero-heading"
     >
@@ -114,26 +114,11 @@ export default function HomeHero3({ fullHeight = false }: { fullHeight?: boolean
         </div>
       ))}
 
-      {/* ── Fixed overlays ────────────────────────────── */}
-      <div className="pointer-events-none absolute inset-0 z-[1] hero-gradient-home" />
-      <div className="pointer-events-none absolute inset-0 z-[1] hero-overlay-home" />
-
-      <div
-        aria-hidden
-        className="absolute inset-x-0 bottom-0 z-[1] h-[52%] bg-gradient-to-t from-primary/70 via-primary/55 to-transparent lg:hidden"
-      />
-
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-y-0 right-0 z-[1] hidden w-[min(560px,52vw)] bg-primary/75 lg:block"
-        style={{ clipPath: "polygon(26% 0, 100% 0, 100% 100%, 0% 100%)" }}
-      />
-
       {/* ── Content area ──────────────────────────────── */}
       <div className="relative z-10 flex h-full flex-col justify-end pb-24 pt-28 md:justify-center md:pb-20 md:pt-32 lg:pb-24 lg:pt-28">
         <div className="container relative mx-auto px-4 md:px-6">
           <div className="pointer-events-none absolute left-2 top-0 hidden md:block">
-            <div className="h-10 w-10 border-l-2 border-t-2 border-accent-blue/80" />
+            <div className="h-10 w-10 border-l-2 border-t-2 border-white/35" />
           </div>
 
           {/* CSS grid stack — all slides share the same cell */}
@@ -150,8 +135,8 @@ export default function HomeHero3({ fullHeight = false }: { fullHeight?: boolean
                 }}
                 aria-hidden={i !== active}
               >
-                <p className="mb-4 inline-flex items-center gap-3 font-headline text-xs font-black uppercase tracking-[0.3em] text-accent-blue">
-                  <span className="h-px w-10 bg-accent-blue" aria-hidden />
+                <p className="mb-4 inline-flex items-center gap-3 font-headline text-sm font-black uppercase tracking-[0.28em] text-white/65 md:text-base">
+                  <span className="h-px w-10 bg-white/45" aria-hidden />
                   {slide.eyebrow}
                 </p>
 
@@ -161,7 +146,7 @@ export default function HomeHero3({ fullHeight = false }: { fullHeight?: boolean
                 >
                   {slide.title}
                   <br />
-                  <span className="text-accent-blue">{slide.highlight}</span>
+                  <span className="text-white/90">{slide.highlight}</span>
                 </h1>
 
                 <p className="mt-6 max-w-xl font-headline text-base font-medium leading-relaxed text-slate-200 md:mt-8 md:max-w-2xl md:text-lg md:leading-relaxed lg:text-xl lg:font-light">
@@ -171,7 +156,7 @@ export default function HomeHero3({ fullHeight = false }: { fullHeight?: boolean
                 <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center sm:gap-5 md:mt-10">
                   <Link
                     href={slide.primary.href}
-                    className="inline-flex min-h-[48px] cursor-pointer items-center justify-center rounded-sm bg-accent-blue px-8 py-4 font-headline text-sm font-black uppercase tracking-widest text-white shadow-xl transition-colors duration-200 hover:bg-accent-blue-alt focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-primary md:px-10 md:py-5"
+                    className="inline-flex min-h-[48px] cursor-pointer items-center justify-center rounded-sm bg-white px-8 py-4 font-headline text-sm font-black uppercase tracking-widest text-slate-900 shadow-xl transition-colors duration-200 hover:bg-white/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 md:px-10 md:py-5"
                   >
                     {slide.primary.label}
                     <span className="material-symbols-outlined ml-2 text-xl" aria-hidden>
@@ -180,7 +165,7 @@ export default function HomeHero3({ fullHeight = false }: { fullHeight?: boolean
                   </Link>
                   <Link
                     href={slide.secondary.href}
-                    className="inline-flex min-h-[48px] cursor-pointer items-center justify-center rounded-sm border border-white/25 bg-white/5 px-8 py-4 font-headline text-sm font-black uppercase tracking-widest text-white backdrop-blur-md transition-colors duration-200 hover:border-white/40 hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue focus-visible:ring-offset-2 focus-visible:ring-offset-primary md:px-10 md:py-5"
+                    className="inline-flex min-h-[48px] cursor-pointer items-center justify-center rounded-sm border border-white/25 bg-white/5 px-8 py-4 font-headline text-sm font-black uppercase tracking-widest text-white backdrop-blur-md transition-colors duration-200 hover:border-white/40 hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 md:px-10 md:py-5"
                   >
                     {slide.secondary.label}
                   </Link>
@@ -199,9 +184,9 @@ export default function HomeHero3({ fullHeight = false }: { fullHeight?: boolean
             key={slide.id}
             onClick={() => handleDotClick(i)}
             aria-label={`Ir al slide ${i + 1}`}
-            className={`h-[3px] rounded-full transition-all duration-500 ease-in-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue focus-visible:ring-offset-2 focus-visible:ring-offset-primary ${
+            className={`h-[3px] rounded-full transition-all duration-500 ease-in-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 ${
               i === active
-                ? "w-9 bg-accent-blue"
+                ? "w-9 bg-white"
                 : "w-[9px] bg-white/35 hover:bg-white/60"
             }`}
           />

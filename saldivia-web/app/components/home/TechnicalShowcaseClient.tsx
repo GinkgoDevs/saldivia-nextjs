@@ -69,13 +69,13 @@ export function TechnicalShowcaseClient({ slides }: { slides: ResolvedHomeShowca
         <div>
           <motion.p
             variants={reduce ? {} : itemY}
-            className="mb-1 text-[11px] font-bold uppercase tracking-[0.4em] text-accent-blue"
+            className="ui-caption-caps mb-1 text-accent-blue"
           >
             Ingeniería en Movimiento
           </motion.p>
           <motion.h2
             variants={reduce ? {} : itemY}
-            className="font-headline text-4xl font-extrabold tracking-tight md:text-5xl"
+            className="font-headline text-4xl font-extrabold tracking-tight md:text-5xl lg:text-6xl"
           >
             SHOWCASE TÉCNICO
           </motion.h2>
@@ -162,7 +162,7 @@ export function TechnicalShowcaseClient({ slides }: { slides: ResolvedHomeShowca
               variants={reduce ? {} : itemYDelayed}
               initial="hidden"
               animate={animState}
-              className="mb-4 inline-block rounded border border-white/10 bg-white/8 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-slate-400"
+              className="mb-4 inline-block rounded border border-white/10 bg-white/8 px-3 py-1 text-sm font-bold uppercase tracking-widest text-slate-400"
             >
               {slide.eyebrow}
             </motion.span>
@@ -193,7 +193,7 @@ export function TechnicalShowcaseClient({ slides }: { slides: ResolvedHomeShowca
               <div className="mb-8 divide-y divide-white/[0.07]">
                 {slide.specRows.map((row) => (
                   <div key={row.key} className="flex items-center justify-between py-3">
-                    <span className="text-[11px] font-bold uppercase tracking-widest text-slate-500">
+                    <span className="text-sm font-bold uppercase tracking-widest text-slate-500">
                       {row.key}
                     </span>
                     <span className="text-sm font-semibold text-white/90">{row.value}</span>
@@ -213,7 +213,7 @@ export function TechnicalShowcaseClient({ slides }: { slides: ResolvedHomeShowca
                     <div className="text-2xl font-extrabold leading-none text-accent-blue">
                       {m.value}
                     </div>
-                    <div className="mt-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-slate-500">
+                    <div className="mt-1.5 text-sm font-bold uppercase tracking-[0.12em] text-slate-500">
                       {m.label}
                     </div>
                   </div>
