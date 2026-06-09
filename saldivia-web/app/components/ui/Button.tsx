@@ -35,7 +35,7 @@ const VARIANT_CLASS: Record<ButtonVariant, string> = {
 };
 
 const SIZE_CLASS: Record<ButtonSize, string> = {
-  sm: "min-h-[44px] px-4 py-2 text-xs font-bold uppercase tracking-[0.14em]",
+  sm: "min-h-[44px] px-4 py-2 text-sm font-bold uppercase tracking-[0.12em]",
   md: "min-h-[44px] px-5 py-2.5 text-sm font-bold uppercase tracking-[0.12em]",
   lg: "min-h-[48px] px-8 py-3.5 text-sm font-black uppercase tracking-[0.16em]",
 };

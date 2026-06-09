@@ -60,7 +60,7 @@ export function PostventaSoporteForm({ modelOptions }: Props) {
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         <div>
           <label
-            className="mb-2 block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant"
+            className="mb-2 block text-sm font-bold uppercase tracking-widest text-on-surface-variant"
             htmlFor="postventa_company"
           >
             Empresa <span className="text-secondary">*</span>
@@ -77,7 +77,7 @@ export function PostventaSoporteForm({ modelOptions }: Props) {
         </div>
         <div>
           <label
-            className="mb-2 block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant"
+            className="mb-2 block text-sm font-bold uppercase tracking-widest text-on-surface-variant"
             htmlFor="postventa_model"
           >
             Modelo del bus
@@ -101,7 +101,7 @@ export function PostventaSoporteForm({ modelOptions }: Props) {
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         <div>
           <label
-            className="mb-2 block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant"
+            className="mb-2 block text-sm font-bold uppercase tracking-widest text-on-surface-variant"
             htmlFor="postventa_vin"
           >
             Número de chasis (VIN) <span className="text-secondary">*</span>
@@ -118,7 +118,7 @@ export function PostventaSoporteForm({ modelOptions }: Props) {
         </div>
         <div>
           <label
-            className="mb-2 block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant"
+            className="mb-2 block text-sm font-bold uppercase tracking-widest text-on-surface-variant"
             htmlFor="postventa_contact_name"
           >
             Nombre de contacto
@@ -137,7 +137,7 @@ export function PostventaSoporteForm({ modelOptions }: Props) {
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         <div>
           <label
-            className="mb-2 block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant"
+            className="mb-2 block text-sm font-bold uppercase tracking-widest text-on-surface-variant"
             htmlFor="postventa_email"
           >
             Email
@@ -153,7 +153,7 @@ export function PostventaSoporteForm({ modelOptions }: Props) {
         </div>
         <div>
           <label
-            className="mb-2 block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant"
+            className="mb-2 block text-sm font-bold uppercase tracking-widest text-on-surface-variant"
             htmlFor="postventa_phone"
           >
             Teléfono
@@ -171,7 +171,7 @@ export function PostventaSoporteForm({ modelOptions }: Props) {
 
       <div>
         <label
-          className="mb-2 block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant"
+          className="mb-2 block text-sm font-bold uppercase tracking-widest text-on-surface-variant"
           htmlFor="postventa_description"
         >
           Descripción del requerimiento <span className="text-secondary">*</span>

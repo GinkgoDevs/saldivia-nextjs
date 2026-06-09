@@ -12,7 +12,7 @@ export const footerLegalLinks = [
   { label: "Privacidad", href: "/privacidad" },
   { label: "Términos", href: "/terminos" },
   { label: "Soporte", href: "/postventa" },
-  { label: "Distribuidores", href: "/trabaja-con-nosotros" },
+  { label: "Distribuidores", href: "/contacto" },
 ] as const;
 
 export function getSocialInstagramHref(): string {

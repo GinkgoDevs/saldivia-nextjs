@@ -19,7 +19,7 @@ export default function NosotrosPage() {
             <HeroStagger>
               <div className="mb-8 flex items-center gap-4">
                 <span className="h-px w-14 bg-secondary-container" />
-                <span className="text-xs font-bold uppercase tracking-[0.45em] text-secondary-container">
+                <span className="text-sm font-bold uppercase tracking-[0.35em] text-secondary-container md:text-base">
                   Nuestra Trayectoria
                 </span>
               </div>

@@ -42,13 +42,13 @@ export default function HomePage() {
           <MotionReveal>
             <section className="relative py-20">
               <div className="container relative mx-auto px-4 md:px-6 text-center">
-                <p className="mb-3 font-headline text-xs font-bold uppercase tracking-[0.24em] text-secondary dark:text-secondary-container">
+                <p className="ui-section-eyebrow mb-3 text-secondary dark:text-secondary-container">
                   Atención comercial personalizada
                 </p>
-                <h2 className="font-headline text-3xl md:text-5xl font-bold text-primary dark:text-white mb-8">
+                <h2 className="ui-section-title mb-8 text-primary dark:text-white">
                   ¿Estás listo para renovar tu flota?
                 </h2>
-                <p className="mx-auto mb-8 max-w-2xl font-headline text-sm leading-relaxed text-on-surface-variant dark:text-slate-300 md:text-base">
+                <p className="ui-section-intro mx-auto mb-8 max-w-2xl dark:text-slate-300">
                   Te acompañamos desde la configuración inicial hasta la entrega de la unidad, con tiempos de fabricación líderes y soporte postventa dedicado.
                 </p>
                 <Link

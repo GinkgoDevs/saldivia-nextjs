@@ -75,20 +75,26 @@ function CountCell({
         {display.toLocaleString("es-AR")}
         {suffix}
       </div>
-      <div className="text-xs font-bold uppercase tracking-widest text-on-surface-variant dark:text-slate-400">
+      <div className="ui-caption-caps text-on-surface-variant dark:text-slate-400">
         {label}
       </div>
     </motion.div>
   );
 }
 
-function IsoCell({
-  inView,
+const FOUNDING_YEAR = 1995;
+
+function StaticStatCell({
+  value,
+  label,
   delayMs,
+  inView,
   reduceMotion,
 }: {
-  inView: boolean;
+  value: string;
+  label: string;
   delayMs: number;
+  inView: boolean;
   reduceMotion: boolean;
 }) {
   const delayS = delayMs / 1000;
@@ -103,9 +109,9 @@ function IsoCell({
           : { duration: 0.5, delay: delayS, ease: [0.22, 1, 0.36, 1] }
       }
     >
-      <div className="mb-2 font-headline text-5xl font-extrabold text-accent-blue">ISO</div>
-      <div className="text-xs font-bold uppercase tracking-widest text-on-surface-variant dark:text-slate-400">
-        Certificación 9001
+      <div className="mb-2 font-headline text-5xl font-extrabold tabular-nums text-accent-blue">{value}</div>
+      <div className="ui-caption-caps text-on-surface-variant dark:text-slate-400">
+        {label}
       </div>
     </motion.div>
   );
@@ -115,6 +121,7 @@ export function CountUpStatsRow() {
   const ref = useRef<HTMLElement>(null);
   const inView = useInView(ref, { once: true, amount: 0.35 });
   const reduceMotion = useReducedMotion();
+  const trajectoryYears = new Date().getFullYear() - FOUNDING_YEAR;
 
   return (
     <section
@@ -133,26 +140,32 @@ export function CountUpStatsRow() {
         </header>
         <div className="grid grid-cols-2 gap-10 text-center md:grid-cols-4 md:gap-12">
           <CountCell
-            end={40}
+            end={trajectoryYears}
             suffix="+"
-            label="Años de Trayectoria"
+            label="Años de trayectoria"
             delayMs={0}
             inView={inView}
             reduceMotion={!!reduceMotion}
           />
           <CountCell
-            end={5000}
+            end={4000}
             suffix="+"
-            label="Unidades Producidas"
+            label="Unidades producidas"
             delayMs={120}
             inView={inView}
             reduceMotion={!!reduceMotion}
           />
-          <IsoCell inView={inView} delayMs={240} reduceMotion={!!reduceMotion} />
           <CountCell
-            end={100}
-            suffix="%"
-            label="Capital Nacional"
+            end={14500}
+            suffix=""
+            label="Metros cuadrados cubiertos"
+            delayMs={240}
+            inView={inView}
+            reduceMotion={!!reduceMotion}
+          />
+          <StaticStatCell
+            value="2,6 ha"
+            label="Terreno de planta"
             delayMs={360}
             inView={inView}
             reduceMotion={!!reduceMotion}

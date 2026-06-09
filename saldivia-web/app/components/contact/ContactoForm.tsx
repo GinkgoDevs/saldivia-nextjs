@@ -52,7 +52,7 @@ export function ContactoForm({ modelOptions }: Props) {
 
       <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
         <div className="space-y-2">
-          <label className="text-machined text-[11px] font-bold text-secondary" htmlFor="contact_name">
+          <label className="text-machined text-sm font-bold text-secondary" htmlFor="contact_name">
             Nombre y apellido <span className="text-primary">*</span>
           </label>
           <Input
@@ -65,7 +65,7 @@ export function ContactoForm({ modelOptions }: Props) {
           />
         </div>
         <div className="space-y-2">
-          <label className="text-machined text-[11px] font-bold text-secondary" htmlFor="company">
+          <label className="text-machined text-sm font-bold text-secondary" htmlFor="company">
             Empresa
           </label>
           <Input id="company" name="company" placeholder="Transporte del Sol" type="text" autoComplete="organization" />
@@ -73,7 +73,7 @@ export function ContactoForm({ modelOptions }: Props) {
       </div>
 
       <div className="space-y-2">
-        <label className="text-machined text-[11px] font-bold text-secondary" htmlFor="email">
+        <label className="text-machined text-sm font-bold text-secondary" htmlFor="email">
           Correo electrónico <span className="text-primary">*</span>
         </label>
         <Input
@@ -87,7 +87,7 @@ export function ContactoForm({ modelOptions }: Props) {
       </div>
 
       <div className="space-y-2">
-        <label className="text-machined text-[11px] font-bold text-secondary" htmlFor="phone">
+        <label className="text-machined text-sm font-bold text-secondary" htmlFor="phone">
           Teléfono
         </label>
         <Input id="phone" name="phone" type="tel" autoComplete="tel" placeholder="+54 11 0000-0000" />
@@ -95,7 +95,7 @@ export function ContactoForm({ modelOptions }: Props) {
 
       <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
         <div className="space-y-2">
-          <label className="text-machined text-[11px] font-bold text-secondary" htmlFor="model_name">
+          <label className="text-machined text-sm font-bold text-secondary" htmlFor="model_name">
             Modelo de interés
           </label>
           <select
@@ -113,7 +113,7 @@ export function ContactoForm({ modelOptions }: Props) {
           </select>
         </div>
         <div className="space-y-2">
-          <label className="text-machined text-[11px] font-bold text-secondary" htmlFor="configuration">
+          <label className="text-machined text-sm font-bold text-secondary" htmlFor="configuration">
             Configuración / requisitos
           </label>
           <Input
@@ -126,7 +126,7 @@ export function ContactoForm({ modelOptions }: Props) {
       </div>
 
       <div className="space-y-2">
-        <label className="text-machined text-[11px] font-bold text-secondary" htmlFor="message">
+        <label className="text-machined text-sm font-bold text-secondary" htmlFor="message">
           Mensaje o consulta
         </label>
         <Textarea
