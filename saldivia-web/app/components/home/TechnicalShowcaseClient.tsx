@@ -202,25 +202,6 @@ export function TechnicalShowcaseClient({ slides }: { slides: ResolvedHomeShowca
               </div>
             )}
 
-            {/* Metrics grid */}
-            {slide.metrics.length > 0 && (
-              <div className="mb-8 grid grid-cols-2 gap-3">
-                {slide.metrics.map((m) => (
-                  <div
-                    key={m.label}
-                    className="rounded border border-white/8 bg-white/[0.04] px-4 py-4"
-                  >
-                    <div className="text-2xl font-extrabold leading-none text-accent-blue">
-                      {m.value}
-                    </div>
-                    <div className="mt-1.5 text-sm font-bold uppercase tracking-[0.12em] text-slate-500">
-                      {m.label}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-
             {/* CTA */}
             <div className="flex flex-col gap-3">
               <Link

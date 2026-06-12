@@ -24,110 +24,148 @@ function useCountUp(end: number, enabled: boolean) {
   return value;
 }
 
-/* ─── datos ─────────────────────────────────────────── */
-const ITEMS = [
+/* ─── cronología ─────────────────────────────────────── */
+const CRONOLOGIA = [
   {
-    year: 1988,
-    title: "EL NACIMIENTO DEL GIGANTE",
-    body: "Fundación de Saldivia como taller especializado en mantenimiento pesado. El inicio de un sueño basado en la robustez estructural.",
-    icon: "factory",
-    tags: ["ORIGEN", "PASIÓN"],
-    side: "left" as const,
-    nodeColor: "bg-primary",
-    imgSrc: "https://lh3.googleusercontent.com/aida-public/AB6AXuBUhz9LWXaVud5PgInl9OtqbGeOwEoNB1vcTPQ8MNejdXm1GK7niy2OyQRQ85yueYFGfchvxtLzwCHvzZlZQzFZLD7-zVA6trRFq50kxcYtL4kBNQHMgwjDKqkNPmAvJsc-tCFiEwPMyTSSac0t4Qc3zE_EIo354wRIE-YTcgF1i9rn_ERcPSHGetZbetiC2zL-ckZncIDR7p-xtu0RguPPl5x0qOrAtJ5TNCBRDVBo2KOhndp2Qb2Uj4Y139RyeeVMlMZJ6IM7VJpF",
-    imgAlt: "Industrial workshop 1988",
+    year: 1995,
+    body: "Comienza oficialmente nuestra historia el 10 de agosto de 1995.",
+    icon: "flag",
+  },
+  {
+    year: 1998,
+    body: "Se produce la primera carrocería completa, el modelo LAS, en nuestra planta fabril original.",
+    icon: "precision_manufacturing",
+    imgSrc: "/historia/1998.jpg",
+    imgAlt: "Primera carrocería LAS en planta fabril, 1998",
+  },
+  {
+    year: 2000,
+    body: "Presentamos ARIES I, una familia de carrocerías que se convertiría en referente del segmento de buses de mediano porte.",
+    icon: "directions_bus",
+    imgSrc: "/historia/2000.jpg",
+    imgAlt: "Presentación de ARIES I, 2000",
   },
   {
     year: 2005,
-    title: "INGENIERÍA PROPIA",
-    body: "Presentación del primer chasis desarrollado íntegramente por Saldivia. Marcamos el inicio de una era de independencia tecnológica.",
-    icon: "precision_manufacturing",
-    tags: ["CHASIS", "INNOVACIÓN"],
-    side: "right" as const,
-    nodeColor: "bg-secondary",
-    imgSrc: "https://lh3.googleusercontent.com/aida-public/AB6AXuDliWzV3M-UWKH5-1ss4GfBt-T2JaTVHdyQeNz59G_dbJxk2xkb6d1mZlKc1_SP-eXo2_W0vXldYKO0Q63hc_4M22KoC2AuZXog_l3gZidh2S0te39iilEdgXvdPDPi87NL2M81gnvxM_zbypAdn8wTivHeh9fYznw3ED-lAXmAtYT9i08wREhX2RkBoE8XKjT1E7VpJg5NpxSojND74u4BwceTLllKexXclnoD1oliKElkhwNAhH9OiIfWDm9K4rE8KPXXsVuijX9V",
-    imgAlt: "Engineering 2005",
+    body: "Lanzamiento de ARIES Facelift, incorporando importantes mejoras de diseño e ingeniería.",
+    icon: "design_services",
+    imgSrc: "/historia/2005.jpg",
+    imgAlt: "Lanzamiento de ARIES Facelift, 2005",
   },
   {
-    year: 2015,
-    title: "LIDERAZGO REGIONAL",
-    body: "Expansión de la planta industrial a 25,000m². Saldivia se posiciona como el carrocero líder en soluciones personalizadas.",
+    year: 2011,
+    body: "Presentación del minibús A305.",
+    icon: "airport_shuttle",
+  },
+  {
+    year: 2012,
+    body: "Un año clave para la compañía: nace la generación ARIES GT y se inaugura la nueva planta industrial en el Parque Industrial Alvear.",
+    icon: "factory",
+    imgSrc: "/historia/2012.jpg",
+    imgAlt: "Nueva planta industrial en Parque Industrial Alvear, 2012",
+  },
+  {
+    year: 2017,
+    body: "Desarrollo del prototipo A405, un proyecto conceptual que impulsó nuevas soluciones tecnológicas para futuros modelos.",
+    icon: "science",
+  },
+  {
+    year: 2018,
+    body: "Lanzamiento de NUEVO ARIES 365, una nueva generación de carrocerías diseñada para competir a nivel internacional.",
     icon: "public",
-    tags: ["CRECIMIENTO", "CAPACIDAD"],
-    side: "left" as const,
-    nodeColor: "bg-primary",
-    imgSrc: "https://lh3.googleusercontent.com/aida-public/AB6AXuBiTFG7DhNGyoDqVv6EBvMzw_ImM8oYQZVvZNBxoEwuiBYLD-0C3kb25UwxAErLnyPoce4eHmZItnT2MFLnkGCkN3nrNIAB-G67LKqX3KX-v7Atjf1MVTyLLVnHoEaSeWQD4bULHjUNBtun6FaFrd6mUTYuz2CKSGVwkMjoyDfj6HNlPWWGqmoiYHOUsmuq2g_bmgl_hM2qHX--M29E_husSlCr-IuWC-q36W7Cb4sPQTXmJA4R8_zdbEGceRYGDvufSWripCImM5q",
-    imgAlt: "Fleet expansion 2015",
+  },
+  {
+    year: 2019,
+    body: "Se concretan las primeras exportaciones y comienza la ampliación de la gama de productos.",
+    icon: "flight_takeoff",
+  },
+  {
+    year: 2021,
+    body: "Presentación de ARIES TRUCK, desarrollado para responder a las necesidades de la industria minera.",
+    icon: "local_shipping",
+  },
+  {
+    year: 2023,
+    body: "Lanzamiento del NA 315, nuestro primer modelo urbano de piso bajo.",
+    icon: "commute",
   },
   {
     year: 2024,
-    title: "SISTEMAS INTELIGENTES",
-    body: "Integración de telemetría avanzada y sistemas de asistencia al conductor de última generación. El futuro es digital.",
-    icon: "bolt",
-    tags: ["SMART BUS", "DATOS"],
-    side: "right" as const,
-    nodeColor: "technical-gradient",
-    imgSrc: "https://lh3.googleusercontent.com/aida-public/AB6AXuDOeSF4qyLXEOT_k71T_v1K52ayE4kQASEKIvriTYlHwivddTHVpisPXZ266D7SbPeBndrt6R8jftKMd4sRRzvnsgVb51TCgJWN-yvcaW7uICzMXB7Ztp3b73bJTF826CpA8MZmEZ-vLQ36QXuTznz0W9smFygHbQ-IZWvDEPefzdAYqBAptuanlNoK0qw64Q4AjDlgG1Ak8FCsmjRhujy_QDmNPDv4kXrR6cAV33WE8lDxTP9Q_eoQeBoRmKCeIO3S-d14Uwi33_pz",
-    imgAlt: "Smart systems 2024",
+    body: "Presentación del NA 405, nuevo modelo de larga distancia de doble piso.",
+    icon: "layers",
+  },
+  {
+    year: 2025,
+    body: "Tras casi dos décadas sale de la línea de montaje la última unidad del clásico ARIES y nace el NA 330 MD, marcando el inicio de una nueva etapa.",
+    icon: "celebration",
   },
 ] as const;
 
+const NODE_COLORS = ["bg-primary", "bg-secondary", "technical-gradient"] as const;
+
 /* ─── item individual ───────────────────────────────── */
-function TimelineItem({ item }: { item: typeof ITEMS[number] }) {
+function ChronologyItem({
+  item,
+  index,
+}: {
+  item: (typeof CRONOLOGIA)[number];
+  index: number;
+}) {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, amount: 0.25 });
   const year = useCountUp(item.year, inView);
-  const isLeft = item.side === "left";
+  const isLeft = index % 2 === 0;
+  const nodeColor = NODE_COLORS[index % NODE_COLORS.length];
+  const hasImage = "imgSrc" in item && item.imgSrc;
 
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, y: 40 }}
+      initial={{ opacity: 0, y: 32 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.65, delay: 0.05, ease: [0.22, 1, 0.36, 1] }}
-      className="group flex flex-col items-center gap-8 sm:gap-10 lg:flex-row lg:gap-12"
+      transition={{ duration: 0.55, delay: 0.03, ease: [0.22, 1, 0.36, 1] }}
+      className={`group flex flex-col items-center gap-6 sm:gap-8 ${hasImage ? "lg:flex-row lg:gap-12" : "lg:flex-row lg:gap-10"}`}
     >
-      {/* Tarjeta */}
       <div
-        className={`w-full lg:w-1/2 ${
+        className={`w-full ${
+          hasImage ? "lg:w-1/2" : "lg:w-[calc(50%-2.5rem)]"
+        } ${
           isLeft
             ? "order-2 text-left lg:order-1 lg:text-right"
             : "order-2 text-left lg:order-3"
-        }`}
+        } ${!hasImage && isLeft ? "lg:ml-auto" : ""}`}
       >
         <div
-          className={`rounded bg-surface-container-lowest p-5 shadow-sm sm:p-8 border-l-4 border-secondary ${
+          className={`rounded bg-surface-container-lowest p-5 shadow-sm sm:p-6 border-l-4 border-secondary ${
             isLeft ? "lg:border-l-0 lg:border-r-4" : ""
           }`}
         >
-          <span className="mb-2 block text-4xl font-black tabular-nums text-secondary sm:text-5xl">
+          <span className="mb-2 block text-3xl font-black tabular-nums text-secondary sm:text-4xl">
             {year}
           </span>
-          <h3 className="mb-3 text-lg font-bold uppercase tracking-tight text-primary sm:mb-4 sm:text-xl">{item.title}</h3>
           <p className="text-sm leading-relaxed text-on-surface-variant sm:text-base">{item.body}</p>
-          <div className={`mt-5 flex flex-wrap gap-2 sm:mt-6 ${isLeft ? "lg:justify-end" : ""}`}>
-            {item.tags.map((tag) => (
-              <span key={tag} className="bg-secondary-container text-on-secondary-container px-3 py-1 text-[10px] font-bold uppercase tracking-tighter">
-                {tag}
-              </span>
-            ))}
+        </div>
+      </div>
+
+      <div
+        className={`order-1 z-10 flex h-12 w-12 shrink-0 items-center justify-center rounded font-black text-white shadow-xl ring-4 ring-surface-container-lowest sm:h-14 sm:w-14 sm:ring-8 ${nodeColor} lg:order-2`}
+      >
+        <span className="material-symbols-outlined text-xl sm:text-2xl">{item.icon}</span>
+      </div>
+
+      {hasImage ? (
+        <div className={`w-full lg:w-1/2 ${isLeft ? "order-3" : "order-3 lg:order-1"}`}>
+          <div className="h-52 overflow-hidden rounded-lg shadow-2xl grayscale transition-all duration-500 group-hover:grayscale-0 sm:h-64">
+            <img
+              className="h-full w-full object-cover"
+              alt={"imgAlt" in item ? item.imgAlt : `Saldivia ${item.year}`}
+              src={item.imgSrc}
+            />
           </div>
         </div>
-      </div>
-
-      {/* Nodo central */}
-      <div
-        className={`order-1 z-10 flex h-14 w-14 shrink-0 items-center justify-center rounded font-black text-white shadow-xl ring-4 ring-surface-container-lowest sm:h-16 sm:w-16 sm:ring-8 ${item.nodeColor} lg:order-2`}
-      >
-        <span className="material-symbols-outlined text-2xl sm:text-[28px]">{item.icon}</span>
-      </div>
-
-      {/* Imagen */}
-      <div className={`w-full lg:w-1/2 ${isLeft ? "order-3" : "order-3 lg:order-1"}`}>
-        <div className="h-52 overflow-hidden rounded-lg shadow-2xl grayscale transition-all duration-500 hover:grayscale-0 sm:h-64">
-          <img className="w-full h-full object-cover" alt={item.imgAlt} src={item.imgSrc} />
-        </div>
-      </div>
+      ) : (
+        <div className="hidden w-[calc(50%-2.5rem)] lg:block lg:order-3" aria-hidden />
+      )}
     </motion.div>
   );
 }
@@ -142,7 +180,7 @@ function StatCard({
   icon,
   featured = false,
 }: {
-  value: number;
+  value?: number;
   prefix?: string;
   suffix?: string;
   label: string;
@@ -152,7 +190,7 @@ function StatCard({
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, amount: 0.5 });
-  const count = useCountUp(value, inView);
+  const count = useCountUp(value ?? 0, inView && value !== undefined);
 
   if (featured) {
     return (
@@ -162,9 +200,11 @@ function StatCard({
         </div>
         <div className="relative z-10">
           <h4 className="mb-2 text-xs font-black uppercase tracking-widest text-secondary-container">{label}</h4>
-          <div className="mb-3 text-5xl font-black tracking-tighter text-white sm:text-6xl">
-            {prefix}{count.toLocaleString()}{suffix}
-          </div>
+          {value !== undefined && (
+            <div className="mb-3 text-5xl font-black tracking-tighter text-white sm:text-6xl">
+              {prefix}{count.toLocaleString()}{suffix}
+            </div>
+          )}
           {sublabel && <p className="text-sm text-on-primary-container">{sublabel}</p>}
         </div>
       </div>
@@ -174,9 +214,11 @@ function StatCard({
   return (
     <div ref={ref} className="flex flex-col justify-center border-t-4 border-secondary bg-surface-container-highest p-6">
       <span className="material-symbols-outlined mb-3 text-3xl text-secondary">{icon}</span>
-      <div className="mb-1 text-4xl font-black tracking-tighter text-primary">
-        {prefix}{count.toLocaleString()}{suffix}
-      </div>
+      {value !== undefined && (
+        <div className="mb-1 text-4xl font-black tracking-tighter text-primary">
+          {prefix}{count.toLocaleString()}{suffix}
+        </div>
+      )}
       <p className="text-xs font-bold uppercase tracking-wider text-on-surface-variant">{label}</p>
     </div>
   );
@@ -221,35 +263,31 @@ export default function NosotrosTimeline() {
               <div className="relative mb-6 flex items-center gap-4">
                 <span className="h-px w-14 bg-secondary" />
                 <span className="text-xs font-bold uppercase tracking-[0.45em] text-secondary">
-                  Nuestra Esencia
+                  Nuestra Historia
                 </span>
               </div>
 
-              <h2 className="mb-8 text-[clamp(2.2rem,5.5vw,4.5rem)] font-black uppercase leading-[0.9] tracking-tighter text-on-surface">
-                AGILIDAD,<br />
-                <span className="text-primary">CALIDAD</span><br />
-                Y COMPROMISO.
-              </h2>
-
-              <div className="flex max-w-3xl items-start gap-5">
-                <span className="mt-1 h-16 w-0.5 shrink-0 bg-secondary" />
-                <p className="text-lg leading-relaxed text-on-surface-variant sm:text-xl md:text-2xl">
-                  Nuestra principal característica radica en la{" "}
-                  <strong className="font-bold text-primary">agilidad en todo el proceso</strong>,
-                  desde los primeros contactos hasta la entrega de la unidad, obteniendo el{" "}
-                  <strong className="font-bold text-secondary">tiempo de fabricación más bajo del mercado</strong>.
-                  Con nuestra{" "}
-                  <strong className="font-bold text-primary">atención intensiva al cliente y post venta</strong>{" "}
-                  logramos la máxima satisfacción. La calidad es un objetivo primordial:{" "}
-                  <strong className="font-bold text-secondary">certificados ISO&nbsp;9001</strong>.
+              <div className="flex max-w-3xl flex-col gap-6">
+                <p className="text-lg leading-relaxed text-on-surface-variant sm:text-xl">
+                  Lo que comenzó como un proyecto industrial con grandes aspiraciones se transformó en una empresa
+                  referente del sector, con más de 4.100 unidades producidas, una amplia diversidad de modelos y una
+                  planta industrial de 14.500 m² cubiertos sobre un predio de 2,6 hectáreas en el Parque Industrial
+                  Alvear.
+                </p>
+                <p className="text-lg leading-relaxed text-on-surface-variant sm:text-xl">
+                  A lo largo de nuestra historia hemos evolucionado constantemente, incorporando nuevas tecnologías,
+                  perfeccionando procesos y desarrollando generaciones de productos que marcaron hitos en la industria.
+                  Desde la primera carrocería LAS hasta la actual familia Nuevo Aries, cada modelo refleja nuestro
+                  compromiso con la mejora continua y la búsqueda de soluciones adaptadas a las necesidades de nuestros
+                  clientes.
                 </p>
               </div>
 
               <div className="mt-10 flex flex-wrap gap-3">
                 {[
-                  { icon: "speed", label: "Fabricación Ágil" },
-                  { icon: "support_agent", label: "Atención Intensiva" },
-                  { icon: "verified", label: "ISO 9001" },
+                  { icon: "verified", label: "Calidad" },
+                  { icon: "lightbulb", label: "Innovación" },
+                  { icon: "support_agent", label: "Postventa" },
                 ].map(({ icon, label }) => (
                   <div
                     key={label}
@@ -265,17 +303,15 @@ export default function NosotrosTimeline() {
             {/* Derecha: stats */}
             <div className="flex flex-col gap-4 lg:w-2/5 lg:pt-4">
               <StatCard
-                value={5000}
+                value={4100}
                 prefix="+"
                 label="Producción Histórica"
-                sublabel="Unidades fabricadas y rodando por toda la geografía sudamericana."
+                sublabel="Unidades producidas con una amplia diversidad de modelos."
                 icon="directions_bus"
                 featured
               />
               <div className="grid grid-cols-2 gap-4">
                 <StatCard
-                  value={450}
-                  suffix="+"
                   label="Expertos Industriales"
                   icon="groups"
                 />
@@ -293,7 +329,7 @@ export default function NosotrosTimeline() {
         <div className="relative rounded-xl border border-outline-variant/35 bg-surface-container-low/95 shadow-sm px-4 py-12 sm:px-6 sm:py-14 md:px-8 md:py-16">
           <div className="mb-12 text-center sm:mb-16 md:mb-20">
             <h2 className="mb-3 text-2xl font-black uppercase tracking-tighter text-primary sm:mb-4 sm:text-3xl md:text-4xl">
-              Línea de Tiempo Industrial
+              Cronología
             </h2>
             <div className="mx-auto h-1 w-20 technical-gradient sm:w-24" />
           </div>
@@ -308,9 +344,9 @@ export default function NosotrosTimeline() {
               />
             </div>
 
-            <div className="space-y-16 sm:space-y-24 md:space-y-28 lg:space-y-32">
-              {ITEMS.map((item) => (
-                <TimelineItem key={item.year} item={item} />
+            <div className="space-y-10 sm:space-y-12 md:space-y-14 lg:space-y-16">
+              {CRONOLOGIA.map((item, index) => (
+                <ChronologyItem key={item.year} item={item} index={index} />
               ))}
             </div>
           </div>

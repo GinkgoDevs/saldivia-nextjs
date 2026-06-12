@@ -314,7 +314,7 @@ export default function ArgentinaProjectsMapClient({
               <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_54%_20%,rgba(32,149,212,0.08),transparent_58%)]" />
 
               {/* Contador */}
-              <div className="absolute right-4 top-4 z-[6] rounded-full border border-cyan-400/40 bg-[#061220]/94 px-3 py-1.5 font-headline text-sm font-bold uppercase tracking-[0.15em] text-slate-200 shadow-[0_0_26px_rgba(32,149,212,0.15)] backdrop-blur-sm md:right-6 md:top-6">
+              <div className="absolute left-4 top-4 z-[6] rounded-full border border-cyan-400/40 bg-[#061220]/94 px-3 py-1.5 font-headline text-sm font-bold uppercase tracking-[0.15em] text-slate-200 shadow-[0_0_26px_rgba(32,149,212,0.15)] backdrop-blur-sm md:left-6 md:top-6">
                 <span className="tabular-nums text-white">{aggregate.provincesWith}</span>
                 {" provincias "}
                 <span className="text-slate-500">·</span>

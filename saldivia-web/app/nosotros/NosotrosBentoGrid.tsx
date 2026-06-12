@@ -15,9 +15,9 @@ export function NosotrosBentoGrid() {
         </div>
         <div className="relative z-10">
           <h4 className="mb-2 text-sm font-black uppercase tracking-widest text-secondary-container">Producción Histórica</h4>
-          <div className="mb-4 text-5xl font-black tracking-tighter text-white sm:text-6xl md:text-7xl">+5,000</div>
+          <div className="mb-4 text-5xl font-black tracking-tighter text-white sm:text-6xl md:text-7xl">+4.100</div>
           <p className="max-w-sm text-base text-on-primary-container sm:text-lg">
-            Unidades fabricadas y rodando por toda la geografía sudamericana, garantizando seguridad y confort.
+            Unidades producidas con una amplia diversidad de modelos para el transporte de pasajeros.
           </p>
         </div>
         <Link
@@ -33,7 +33,6 @@ export function NosotrosBentoGrid() {
       </StaggerItem>
       <StaggerItem className="flex flex-col justify-center border-t-4 border-secondary bg-surface-container-highest p-6 sm:p-8">
         <span className="material-symbols-outlined mb-4 text-4xl text-secondary">groups</span>
-        <div className="mb-1 text-4xl font-black tracking-tighter text-primary">450+</div>
         <p className="text-sm font-bold uppercase tracking-wider text-on-surface-variant">Expertos Industriales</p>
       </StaggerItem>
       <StaggerItem className="flex flex-col justify-center border-t-4 border-secondary bg-surface-container-highest p-6 sm:p-8">

@@ -17,22 +17,15 @@ export default function NosotrosPage() {
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
           <div className="relative z-10 mx-auto w-full max-w-screen-2xl px-6 sm:px-10 md:px-14">
             <HeroStagger>
-              <div className="mb-8 flex items-center gap-4">
-                <span className="h-px w-14 bg-secondary-container" />
-                <span className="text-sm font-bold uppercase tracking-[0.35em] text-secondary-container md:text-base">
-                  Nuestra Trayectoria
-                </span>
-              </div>
               <h1 className="max-w-5xl text-[clamp(2.5rem,6vw,5.5rem)] font-black uppercase leading-[0.9] tracking-tighter text-white">
-                DÉCADAS DE
-                <br />
-                <span className="text-secondary-container">PRECISIÓN</span>
+                Nosotros
               </h1>
-              <div className="mt-10 flex max-w-2xl items-start gap-5">
+              <div className="mt-10 flex max-w-3xl items-start gap-5">
                 <span className="mt-1 h-14 w-0.5 shrink-0 bg-secondary-container" />
                 <p className="text-base font-medium leading-relaxed text-white/80 sm:text-lg md:text-xl">
-                  Desde nuestros orígenes industriales hasta convertirnos en referentes del transporte regional, cada
-                  kilómetro recorrido es testimonio de ingeniería y compromiso.
+                  Desde el 10 de agosto de 1995 trabajamos con una convicción clara: diseñar, fabricar y comercializar
+                  vehículos que acompañen el crecimiento del transporte de pasajeros, siempre con foco en la calidad, la
+                  innovación y el servicio postventa.
                 </p>
               </div>
             </HeroStagger>
@@ -50,12 +43,12 @@ export default function NosotrosPage() {
                   <div className="relative">
                     <div className="absolute -left-12 -top-12 h-64 w-64 rounded-full opacity-10 blur-3xl technical-gradient"></div>
                     <h2 className="relative text-3xl font-black uppercase leading-tight tracking-tighter text-primary sm:text-4xl md:text-5xl">
-                      EL ADN DE <br />
-                      <span className="text-secondary">CADA ESTRUCTURA</span>
+                      SALDIVIA, <br />
+                      <span className="text-secondary">UNIENDO CAMINOS.</span>
                     </h2>
                     <p className="mt-6 text-base leading-relaxed text-on-surface-variant sm:mt-8 sm:text-lg">
-                      No solo fabricamos carrocerías; esculpimos piezas de ingeniería que resisten las condiciones más
-                      extremas. Nuestra obsesión por el detalle se traduce en longevidad para su flota.
+                      Hoy seguimos creciendo con la misma pasión que nos impulsó desde el primer día, respaldados por
+                      una sólida trayectoria, una red de atención postventa y un equipo comprometido con la excelencia.
                     </p>
                     <ul className="mt-10 space-y-6">
                       <li className="flex items-start gap-4">
@@ -63,9 +56,9 @@ export default function NosotrosPage() {
                           <span className="material-symbols-outlined text-sm text-on-secondary-container">check</span>
                         </div>
                         <div>
-                          <p className="text-sm font-bold uppercase tracking-widest text-primary">Aceros de alta resistencia</p>
+                          <p className="text-sm font-bold uppercase tracking-widest text-primary">+4.100 unidades producidas</p>
                           <p className="text-sm text-on-surface-variant">
-                            Aleaciones certificadas que optimizan el peso sin comprometer la seguridad.
+                            Una amplia diversidad de modelos que acompañan el crecimiento del transporte de pasajeros.
                           </p>
                         </div>
                       </li>
@@ -74,9 +67,9 @@ export default function NosotrosPage() {
                           <span className="material-symbols-outlined text-sm text-on-secondary-container">check</span>
                         </div>
                         <div>
-                          <p className="text-sm font-bold uppercase tracking-widest text-primary">Aerodinámica computacional</p>
+                          <p className="text-sm font-bold uppercase tracking-widest text-primary">Planta industrial</p>
                           <p className="text-sm text-on-surface-variant">
-                            Diseños testeados en túneles de viento virtuales para reducir el consumo.
+                            14.500 m² cubiertos sobre un predio de 2,6 hectáreas en el Parque Industrial Alvear.
                           </p>
                         </div>
                       </li>
