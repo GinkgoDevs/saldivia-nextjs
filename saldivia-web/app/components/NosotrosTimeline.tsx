@@ -103,6 +103,56 @@ const CRONOLOGIA = [
 
 const NODE_COLORS = ["bg-primary", "bg-secondary", "technical-gradient"] as const;
 
+function ChronologyCard({
+  year,
+  body,
+  alignRight = false,
+}: {
+  year: number;
+  body: string;
+  alignRight?: boolean;
+}) {
+  return (
+    <div
+      className={`rounded bg-surface-container-lowest p-5 shadow-sm sm:p-6 border-l-4 border-secondary ${
+        alignRight ? "lg:border-l-0 lg:border-r-4 lg:text-right" : ""
+      }`}
+    >
+      <span className="mb-2 block text-3xl font-black tabular-nums text-secondary sm:text-4xl">
+        {year}
+      </span>
+      <p className="text-sm leading-relaxed text-on-surface-variant sm:text-base">{body}</p>
+    </div>
+  );
+}
+
+function ChronologyMedia({
+  imgSrc,
+  imgAlt,
+  icon,
+}: {
+  imgSrc?: string;
+  imgAlt?: string;
+  icon: string;
+}) {
+  if (imgSrc) {
+    return (
+      <div className="h-52 overflow-hidden rounded-lg shadow-2xl grayscale transition-all duration-500 group-hover:grayscale-0 sm:h-64">
+        <img className="h-full w-full object-cover" alt={imgAlt ?? ""} src={imgSrc} />
+      </div>
+    );
+  }
+
+  return (
+    <div
+      aria-hidden
+      className="hidden h-52 items-center justify-center rounded-lg border border-outline-variant/25 bg-surface-container-low/80 sm:h-64 lg:flex"
+    >
+      <span className="material-symbols-outlined text-6xl text-secondary/25">{icon}</span>
+    </div>
+  );
+}
+
 /* ─── item individual ───────────────────────────────── */
 function ChronologyItem({
   item,
@@ -114,9 +164,19 @@ function ChronologyItem({
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, amount: 0.25 });
   const year = useCountUp(item.year, inView);
-  const isLeft = index % 2 === 0;
+  const textOnLeft = index % 2 === 0;
   const nodeColor = NODE_COLORS[index % NODE_COLORS.length];
-  const hasImage = "imgSrc" in item && item.imgSrc;
+  const imgSrc = "imgSrc" in item ? item.imgSrc : undefined;
+  const imgAlt = "imgAlt" in item ? item.imgAlt : undefined;
+
+  const card = <ChronologyCard year={year} body={item.body} alignRight={textOnLeft} />;
+  const media = (
+    <ChronologyMedia
+      imgSrc={imgSrc}
+      imgAlt={imgAlt ?? `Saldivia ${item.year}`}
+      icon={item.icon}
+    />
+  );
 
   return (
     <motion.div
@@ -124,48 +184,25 @@ function ChronologyItem({
       initial={{ opacity: 0, y: 32 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.55, delay: 0.03, ease: [0.22, 1, 0.36, 1] }}
-      className={`group flex flex-col items-center gap-6 sm:gap-8 ${hasImage ? "lg:flex-row lg:gap-12" : "lg:flex-row lg:gap-10"}`}
+      className="group grid grid-cols-1 items-center gap-6 sm:gap-8 lg:grid-cols-[1fr_auto_1fr] lg:gap-x-10 lg:gap-y-0"
     >
-      <div
-        className={`w-full ${
-          hasImage ? "lg:w-1/2" : "lg:w-[calc(50%-2.5rem)]"
-        } ${
-          isLeft
-            ? "order-2 text-left lg:order-1 lg:text-right"
-            : "order-2 text-left lg:order-3"
-        } ${!hasImage && isLeft ? "lg:ml-auto" : ""}`}
-      >
-        <div
-          className={`rounded bg-surface-container-lowest p-5 shadow-sm sm:p-6 border-l-4 border-secondary ${
-            isLeft ? "lg:border-l-0 lg:border-r-4" : ""
-          }`}
-        >
-          <span className="mb-2 block text-3xl font-black tabular-nums text-secondary sm:text-4xl">
-            {year}
-          </span>
-          <p className="text-sm leading-relaxed text-on-surface-variant sm:text-base">{item.body}</p>
-        </div>
+      <div className={`order-3 w-full ${textOnLeft ? "lg:order-1" : "hidden lg:order-1 lg:block"}`}>
+        {textOnLeft ? card : media}
       </div>
 
       <div
-        className={`order-1 z-10 flex h-12 w-12 shrink-0 items-center justify-center rounded font-black text-white shadow-xl ring-4 ring-surface-container-lowest sm:h-14 sm:w-14 sm:ring-8 ${nodeColor} lg:order-2`}
+        className={`order-1 z-10 flex h-12 w-12 shrink-0 items-center justify-center justify-self-center rounded font-black text-white shadow-xl ring-4 ring-surface-container-lowest sm:h-14 sm:w-14 sm:ring-8 ${nodeColor} lg:order-2`}
       >
         <span className="material-symbols-outlined text-xl sm:text-2xl">{item.icon}</span>
       </div>
 
-      {hasImage ? (
-        <div className={`w-full lg:w-1/2 ${isLeft ? "order-3" : "order-3 lg:order-1"}`}>
-          <div className="h-52 overflow-hidden rounded-lg shadow-2xl grayscale transition-all duration-500 group-hover:grayscale-0 sm:h-64">
-            <img
-              className="h-full w-full object-cover"
-              alt={"imgAlt" in item ? item.imgAlt : `Saldivia ${item.year}`}
-              src={item.imgSrc}
-            />
-          </div>
-        </div>
-      ) : (
-        <div className="hidden w-[calc(50%-2.5rem)] lg:block lg:order-3" aria-hidden />
-      )}
+      <div className={`order-4 w-full ${textOnLeft ? "hidden lg:order-3 lg:block" : "lg:order-3"}`}>
+        {textOnLeft ? media : card}
+      </div>
+
+      {imgSrc ? (
+        <div className="order-5 w-full lg:hidden">{media}</div>
+      ) : null}
     </motion.div>
   );
 }
