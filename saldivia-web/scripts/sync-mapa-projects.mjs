@@ -1,8 +1,11 @@
 /**
- * Sincroniza proyectos desde public/02  MAPA hacia Supabase (province_projects).
+ * Sincroniza proyectos desde public/02  MAPA hacia Supabase:
+ * 1. Sube la portada de cada empresa al bucket `media` (Storage)
+ * 2. Upsert en `province_projects` con la URL pública de Supabase
  *
  * Uso (desde saldivia-web/):
- *   node scripts/sync-mapa-projects.mjs
+ *   npm run sync:mapa
+ *   node scripts/sync-mapa-projects.mjs --dry-run
  *
  * Requiere en .env: NEXT_PUBLIC_SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY
  */
@@ -15,6 +18,11 @@ import { fileURLToPath } from "node:url";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, "..");
 const MAPA_DIR = path.join(ROOT, "public", "02  MAPA");
+const STORAGE_BUCKET = "media";
+const STORAGE_PREFIX = "mapa";
+/** Límite del bucket `media` (ver migración 004_model_images_rls_forms.sql) */
+const MAX_FILE_BYTES = 15 * 1024 * 1024;
+const UPLOAD_CONCURRENCY = 4;
 
 const MAPA_FOLDER_TO_SLUG = {
   "BUENOS AIRES": "buenos-aires",
@@ -43,6 +51,15 @@ const MAPA_FOLDER_TO_SLUG = {
 
 const IMAGE_EXT = new Set([".jpg", ".jpeg", ".png", ".webp"]);
 
+const MIME_BY_EXT = {
+  ".jpg": "image/jpeg",
+  ".jpeg": "image/jpeg",
+  ".png": "image/png",
+  ".webp": "image/webp",
+};
+
+const dryRun = process.argv.includes("--dry-run");
+
 function loadEnv() {
   const envPath = path.join(ROOT, ".env");
   if (!fs.existsSync(envPath)) return;
@@ -56,11 +73,23 @@ function loadEnv() {
   }
 }
 
-function mapaPublicUrl(...segments) {
-  return ["/02  MAPA", ...segments]
-    .map((part) => encodeURIComponent(part))
-    .join("/")
-    .replace(/^%2F/, "/");
+function sanitizeStorageSegment(value) {
+  return (
+    value
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-zA-Z0-9._-]+/g, "-")
+      .replace(/-+/g, "-")
+      .replace(/^-|-$/g, "")
+      .toLowerCase() || "item"
+  );
+}
+
+function sanitizeFilename(filename) {
+  const ext = path.extname(filename).toLowerCase();
+  const base = path.basename(filename, ext);
+  const safeBase = sanitizeStorageSegment(base) || "cover";
+  return `${safeBase}${ext}`;
 }
 
 function pickCoverImage(files) {
@@ -90,9 +119,7 @@ function scanMapa() {
     const companyDirs = fs.readdirSync(provPath, { withFileTypes: true }).filter((d) => d.isDirectory());
 
     let sortOrder = 0;
-    const companies = companyDirs
-      .map((d) => d.name)
-      .sort((a, b) => a.localeCompare(b, "es"));
+    const companies = companyDirs.map((d) => d.name).sort((a, b) => a.localeCompare(b, "es"));
 
     for (const company of companies) {
       const companyPath = path.join(provPath, company);
@@ -103,6 +130,14 @@ function scanMapa() {
         continue;
       }
 
+      const localFilePath = path.join(companyPath, cover);
+      const storagePath = [
+        STORAGE_PREFIX,
+        slug,
+        sanitizeStorageSegment(company),
+        sanitizeFilename(cover),
+      ].join("/");
+
       rows.push({
         province_slug: slug,
         title: company,
@@ -110,9 +145,10 @@ function scanMapa() {
         location_label: folderName,
         segment: "Flota Saldivia",
         year: null,
-        image_url: mapaPublicUrl(folderName, company, cover),
         sort_order: sortOrder++,
         active: true,
+        localFilePath,
+        storagePath,
       });
     }
   }
@@ -125,6 +161,62 @@ function scanMapa() {
   );
 }
 
+async function mapPool(items, limit, fn) {
+  const results = new Array(items.length);
+  let nextIndex = 0;
+
+  async function worker() {
+    while (nextIndex < items.length) {
+      const index = nextIndex++;
+      results[index] = await fn(items[index], index);
+    }
+  }
+
+  const workers = Array.from({ length: Math.min(limit, items.length) }, () => worker());
+  await Promise.all(workers);
+  return results;
+}
+
+async function uploadCover(supabase, row) {
+  const stat = fs.statSync(row.localFilePath);
+  if (stat.size > MAX_FILE_BYTES) {
+    const mb = (stat.size / (1024 * 1024)).toFixed(1);
+    console.warn(`⚠ Omitida (>15 MB, ${mb} MB): ${row.title} (${row.storagePath})`);
+    return { ...row, image_url: null, uploadError: "file_too_large" };
+  }
+
+  const ext = path.extname(row.localFilePath).toLowerCase();
+  const contentType = MIME_BY_EXT[ext] ?? "application/octet-stream";
+  const buffer = fs.readFileSync(row.localFilePath);
+
+  const { error } = await supabase.storage.from(STORAGE_BUCKET).upload(row.storagePath, buffer, {
+    contentType,
+    upsert: true,
+  });
+
+  if (error) {
+    console.error(`✗ Storage ${row.title}: ${error.message}`);
+    return { ...row, image_url: null, uploadError: error.message };
+  }
+
+  const { data: pub } = supabase.storage.from(STORAGE_BUCKET).getPublicUrl(row.storagePath);
+  return { ...row, image_url: pub.publicUrl, uploadError: null };
+}
+
+function toDbRow(row) {
+  return {
+    province_slug: row.province_slug,
+    title: row.title,
+    description: row.description,
+    location_label: row.location_label,
+    segment: row.segment,
+    year: row.year,
+    image_url: row.image_url,
+    sort_order: row.sort_order,
+    active: row.active,
+  };
+}
+
 async function main() {
   loadEnv();
 
@@ -135,15 +227,42 @@ async function main() {
     process.exit(1);
   }
 
-  const rows = scanMapa();
-  console.log(`Encontrados ${rows.length} proyectos en MAPA.`);
+  const scanned = scanMapa();
+  console.log(`Encontrados ${scanned.length} proyectos en MAPA.`);
+
+  if (dryRun) {
+    console.log("\n[dry-run] Primeras rutas de storage:");
+    for (const row of scanned.slice(0, 5)) {
+      console.log(`  ${row.storagePath}`);
+    }
+    console.log("\n[dry-run] Sin subida ni escritura en Supabase.");
+    return;
+  }
 
   const supabase = createClient(url, key, { auth: { persistSession: false } });
 
+  console.log(`\nSubiendo portadas a ${STORAGE_BUCKET}/${STORAGE_PREFIX}/ …`);
+  let uploaded = 0;
+  const withUrls = await mapPool(scanned, UPLOAD_CONCURRENCY, async (row, index) => {
+    const result = await uploadCover(supabase, row);
+    uploaded += 1;
+    if (uploaded % 10 === 0 || uploaded === scanned.length) {
+      process.stdout.write(`\r  storage: ${uploaded}/${scanned.length}`);
+    }
+    return result;
+  });
+  console.log("");
+
+  const ready = withUrls.filter((r) => r.image_url);
+  const failed = withUrls.filter((r) => !r.image_url);
+  if (failed.length > 0) {
+    console.warn(`\n⚠ ${failed.length} proyecto(s) sin imagen subida (ver warnings arriba).`);
+  }
+
   const BATCH = 100;
   let upserted = 0;
-  for (let i = 0; i < rows.length; i += BATCH) {
-    const batch = rows.slice(i, i + BATCH);
+  for (let i = 0; i < ready.length; i += BATCH) {
+    const batch = ready.slice(i, i + BATCH).map(toDbRow);
     const { error } = await supabase.from("province_projects").upsert(batch, {
       onConflict: "province_slug,title",
       ignoreDuplicates: false,
@@ -156,18 +275,18 @@ async function main() {
       process.exit(1);
     }
     upserted += batch.length;
-    console.log(`  … ${upserted}/${rows.length}`);
+    console.log(`  db: ${upserted}/${ready.length}`);
   }
 
   const byProvince = {};
-  for (const r of rows) {
+  for (const r of ready) {
     byProvince[r.province_slug] = (byProvince[r.province_slug] ?? 0) + 1;
   }
   console.log("\nProyectos por provincia:");
   for (const [slug, count] of Object.entries(byProvince).sort((a, b) => a[0].localeCompare(b[0]))) {
     console.log(`  ${slug}: ${count}`);
   }
-  console.log("\nListo.");
+  console.log(`\nListo. ${ready.length} proyectos con URL de Supabase Storage.`);
 }
 
 main().catch((err) => {

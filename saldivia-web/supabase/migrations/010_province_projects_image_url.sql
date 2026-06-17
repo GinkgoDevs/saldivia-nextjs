@@ -1,4 +1,4 @@
--- Imagen de proyecto (ruta pública, ej. /02  MAPA/CORDOBA/EMPRESA/foto.jpg)
+-- Imagen de proyecto (URL pública de Supabase Storage, ej. media/mapa/cordoba/empresa/cover.jpg)
 
 ALTER TABLE public.province_projects
   ADD COLUMN IF NOT EXISTS image_url TEXT;

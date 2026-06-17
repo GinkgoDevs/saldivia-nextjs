@@ -191,11 +191,11 @@ export function ProvinceProjectsAdmin({ initial, provinceOptions }: Props) {
           </div>
           <div className="space-y-1">
             <label className="text-xs font-bold text-secondary" htmlFor="pp-img">
-              Imagen (ruta pública)
+              Imagen (URL pública)
             </label>
             <Input
               id="pp-img"
-              placeholder="/02%20%20MAPA/CORDOBA/EMPRESA/foto.jpg"
+              placeholder="https://…supabase.co/storage/v1/object/public/media/mapa/…"
               value={form.image_url}
               onChange={(e) => setForm((f) => ({ ...f, image_url: e.target.value }))}
             />

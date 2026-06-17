@@ -1,4 +1,4 @@
-/** Carpetas en `public/02  MAPA/` → slug del SVG (`argentinaProvinceMapData.json`). */
+/** Carpetas locales en `public/02  MAPA/` (fuera de git). Producción usa URLs de Supabase Storage. */
 export const MAPA_FOLDER_TO_SLUG: Record<string, string> = {
   "BUENOS AIRES": "buenos-aires",
   CABA: "ciudad-de-buenos-aires",

@@ -226,8 +226,8 @@ export function ProvinceProjectCardsGrid({
     return (
       <div className="rounded-[1.25rem] border border-dashed border-white/22 bg-[#071422]/80 p-5 text-base leading-relaxed text-slate-500">
         No hay proyectos en esta provincia. Ejecutá{" "}
-        <code className="text-xs text-slate-400">node scripts/sync-mapa-projects.mjs</code> para cargar la
-        carpeta MAPA en Supabase.
+        <code className="text-xs text-slate-400">npm run sync:mapa</code> para subir la carpeta MAPA a
+        Supabase Storage.
       </div>
     );
   }
