@@ -11,6 +11,7 @@ export type ProvinceProjectCard = {
   description: string;
   segment: string;
   year: string;
+  imageUrl?: string;
 };
 
 const LOCATION_TYPE_LABEL: Record<LocationType, string> = {
@@ -49,6 +50,7 @@ export function groupByProvince(
       description: r.description?.trim() || "",
       segment: r.segment?.trim() || "—",
       year: r.year?.trim() || "—",
+      imageUrl: r.image_url?.trim() || undefined,
     });
   }
   return out;
@@ -88,7 +90,7 @@ export async function getActiveProvinceProjects(
   const { data, error } = await supabase
     .from("province_projects")
     .select(
-      "id, province_slug, title, description, location_label, segment, year, sort_order, active, created_at",
+      "id, province_slug, title, description, location_label, segment, year, image_url, sort_order, active, created_at",
     )
     .eq("active", true)
     .order("sort_order", { ascending: true, nullsFirst: false })
@@ -108,7 +110,7 @@ export async function getAllProvinceProjectsForAdmin(
   const { data, error } = await supabase
     .from("province_projects")
     .select(
-      "id, province_slug, title, description, location_label, segment, year, sort_order, active, created_at",
+      "id, province_slug, title, description, location_label, segment, year, image_url, sort_order, active, created_at",
     )
     .order("province_slug")
     .order("sort_order", { ascending: true, nullsFirst: false });
