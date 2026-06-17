@@ -1,9 +1,10 @@
 "use client";
 
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import type { ProvinceProjectCard } from "@/lib/supabase/province-projects";
 import argentinaProvinceMapData from "./argentinaProvinceMapData.json";
+import { ProvinceProjectCardsGrid } from "./ProvinceProjectCardsGrid";
 
 type ProvinceShape = {
   id: string;
@@ -76,20 +77,45 @@ export default function ArgentinaProjectsMapClient({
   const [selectedProvinceId, setSelectedProvinceId] = useState<string>(FIRST_PROVINCE_ID);
   const [hoveredProvinceId, setHoveredProvinceId] = useState<string | null>(null);
   const [selectionLocked, setSelectionLocked] = useState(false);
-  const [selectedProjectIndex, setSelectedProjectIndex] = useState(0);
   const [mapTooltip, setMapTooltip] = useState<MapTooltip>(null);
-
-  const [connector, setConnector] = useState<{
-    x1: number;
-    y1: number;
-    x2: number;
-    y2: number;
-  } | null>(null);
+  const [isDesktopLayout, setIsDesktopLayout] = useState(false);
+  const [mapColumnHeight, setMapColumnHeight] = useState<number | undefined>(undefined);
 
   const sectionRef = useRef<HTMLElement | null>(null);
-  const panelAnchorRef = useRef<HTMLDivElement | null>(null);
+  const projectsPanelRef = useRef<HTMLDivElement | null>(null);
   const svgRef = useRef<SVGSVGElement | null>(null);
   const mapSurfaceRef = useRef<HTMLDivElement | null>(null);
+
+  const scrollToProjectsIfNeeded = useCallback(() => {
+    if (typeof window !== "undefined" && window.matchMedia("(min-width: 1024px)").matches) return;
+    const panel = projectsPanelRef.current;
+    if (!panel) return;
+    const rect = panel.getBoundingClientRect();
+    const navOffset = 96;
+    const mostlyHidden = rect.top > window.innerHeight * 0.42 || rect.bottom < navOffset + 120;
+    if (mostlyHidden) {
+      panel.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, []);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 1024px)");
+    const update = () => setIsDesktopLayout(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
+
+  const handleProvinceSelect = useCallback(
+    (provinceId: string) => {
+      setSelectedProvinceId(provinceId);
+      setSelectionLocked(true);
+      setHoveredProvinceId(null);
+      setMapTooltip(null);
+      requestAnimationFrame(() => scrollToProjectsIfNeeded());
+    },
+    [scrollToProjectsIfNeeded],
+  );
 
   useEffect(() => {
     const withData = mapData.provinces.find((p) => (byProvince[p.id] ?? []).length > 0);
@@ -101,13 +127,29 @@ export default function ArgentinaProjectsMapClient({
     : hoveredProvinceId ?? selectedProvinceId;
   const activeProvince = provinceById.get(activeProvinceId) ?? mapData.provinces[0] ?? null;
   const activeProjects = activeProvince ? (projects[activeProvince.id] ?? []) : [];
-  const activeProject = activeProjects[selectedProjectIndex] ?? activeProjects[0] ?? null;
-
-  const showConnector = hoveredProvinceId !== null || selectionLocked;
 
   useEffect(() => {
-    setSelectedProjectIndex(0);
-  }, [activeProvinceId]);
+    if (!isDesktopLayout) {
+      setMapColumnHeight(undefined);
+      return undefined;
+    }
+    const el = mapSurfaceRef.current;
+    if (!el) return undefined;
+
+    const syncHeight = () => {
+      setMapColumnHeight(el.getBoundingClientRect().height);
+    };
+
+    syncHeight();
+    const ro = new ResizeObserver(syncHeight);
+    ro.observe(el);
+    window.addEventListener("resize", syncHeight);
+
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", syncHeight);
+    };
+  }, [isDesktopLayout, activeProvinceId, selectionLocked]);
 
   const updateTooltipForProvince = useCallback((provinceId: string) => {
     const svg = svgRef.current;
@@ -139,58 +181,6 @@ export default function ArgentinaProjectsMapClient({
       provinceId,
     });
   }, [projects, provinceById]);
-
-  const updateConnector = useCallback(() => {
-    const sectionEl = sectionRef.current;
-    const anchorEl = panelAnchorRef.current;
-    const svg = svgRef.current;
-    if (!showConnector || !sectionEl || !anchorEl || !svg || !activeProvince) {
-      setConnector(null);
-      return;
-    }
-    const minW = typeof window !== "undefined" ? window.matchMedia("(min-width: 1024px)") : null;
-    if (minW && !minW.matches) {
-      setConnector(null);
-      return;
-    }
-    const rect = sectionEl.getBoundingClientRect();
-    const ar = anchorEl.getBoundingClientRect();
-    const [cx, cy] = activeProvince.centroid;
-    const pt = svg.createSVGPoint();
-    pt.x = cx;
-    pt.y = cy;
-    const ctm = svg.getScreenCTM();
-    if (!ctm) {
-      setConnector(null);
-      return;
-    }
-    const sp = pt.matrixTransform(ctm);
-    setConnector({
-      x1: ar.right - rect.left,
-      y1: ar.top + Math.min(ar.height / 2, 48) - rect.top,
-      x2: sp.x - rect.left,
-      y2: sp.y - rect.top,
-    });
-  }, [activeProvince, showConnector]);
-
-  useLayoutEffect(() => {
-    updateConnector();
-  }, [updateConnector]);
-
-  useEffect(() => {
-    const sec = sectionRef.current;
-    if (!sec) return undefined;
-    const ro = new ResizeObserver(() => updateConnector());
-    ro.observe(sec);
-    const onResize = () => updateConnector();
-    window.addEventListener("scroll", onResize, true);
-    window.addEventListener("resize", onResize);
-    return () => {
-      ro.disconnect();
-      window.removeEventListener("scroll", onResize, true);
-      window.removeEventListener("resize", onResize);
-    };
-  }, [updateConnector]);
 
   if (!activeProvince) {
     return null;
@@ -238,91 +228,71 @@ export default function ArgentinaProjectsMapClient({
         <rect width="100%" height="100%" fill="url(#argentinaPresenceCircuitLines)" />
       </svg>
 
-      {/* Línea puente panel ↔ provincia */}
-      {connector ? (
-        <svg
-          className="pointer-events-none absolute inset-0 z-[5] hidden h-full w-full overflow-visible lg:block"
-          aria-hidden
-        >
-          <defs>
-            <linearGradient id="presenceConnectorGlow" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="rgba(56,189,248,0.92)" />
-              <stop offset="52%" stopColor="rgba(32,149,212,0.35)" />
-              <stop offset="100%" stopColor="rgba(56,189,248,0.55)" />
-            </linearGradient>
-          </defs>
-          <path
-            d={`M ${connector.x1} ${connector.y1} Q ${(connector.x1 + connector.x2) / 2} ${connector.y2 - (connector.y2 - connector.y1) * 0.15} ${connector.x2} ${connector.y2}`}
-            fill="none"
-            stroke="url(#presenceConnectorGlow)"
-            strokeDasharray={5.5}
-            strokeLinecap="round"
-            strokeWidth={1}
-            opacity={0.55}
-          />
-        </svg>
-      ) : null}
-
       <div className="container relative z-10 mx-auto px-4 md:px-6">
         {fetchError ? (
           <p className="mb-4 rounded-sm border border-amber-300/35 bg-amber-950/50 px-4 py-2 text-sm text-amber-100">
             No se pudieron cargar proyectos destacados. Revisá la tabla{" "}
-            <code className="text-xs">locations</code> en Supabase. {fetchError.message}
+            <code className="text-xs">province_projects</code> en Supabase. {fetchError.message}
           </p>
         ) : null}
 
         <div className="flex flex-col gap-10 xl:gap-12">
-          <div className="grid items-start gap-10 lg:grid-cols-[minmax(300px,0.82fr)_minmax(0,1.18fr)] lg:gap-10 xl:gap-12">
-            <div className="order-2 lg:order-1">
-              <div className="mb-6 max-w-xl lg:mb-8">
-                <p className="mb-4 inline-flex items-center gap-3 font-headline text-sm font-black uppercase tracking-[0.28em] text-accent-blue md:text-base">
-                  <span className="h-[2.125rem] w-0.5 shrink-0 bg-accent-blue" aria-hidden />
-                  Presencia nacional
-                </p>
-                <h2 className="font-headline text-4xl font-extrabold text-white md:text-5xl">
-                  Nuestras últimas unidades
-                </h2>
-                <p className="mt-3 text-base leading-relaxed text-slate-400 md:text-lg">
-                  Cada pin es un proyecto que refleja nuestra trayectoria. Pasá el cursor sobre una provincia para
-                  ver el detalle.
-                </p>
-              </div>
-
-              <div className="grid gap-3 sm:grid-cols-3">
-                <div className="rounded-xl border border-cyan-400/35 bg-[#081a30]/85 px-4 py-4 text-center font-headline sm:text-left">
-                  <p className="text-2xl font-black tabular-nums text-white md:text-3xl">{aggregate.provincesWith}</p>
-                  <p className="ui-caption-caps mt-1.5 text-slate-400">Provincias</p>
-                </div>
-                <div className="rounded-xl border border-cyan-400/35 bg-[#081a30]/85 px-4 py-4 text-center font-headline sm:text-left">
-                  <p className="text-2xl font-black tabular-nums text-white md:text-3xl">{aggregate.projectsTotal}</p>
-                  <p className="ui-caption-caps mt-1.5 text-slate-400">Proyectos</p>
-                </div>
-                <div className="rounded-xl border border-cyan-400/35 bg-[#081a30]/85 px-4 py-4 text-center font-headline sm:text-left">
-                  <p className="text-2xl font-black tabular-nums text-white md:text-3xl">
-                    +{new Date().getFullYear() - 1995}
-                  </p>
-                  <p className="ui-caption-caps mt-1.5 text-slate-400">Años</p>
-                </div>
-              </div>
+          <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
+            <div className="max-w-xl">
+              <p className="mb-4 inline-flex items-center gap-3 font-headline text-sm font-black uppercase tracking-[0.28em] text-accent-blue md:text-base">
+                <span className="h-[2.125rem] w-0.5 shrink-0 bg-accent-blue" aria-hidden />
+                Presencia nacional
+              </p>
+              <h2 className="font-headline text-4xl font-extrabold text-white md:text-5xl">
+                Nuestras últimas unidades
+              </h2>
+              <p className="mt-3 text-base leading-relaxed text-slate-400 md:text-lg">
+                Elegí una provincia y explorá las empresas con unidades Saldivia en todo el país.
+              </p>
             </div>
 
-            <div className="relative order-1 lg:order-2">
-            <div
-              ref={mapSurfaceRef}
-              className="relative overflow-hidden rounded-[2rem] border border-cyan-400/25 bg-gradient-to-br from-[#0a1e36]/95 to-[#020817]/98 p-4 shadow-[0px_42px_100px_rgba(0,0,0,0.55)] md:p-6"
-            >
+            <div className="flex flex-wrap gap-3 lg:max-w-md lg:justify-end">
+              <div className="rounded-xl border border-cyan-400/35 bg-[#081a30]/85 px-4 py-3 text-center font-headline sm:min-w-[7.5rem]">
+                <p className="text-2xl font-black tabular-nums text-white">{aggregate.provincesWith}</p>
+                <p className="ui-caption-caps mt-1 text-slate-400">Provincias</p>
+              </div>
+              <div className="rounded-xl border border-cyan-400/35 bg-[#081a30]/85 px-4 py-3 text-center font-headline sm:min-w-[7.5rem]">
+                <p className="text-2xl font-black tabular-nums text-white">{aggregate.projectsTotal}</p>
+                <p className="ui-caption-caps mt-1 text-slate-400">Proyectos</p>
+              </div>
+              <div className="rounded-xl border border-cyan-400/35 bg-[#081a30]/85 px-4 py-3 text-center font-headline sm:min-w-[7.5rem]">
+                <p className="text-2xl font-black tabular-nums text-white">
+                  +{new Date().getFullYear() - 1995}
+                </p>
+                <p className="ui-caption-caps mt-1 text-slate-400">Años</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="rounded-[2rem] border border-cyan-400/25 bg-[#030b14] shadow-[0px_42px_100px_rgba(0,0,0,0.55)] lg:grid lg:grid-cols-[minmax(340px,44%)_minmax(0,1fr)] lg:items-start lg:overflow-hidden">
+            <div ref={mapSurfaceRef} className="relative h-fit w-full min-w-0">
               <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_54%_20%,rgba(32,149,212,0.08),transparent_58%)]" />
 
-              {/* Contador */}
-              <div className="absolute left-4 top-4 z-[6] rounded-full border border-cyan-400/40 bg-[#061220]/94 px-3 py-1.5 font-headline text-sm font-bold uppercase tracking-[0.15em] text-slate-200 shadow-[0_0_26px_rgba(32,149,212,0.15)] backdrop-blur-sm md:left-6 md:top-6">
-                <span className="tabular-nums text-white">{aggregate.provincesWith}</span>
-                {" provincias "}
-                <span className="text-slate-500">·</span>
-                {" "}
-                <span className="tabular-nums text-white">{aggregate.projectsTotal}</span> proyectos
+              <div className="relative z-[6] flex flex-wrap items-center justify-between gap-3 border-b border-white/10 px-5 py-4 md:px-6">
+                <p className="font-headline text-xs font-black uppercase tracking-[0.2em] text-slate-400">
+                  Mapa interactivo
+                </p>
+                {!selectionLocked ? (
+                  <p className="hidden text-xs font-bold uppercase tracking-[0.16em] text-slate-500 lg:block">
+                    Hover para previsualizar · clic para fijar
+                  </p>
+                ) : (
+                  <button
+                    type="button"
+                    className="inline-flex items-center gap-1 rounded-full border border-cyan-400/35 px-3 py-1.5 text-xs font-bold uppercase tracking-[0.14em] text-accent-blue transition-colors hover:bg-cyan-400/10"
+                    onClick={() => setSelectionLocked(false)}
+                  >
+                    <span className="material-symbols-outlined text-sm">explore</span>
+                    Modo exploración
+                  </button>
+                )}
               </div>
 
-              {/* Tooltip proyecto */}
               {mapTooltip &&
               hoveredProvinceId &&
               mapTooltip.provinceId === hoveredProvinceId &&
@@ -344,10 +314,12 @@ export default function ArgentinaProjectsMapClient({
                 </div>
               ) : null}
 
-              <div className="relative z-[2] flex justify-center lg:max-h-[760px] xl:max-h-[820px]">
-                <svg
-                  ref={svgRef}
-                  className="h-auto w-full max-w-[520px]"
+              <div className="relative z-[2]">
+                <div className="flex justify-center px-4 pb-4 pt-2">
+                  <svg
+                    ref={svgRef}
+                    className="block h-auto w-full max-w-[min(100%,440px)]"
+                    preserveAspectRatio="xMidYMin meet"
                   viewBox={mapData.viewBox.join(" ")}
                   xmlns="http://www.w3.org/2000/svg"
                   onMouseLeave={() => {
@@ -358,9 +330,6 @@ export default function ArgentinaProjectsMapClient({
                   }}
                 >
                   <defs>
-                    <clipPath id="argentinaMapClip">
-                      <rect x={0} y={0} width={vbWidth} height={vbHeight} rx={28} ry={28} />
-                    </clipPath>
                     <pattern
                       id="argentinaMapInteriorMesh"
                       width={48}
@@ -385,16 +354,9 @@ export default function ArgentinaProjectsMapClient({
                     </filter>
                   </defs>
 
-                  <g clipPath="url(#argentinaMapClip)">
-                    <rect
-                      width={vbWidth}
-                      height={vbHeight}
-                      fill="#030b14"
-                      opacity={0.96}
-                    />
-                    <rect width={vbWidth} height={vbHeight} fill="url(#argentinaMapInteriorMesh)" opacity={0.65} />
+                  <rect width={vbWidth} height={vbHeight} fill="url(#argentinaMapInteriorMesh)" opacity={0.65} />
 
-                    <g>
+                  <g>
                       {mapData.provinces.map((province) => {
                         const list = projects[province.id] ?? [];
                         const projectCount = list.length;
@@ -414,18 +376,8 @@ export default function ArgentinaProjectsMapClient({
                             stroke={isActive ? HEX.activeStroke : HEX.strokeIdle}
                             strokeWidth={isActive ? 2.1 : 1.05}
                             filter={isActive ? "url(#argentinaProvinceActiveGlow)" : undefined}
-                            onClick={() => {
-                              setSelectedProvinceId(province.id);
-                              setSelectionLocked(true);
-                              setHoveredProvinceId(null);
-                              setMapTooltip(null);
-                            }}
-                            onFocus={() => {
-                              setSelectedProvinceId(province.id);
-                              setSelectionLocked(true);
-                              setHoveredProvinceId(null);
-                              setMapTooltip(null);
-                            }}
+                            onClick={() => handleProvinceSelect(province.id)}
+                            onFocus={() => handleProvinceSelect(province.id)}
                             onMouseEnter={() => {
                               if (!selectionLocked) {
                                 setHoveredProvinceId(province.id);
@@ -437,10 +389,10 @@ export default function ArgentinaProjectsMapClient({
                           </path>
                         );
                       })}
-                    </g>
+                  </g>
 
-                    {/* Pins luminosos por provincias con proyecto */}
-                    <g className="pointer-events-none">
+                  {/* Pins luminosos por provincias con proyecto */}
+                  <g className="pointer-events-none">
                       {mapData.provinces.map((province) => {
                         const list = projects[province.id] ?? [];
                         if (list.length === 0) return null;
@@ -474,137 +426,77 @@ export default function ArgentinaProjectsMapClient({
                           </g>
                         );
                       })}
-                    </g>
                   </g>
                 </svg>
-              </div>
-
-              {/* Leyenda */}
-              <div className="relative z-[2] mt-4 flex flex-wrap items-center justify-center gap-6 border-t border-white/10 pt-4 text-sm font-bold uppercase tracking-[0.16em] text-slate-400 md:justify-end">
-                <span className="inline-flex items-center gap-2">
-                  <span className="relative flex h-2.5 w-2.5">
-                    <span className="absolute inset-0 rounded-full bg-accent-blue shadow-[0_0_10px_rgba(32,149,212,0.75)]" />
-                  </span>
-                  Con proyecto
-                </span>
-                <span className="inline-flex items-center gap-2">
-                  <span className="h-2.5 w-2.5 rounded-full border border-slate-500/80 bg-transparent ring-2 ring-transparent" />
-                  Sin proyecto
-                </span>
-              </div>
-            </div>
-          </div>
-          </div>
-
-          {/* Detalle de unidad — ancho completo para evitar recorte con el mapa */}
-          <div
-            className="relative rounded-[1.5rem] border border-cyan-400/35 bg-[#081a30]/92 p-5 shadow-[0px_36px_80px_rgba(0,10,26,0.55)] backdrop-blur-sm md:p-8"
-            aria-live="polite"
-            aria-atomic="true"
-          >
-            <div
-              ref={panelAnchorRef}
-              aria-hidden
-              className="pointer-events-none absolute right-0 top-10 z-[1] hidden h-20 w-px lg:block xl:top-12"
-            />
-
-            <div className="min-w-0 space-y-5">
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="inline-flex items-center rounded-full bg-accent-blue px-2.5 py-1 text-sm font-black uppercase tracking-[0.22em] text-white shadow-[0_0_22px_rgba(32,149,212,0.35)]">
-                  Provincia activa
-                </span>
-                <span className="inline-flex items-center rounded-full border border-white/18 bg-[#071422]/85 px-2.5 py-1 text-sm font-bold uppercase tracking-[0.18em] text-slate-300">
-                  {activeProjects.length} destacado
-                  {activeProjects.length === 1 ? "" : "s"}
-                </span>
-                <span className="inline-flex items-center rounded-full border border-white/12 px-2.5 py-1 text-sm font-bold uppercase tracking-[0.18em] text-slate-500">
-                  {selectionLocked ? "Selección fija" : "Hover activo"}
-                </span>
-                {selectionLocked ? (
-                  <button
-                    className="inline-flex items-center rounded-full border border-cyan-400/40 px-2.5 py-1 text-sm font-bold uppercase tracking-[0.18em] text-accent-blue transition-colors hover:bg-cyan-400/15"
-                    onClick={() => setSelectionLocked(false)}
-                    type="button"
-                  >
-                    Liberar selección
-                  </button>
-                ) : null}
-              </div>
-
-              <div>
-                <h3 className="font-headline text-3xl font-extrabold text-white md:text-4xl">
-                  {activeProvince.name}
-                </h3>
-                <p className="mt-2.5 max-w-3xl text-base leading-relaxed text-slate-400 md:text-lg">
-                  {activeProjects.length > 0
-                    ? "Proyectos destacados en esta provincia."
-                    : "No hay destacados en esta provincia. Creálos en Dashboard → Ubicaciones; la provincia debe ser la del mapa (slug, ej. cordoba)."}
-                </p>
-              </div>
-
-            <div className="min-w-0 space-y-3">
-              {activeProjects.length > 0 ? (
-                <>
-                  {activeProjects.length > 1 ? (
-                    <div className="flex flex-wrap gap-2">
-                      {activeProjects.map((project, index) => {
-                        const isSelected = index === selectedProjectIndex;
-                        return (
-                          <button
-                            key={`${activeProvince.id}-tab-${index}`}
-                            className={`rounded-full border px-3 py-1.5 text-left text-sm font-black uppercase tracking-[0.18em] transition-colors ${
-                              isSelected
-                                ? "border-accent-blue bg-accent-blue/25 text-accent-blue"
-                                : "border-white/15 bg-transparent text-slate-400 hover:border-cyan-400/45 hover:text-slate-200"
-                            }`}
-                            onClick={() => setSelectedProjectIndex(index)}
-                            type="button"
-                          >
-                            Destacado {index + 1}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  ) : null}
-
-                  {activeProject ? (
-                    <article
-                      key={`${activeProvince.id}-${selectedProjectIndex}-${activeProject.title}`}
-                      className="relative overflow-visible rounded-[1.25rem] border border-white/14 bg-[#051018]/92 pl-[4px]"
-                    >
-                      <div
-                        className="pointer-events-none absolute bottom-4 left-0 top-4 w-[3px] rounded-sm bg-accent-blue"
-                        aria-hidden
-                      />
-                      <div className="p-4 pl-[1.125rem] md:p-5 md:pl-6">
-                        <div className="mb-2.5 flex flex-wrap items-center gap-2">
-                          <span className="inline-flex items-center rounded-full border border-accent-blue/50 bg-accent-blue/20 px-2.5 py-1 text-xs font-black uppercase tracking-[0.22em] text-accent-blue">
-                            {activeProject.segment}
-                          </span>
-                          {activeProject.year.trim() && activeProject.year.trim() !== "—" ? (
-                            <span className="inline-flex items-center rounded-full border border-white/15 px-2.5 py-1 text-xs font-bold uppercase tracking-[0.18em] text-slate-500">
-                              {activeProject.year}
-                            </span>
-                          ) : null}
-                        </div>
-                        <h4 className="font-headline text-xl font-bold text-white md:text-2xl">{activeProject.title}</h4>
-                        <p className="mt-1.5 text-sm font-black uppercase tracking-[0.18em] text-accent-blue">
-                          {activeProject.location}
-                        </p>
-                        <p className="mt-2.5 text-base leading-relaxed text-slate-300 md:text-lg">
-                          {activeProject.description}
-                        </p>
-                      </div>
-                    </article>
-                  ) : null}
-                </>
-              ) : (
-                <div className="rounded-[1.25rem] border border-dashed border-white/22 bg-[#071422]/80 p-5 text-base leading-relaxed text-slate-500">
-                  No hay proyectos destacados en esta provincia. Agregalos en Dashboard → Ubicaciones con el slug
-                  correcto (ej. mendoza, buenos-aires) y marcá Activo.
                 </div>
-              )}
+              </div>
             </div>
+
+            <div
+              ref={projectsPanelRef}
+              id="province-projects-panel"
+              className="scroll-mt-28 border-t border-white/10 bg-[#071422]/60 lg:flex lg:min-h-0 lg:flex-col lg:overflow-hidden lg:border-l lg:border-t-0"
+              style={isDesktopLayout && mapColumnHeight ? { maxHeight: mapColumnHeight } : undefined}
+              aria-live="polite"
+              aria-atomic="true"
+            >
+              <div className="shrink-0 border-b border-white/10 px-5 py-6 md:px-7 md:py-7">
+                <div className="flex flex-col gap-4">
+                  <div className="flex flex-wrap items-start justify-between gap-3">
+                    <div>
+                      <p className="font-headline text-xs font-black uppercase tracking-[0.24em] text-accent-blue">
+                        Unidades en
+                      </p>
+                      <h3 className="font-headline text-2xl font-extrabold text-white md:text-3xl">
+                        {activeProvince.name}
+                      </h3>
+                      <p className="mt-1.5 text-sm text-slate-400 md:text-base">
+                        {activeProjects.length > 0
+                          ? `${activeProjects.length} empresa${activeProjects.length === 1 ? "" : "s"} con flota Saldivia`
+                          : "Sin proyectos cargados en esta provincia"}
+                      </p>
+                    </div>
+                    <span className="inline-flex items-center rounded-full border border-white/15 bg-[#081a30]/90 px-3 py-1 text-xs font-bold tabular-nums uppercase tracking-[0.14em] text-slate-300">
+                      {activeProjects.length} total
+                    </span>
+                  </div>
+
+                  <label className="flex flex-col gap-2">
+                    <span className="text-[0.65rem] font-bold uppercase tracking-[0.18em] text-slate-500">
+                      Cambiar provincia
+                    </span>
+                    <div className="relative">
+                      <select
+                        value={activeProvince.id}
+                        onChange={(e) => handleProvinceSelect(e.target.value)}
+                        className="w-full cursor-pointer appearance-none rounded-xl border border-white/15 bg-[#081a30]/90 py-3 pl-4 pr-10 font-headline text-sm font-bold uppercase tracking-[0.1em] text-white transition-colors hover:border-cyan-400/35 focus-visible:border-accent-blue focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue/40"
+                      >
+                        {mapData.provinces.map((province) => {
+                          const count = (projects[province.id] ?? []).length;
+                          return (
+                            <option key={province.id} value={province.id} disabled={count === 0}>
+                              {province.name}
+                              {count > 0 ? ` (${count})` : " — sin proyectos"}
+                            </option>
+                          );
+                        })}
+                      </select>
+                      <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-xl text-slate-400">
+                        expand_more
+                      </span>
+                    </div>
+                  </label>
+                </div>
+              </div>
+
+              <div className="px-5 py-6 md:px-7 md:py-7 lg:min-h-0 lg:flex-1 lg:overflow-y-auto lg:overscroll-contain lg:pr-4">
+                <ProvinceProjectCardsGrid
+                  key={activeProvince.id}
+                  projects={activeProjects}
+                  initialLimit={isDesktopLayout ? undefined : 8}
+                  compact={isDesktopLayout}
+                />
+              </div>
             </div>
           </div>
         </div>

@@ -8,7 +8,8 @@
     "dev:clean": "npm run clean && next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "sync:mapa": "node scripts/sync-mapa-projects.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.10.2",

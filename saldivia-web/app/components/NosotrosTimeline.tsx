@@ -137,7 +137,7 @@ function ChronologyMedia({
 }) {
   if (imgSrc) {
     return (
-      <div className="h-52 overflow-hidden rounded-lg shadow-2xl grayscale transition-all duration-500 group-hover:grayscale-0 sm:h-64">
+      <div className="h-52 overflow-hidden rounded-lg shadow-2xl sm:h-64">
         <img className="h-full w-full object-cover" alt={imgAlt ?? ""} src={imgSrc} />
       </div>
     );
@@ -146,9 +146,9 @@ function ChronologyMedia({
   return (
     <div
       aria-hidden
-      className="hidden h-52 items-center justify-center rounded-lg border border-outline-variant/25 bg-surface-container-low/80 sm:h-64 lg:flex"
+      className="hidden h-52 items-center justify-center rounded-lg border border-white/10 bg-white/5 sm:h-64 lg:flex"
     >
-      <span className="material-symbols-outlined text-6xl text-secondary/25">{icon}</span>
+      <span className="material-symbols-outlined text-6xl text-secondary-container/30">{icon}</span>
     </div>
   );
 }
@@ -191,7 +191,7 @@ function ChronologyItem({
       </div>
 
       <div
-        className={`order-1 z-10 flex h-12 w-12 shrink-0 items-center justify-center justify-self-center rounded font-black text-white shadow-xl ring-4 ring-surface-container-lowest sm:h-14 sm:w-14 sm:ring-8 ${nodeColor} lg:order-2`}
+        className={`order-1 z-10 flex h-12 w-12 shrink-0 items-center justify-center justify-self-center rounded font-black text-white shadow-xl ring-4 ring-[#081b31] sm:h-14 sm:w-14 sm:ring-6 ${nodeColor} lg:order-2`}
       >
         <span className="material-symbols-outlined text-xl sm:text-2xl">{item.icon}</span>
       </div>
@@ -216,6 +216,7 @@ function StatCard({
   sublabel,
   icon,
   featured = false,
+  staticValue,
 }: {
   value?: number;
   prefix?: string;
@@ -224,10 +225,12 @@ function StatCard({
   sublabel?: string;
   icon: string;
   featured?: boolean;
+  staticValue?: string;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, amount: 0.5 });
   const count = useCountUp(value ?? 0, inView && value !== undefined);
+  const display = staticValue ?? `${prefix}${count.toLocaleString("es-AR")}${suffix}`;
 
   if (featured) {
     return (
@@ -237,11 +240,9 @@ function StatCard({
         </div>
         <div className="relative z-10">
           <h4 className="mb-2 text-xs font-black uppercase tracking-widest text-secondary-container">{label}</h4>
-          {value !== undefined && (
-            <div className="mb-3 text-5xl font-black tracking-tighter text-white sm:text-6xl">
-              {prefix}{count.toLocaleString()}{suffix}
-            </div>
-          )}
+          <div className="mb-3 text-5xl font-black tracking-tighter text-white sm:text-6xl">
+            {display}
+          </div>
           {sublabel && <p className="text-sm text-on-primary-container">{sublabel}</p>}
         </div>
       </div>
@@ -251,11 +252,9 @@ function StatCard({
   return (
     <div ref={ref} className="flex flex-col justify-center border-t-4 border-secondary bg-surface-container-highest p-6">
       <span className="material-symbols-outlined mb-3 text-3xl text-secondary">{icon}</span>
-      {value !== undefined && (
-        <div className="mb-1 text-4xl font-black tracking-tighter text-primary">
-          {prefix}{count.toLocaleString()}{suffix}
-        </div>
-      )}
+      <div className="mb-1 text-4xl font-black tracking-tighter text-primary">
+        {display}
+      </div>
       <p className="text-xs font-bold uppercase tracking-wider text-on-surface-variant">{label}</p>
     </div>
   );
@@ -273,108 +272,113 @@ export default function NosotrosTimeline() {
   const lineScaleY = useTransform(scrollYProgress, [0, 1], [0, 1]);
 
   return (
-    <section
-      className="relative border-y border-outline-variant/30 bg-surface-container-high py-16 sm:py-20 md:py-24"
-      ref={sectionRef}
-    >
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_12%,rgba(32,149,212,0.12),transparent_42%),radial-gradient(circle_at_82%_88%,rgba(13,44,79,0.16),transparent_48%)]"
-      />
-      <div className="container mx-auto px-4 sm:px-6">
+    <>
+      <section className="relative border-b border-outline-variant/30 bg-surface-container-high py-16 sm:py-20 md:py-24">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_12%,rgba(32,149,212,0.12),transparent_42%),radial-gradient(circle_at_82%_88%,rgba(13,44,79,0.16),transparent_48%)]"
+        />
+        <div className="container relative mx-auto px-4 sm:px-6">
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.15 }}
+            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <div className="relative flex flex-col gap-12 lg:flex-row lg:items-start lg:gap-16">
+              <div className="relative lg:w-3/5">
+                <div className="absolute -left-6 -top-10 h-72 w-72 rounded-full opacity-5 blur-3xl technical-gradient pointer-events-none" />
 
-        {/* ─── Reflexión introductoria ──────────────────────── */}
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.15 }}
-          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-          className="mb-20 sm:mb-28 md:mb-36"
-        >
-          <div className="relative flex flex-col gap-12 lg:flex-row lg:items-start lg:gap-16">
+                <div className="relative mb-6 flex items-center gap-4">
+                  <span className="h-px w-14 bg-secondary" />
+                  <span className="text-xs font-bold uppercase tracking-[0.45em] text-secondary">
+                    Nuestra Historia
+                  </span>
+                </div>
 
-            {/* Izquierda: texto */}
-            <div className="relative lg:w-3/5">
-              <div className="absolute -left-6 -top-10 h-72 w-72 rounded-full opacity-5 blur-3xl technical-gradient pointer-events-none" />
+                <div className="flex max-w-3xl flex-col gap-6">
+                  <p className="text-lg leading-relaxed text-on-surface-variant sm:text-xl">
+                    Lo que comenzó como un proyecto industrial con grandes aspiraciones se transformó en una empresa
+                    referente del sector, con más de 4.100 unidades producidas, una amplia diversidad de modelos y una
+                    planta industrial de 14.500 m² cubiertos sobre un predio de 2,6 hectáreas en el Parque Industrial
+                    Alvear.
+                  </p>
+                  <p className="text-lg leading-relaxed text-on-surface-variant sm:text-xl">
+                    A lo largo de nuestra historia hemos evolucionado constantemente, incorporando nuevas tecnologías,
+                    perfeccionando procesos y desarrollando generaciones de productos que marcaron hitos en la industria.
+                    Desde la primera carrocería LAS hasta la actual familia Nuevo Aries, cada modelo refleja nuestro
+                    compromiso con la mejora continua y la búsqueda de soluciones adaptadas a las necesidades de nuestros
+                    clientes.
+                  </p>
+                </div>
 
-              <div className="relative mb-6 flex items-center gap-4">
-                <span className="h-px w-14 bg-secondary" />
-                <span className="text-xs font-bold uppercase tracking-[0.45em] text-secondary">
-                  Nuestra Historia
-                </span>
+                <div className="mt-10 flex flex-wrap gap-3">
+                  {[
+                    { icon: "verified", label: "Calidad" },
+                    { icon: "lightbulb", label: "Innovación" },
+                    { icon: "support_agent", label: "Postventa" },
+                  ].map(({ icon, label }) => (
+                    <div
+                      key={label}
+                      className="flex items-center gap-2 bg-secondary-container px-4 py-2 text-xs font-bold uppercase tracking-widest text-on-secondary-container"
+                    >
+                      <span className="material-symbols-outlined text-sm">{icon}</span>
+                      {label}
+                    </div>
+                  ))}
+                </div>
               </div>
 
-              <div className="flex max-w-3xl flex-col gap-6">
-                <p className="text-lg leading-relaxed text-on-surface-variant sm:text-xl">
-                  Lo que comenzó como un proyecto industrial con grandes aspiraciones se transformó en una empresa
-                  referente del sector, con más de 4.100 unidades producidas, una amplia diversidad de modelos y una
-                  planta industrial de 14.500 m² cubiertos sobre un predio de 2,6 hectáreas en el Parque Industrial
-                  Alvear.
-                </p>
-                <p className="text-lg leading-relaxed text-on-surface-variant sm:text-xl">
-                  A lo largo de nuestra historia hemos evolucionado constantemente, incorporando nuevas tecnologías,
-                  perfeccionando procesos y desarrollando generaciones de productos que marcaron hitos en la industria.
-                  Desde la primera carrocería LAS hasta la actual familia Nuevo Aries, cada modelo refleja nuestro
-                  compromiso con la mejora continua y la búsqueda de soluciones adaptadas a las necesidades de nuestros
-                  clientes.
-                </p>
-              </div>
-
-              <div className="mt-10 flex flex-wrap gap-3">
-                {[
-                  { icon: "verified", label: "Calidad" },
-                  { icon: "lightbulb", label: "Innovación" },
-                  { icon: "support_agent", label: "Postventa" },
-                ].map(({ icon, label }) => (
-                  <div
-                    key={label}
-                    className="flex items-center gap-2 bg-secondary-container px-4 py-2 text-xs font-bold uppercase tracking-widest text-on-secondary-container"
-                  >
-                    <span className="material-symbols-outlined text-sm">{icon}</span>
-                    {label}
-                  </div>
-                ))}
+              <div className="flex flex-col gap-4 lg:w-2/5 lg:pt-4">
+                <StatCard
+                  value={4100}
+                  prefix="+"
+                  label="Producción Histórica"
+                  sublabel="Unidades producidas con una amplia diversidad de modelos."
+                  icon="directions_bus"
+                  featured
+                />
+                <div className="grid grid-cols-2 gap-4">
+                  <StatCard
+                    value={14500}
+                    suffix=" m²"
+                    label="Planta Industrial"
+                    icon="factory"
+                  />
+                  <StatCard
+                    staticValue="2,6 ha"
+                    label="Superficie del Predio"
+                    icon="landscape"
+                  />
+                </div>
               </div>
             </div>
+          </motion.div>
+        </div>
+      </section>
 
-            {/* Derecha: stats */}
-            <div className="flex flex-col gap-4 lg:w-2/5 lg:pt-4">
-              <StatCard
-                value={4100}
-                prefix="+"
-                label="Producción Histórica"
-                sublabel="Unidades producidas con una amplia diversidad de modelos."
-                icon="directions_bus"
-                featured
-              />
-              <div className="grid grid-cols-2 gap-4">
-                <StatCard
-                  label="Expertos Industriales"
-                  icon="groups"
-                />
-                <StatCard
-                  value={12}
-                  label="Patentes de Diseño"
-                  icon="military_tech"
-                />
-              </div>
-            </div>
-
-          </div>
-        </motion.div>
-
-        <div className="relative rounded-xl border border-outline-variant/35 bg-surface-container-low/95 shadow-sm px-4 py-12 sm:px-6 sm:py-14 md:px-8 md:py-16">
+      <section
+        ref={sectionRef}
+        className="relative overflow-hidden bg-[#081b31] py-16 text-on-primary sm:py-20 md:py-24 industrial-grid"
+      >
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 bg-gradient-to-b from-primary/40 via-transparent to-black/30"
+        />
+        <div className="container relative mx-auto px-4 sm:px-6">
           <div className="mb-12 text-center sm:mb-16 md:mb-20">
-            <h2 className="mb-3 text-2xl font-black uppercase tracking-tighter text-primary sm:mb-4 sm:text-3xl md:text-4xl">
+            <span className="mb-4 block text-xs font-bold uppercase tracking-[0.35em] text-secondary-container">
+              Nuestra historia
+            </span>
+            <h2 className="mb-3 text-2xl font-black uppercase tracking-tighter text-white sm:mb-4 sm:text-3xl md:text-4xl">
               Cronología
             </h2>
             <div className="mx-auto h-1 w-20 technical-gradient sm:w-24" />
           </div>
 
           <div className="relative">
-            {/* Línea vertical animada */}
             <div className="absolute bottom-0 left-1/2 top-0 hidden w-[2px] -translate-x-1/2 overflow-hidden lg:block">
-              <div className="absolute inset-0 bg-outline-variant/20" />
+              <div className="absolute inset-0 bg-white/10" />
               <motion.div
                 className="absolute left-0 right-0 top-0 origin-top technical-gradient"
                 style={{ scaleY: lineScaleY, height: "100%" }}
@@ -388,7 +392,7 @@ export default function NosotrosTimeline() {
             </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </>
   );
 }

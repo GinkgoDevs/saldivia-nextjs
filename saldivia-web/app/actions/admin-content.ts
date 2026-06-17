@@ -305,6 +305,7 @@ type SaveProvinceProjectInput = {
   location_label: string;
   segment: string;
   year: string;
+  image_url: string;
   sort_order: number;
   active: boolean;
 };
@@ -323,6 +324,7 @@ export async function saveProvinceProject(input: SaveProvinceProjectInput) {
     location_label: input.location_label.trim() || null,
     segment: input.segment.trim() || null,
     year: input.year.trim() || null,
+    image_url: input.image_url.trim() || null,
     sort_order: Number.isFinite(input.sort_order) ? input.sort_order : 0,
     active: input.active,
   };

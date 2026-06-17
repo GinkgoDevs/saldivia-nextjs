@@ -18,6 +18,7 @@ type FormState = {
   location_label: string;
   segment: string;
   year: string;
+  image_url: string;
   sort_order: number;
   active: boolean;
 };
@@ -31,6 +32,7 @@ function emptyForm(): FormState {
     location_label: "",
     segment: "",
     year: "",
+    image_url: "",
     sort_order: 0,
     active: true,
   };
@@ -45,6 +47,7 @@ function rowToForm(row: ProvinceProjectRow): FormState {
     location_label: row.location_label ?? "",
     segment: row.segment ?? "",
     year: row.year ?? "",
+    image_url: row.image_url ?? "",
     sort_order: row.sort_order ?? 0,
     active: row.active,
   };
@@ -83,6 +86,7 @@ export function ProvinceProjectsAdmin({ initial, provinceOptions }: Props) {
       location_label: form.location_label,
       segment: form.segment,
       year: form.year,
+      image_url: form.image_url,
       sort_order: form.sort_order,
       active: form.active,
     });
@@ -183,6 +187,17 @@ export function ProvinceProjectsAdmin({ initial, provinceOptions }: Props) {
               rows={3}
               value={form.description}
               onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
+            />
+          </div>
+          <div className="space-y-1">
+            <label className="text-xs font-bold text-secondary" htmlFor="pp-img">
+              Imagen (ruta pública)
+            </label>
+            <Input
+              id="pp-img"
+              placeholder="/02%20%20MAPA/CORDOBA/EMPRESA/foto.jpg"
+              value={form.image_url}
+              onChange={(e) => setForm((f) => ({ ...f, image_url: e.target.value }))}
             />
           </div>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">

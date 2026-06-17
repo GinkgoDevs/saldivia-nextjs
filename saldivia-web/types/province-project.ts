@@ -7,6 +7,7 @@ export type ProvinceProjectRow = {
   location_label: string | null;
   segment: string | null;
   year: string | null;
+  image_url: string | null;
   sort_order: number | null;
   active: boolean;
   created_at: string;
