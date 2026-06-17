@@ -63,8 +63,8 @@ export function TechnicalShowcaseClient({ slides }: { slides: ResolvedHomeShowca
         variants={reduce ? {} : stagger}
         initial="hidden"
         animate={animState}
-        className="absolute left-0 right-0 top-0 z-20 flex items-end justify-between px-8 pb-6 pt-20 md:px-12 md:pt-24"
-        style={{ background: "linear-gradient(to bottom, rgba(18,18,18,0.9) 0%, transparent 100%)" }}
+        className="absolute left-0 right-0 top-0 z-20 flex items-start justify-between px-8 pb-1 pt-16 md:px-12 md:pt-16"
+        style={{ background: "linear-gradient(to bottom, rgba(18,18,18,0.92) 0%, rgba(18,18,18,0.55) 55%, transparent 100%)" }}
       >
         <div>
           <motion.p
@@ -104,7 +104,7 @@ export function TechnicalShowcaseClient({ slides }: { slides: ResolvedHomeShowca
       </motion.div>
 
       {/* ── Body: image + content panel ────────────────────────── */}
-      <div className="relative z-10 flex flex-grow flex-col lg:flex-row">
+      <div className="relative z-10 flex flex-grow flex-col pt-24 md:pt-28 lg:flex-row lg:pt-32">
 
         {/* Hero image */}
         <AnimatePresence mode="wait">
@@ -156,16 +156,6 @@ export function TechnicalShowcaseClient({ slides }: { slides: ResolvedHomeShowca
                 </span>
               </div>
             )}
-
-            {/* Eyebrow */}
-            <motion.span
-              variants={reduce ? {} : itemYDelayed}
-              initial="hidden"
-              animate={animState}
-              className="mb-4 inline-block rounded border border-white/10 bg-white/8 px-3 py-1 text-sm font-bold uppercase tracking-widest text-slate-400"
-            >
-              {slide.eyebrow}
-            </motion.span>
 
             {/* Model name */}
             <motion.h3
