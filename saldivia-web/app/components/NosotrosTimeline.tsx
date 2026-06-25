@@ -56,6 +56,8 @@ const CRONOLOGIA = [
     year: 2011,
     body: "Presentación del minibús A305.",
     icon: "airport_shuttle",
+    imgSrc: "/historia/2011.png",
+    imgAlt: "Presentación del minibús A305, 2011",
   },
   {
     year: 2012,
@@ -68,36 +70,50 @@ const CRONOLOGIA = [
     year: 2017,
     body: "Desarrollo del prototipo A405, un proyecto conceptual que impulsó nuevas soluciones tecnológicas para futuros modelos.",
     icon: "science",
+    imgSrc: "/historia/2017.png",
+    imgAlt: "Prototipo A405, 2017",
   },
   {
     year: 2018,
     body: "Lanzamiento de NUEVO ARIES 365, una nueva generación de carrocerías diseñada para competir a nivel internacional.",
     icon: "public",
+    imgSrc: "/historia/2018.jpg",
+    imgAlt: "Lanzamiento de Nuevo Aries 365, 2018",
   },
   {
     year: 2019,
     body: "Se concretan las primeras exportaciones y comienza la ampliación de la gama de productos.",
     icon: "flight_takeoff",
+    imgSrc: "/historia/2019.jpg",
+    imgAlt: "Primeras exportaciones Saldivia, 2019",
   },
   {
     year: 2021,
     body: "Presentación de ARIES TRUCK, desarrollado para responder a las necesidades de la industria minera.",
     icon: "local_shipping",
+    imgSrc: "/historia/2021.jpg",
+    imgAlt: "Presentación de Aries Truck, 2021",
   },
   {
     year: 2023,
     body: "Lanzamiento del NA 315, nuestro primer modelo urbano de piso bajo.",
     icon: "commute",
+    imgSrc: "/historia/2023.jpg",
+    imgAlt: "Lanzamiento del NA 315, 2023",
   },
   {
     year: 2024,
     body: "Presentación del NA 405, nuevo modelo de larga distancia de doble piso.",
     icon: "layers",
+    imgSrc: "/historia/2024.png",
+    imgAlt: "Presentación del NA 405, 2024",
   },
   {
     year: 2025,
     body: "Tras casi dos décadas sale de la línea de montaje la última unidad del clásico ARIES y nace el NA 330 MD, marcando el inicio de una nueva etapa.",
     icon: "celebration",
+    imgSrc: "/historia/2025.jpg",
+    imgAlt: "NA 330 MD y fin de línea del clásico Aries, 2025",
   },
 ] as const;
 
@@ -137,8 +153,13 @@ function ChronologyMedia({
 }) {
   if (imgSrc) {
     return (
-      <div className="h-52 overflow-hidden rounded-lg shadow-2xl sm:h-64">
-        <img className="h-full w-full object-cover" alt={imgAlt ?? ""} src={imgSrc} />
+      <div className="h-52 overflow-hidden rounded-lg shadow-2xl sm:h-64 lg:h-72">
+        <img
+          className="h-full w-full object-cover object-center"
+          alt={imgAlt ?? ""}
+          src={imgSrc}
+          loading="lazy"
+        />
       </div>
     );
   }

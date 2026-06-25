@@ -1,9 +1,11 @@
 "use client";
 
+import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 
 import type { ProvinceProjectCard } from "@/lib/supabase/province-projects";
+import { optimizedStorageImageUrl } from "@/lib/optimized-storage-image";
 
 type LightboxState = {
   index: number;
@@ -95,7 +97,7 @@ function ProjectLightbox({
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src={current.imageUrl}
+              src={optimizedStorageImageUrl(current.imageUrl) ?? current.imageUrl}
               alt={current.title}
               className="mx-auto h-full max-h-[min(72vh,780px)] w-full cursor-default object-contain"
               onClick={(e) => e.stopPropagation()}
@@ -116,6 +118,48 @@ function ProjectLightbox({
   );
 }
 
+function MapProjectImage({ src, alt }: { src: string; alt: string }) {
+  const [loaded, setLoaded] = useState(false);
+  const [useNative, setUseNative] = useState(false);
+  const imageSrc = optimizedStorageImageUrl(src) ?? src;
+
+  if (useNative) {
+    return (
+      <>
+        {!loaded ? <span className="absolute inset-0 animate-pulse bg-[#0d2844]" aria-hidden /> : null}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={imageSrc}
+          alt={alt}
+          loading="lazy"
+          decoding="async"
+          className={`h-full w-full object-cover transition-[opacity,transform] duration-500 group-hover:scale-[1.03] ${
+            loaded ? "opacity-100" : "opacity-0"
+          }`}
+          onLoad={() => setLoaded(true)}
+        />
+      </>
+    );
+  }
+
+  return (
+    <>
+      {!loaded ? <span className="absolute inset-0 animate-pulse bg-[#0d2844]" aria-hidden /> : null}
+      <Image
+        src={imageSrc}
+        alt={alt}
+        fill
+        sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 280px"
+        className={`object-cover transition-[opacity,transform] duration-500 group-hover:scale-[1.03] ${
+          loaded ? "opacity-100" : "opacity-0"
+        }`}
+        onLoad={() => setLoaded(true)}
+        onError={() => setUseNative(true)}
+      />
+    </>
+  );
+}
+
 function ProjectCard({
   project,
   onOpen,
@@ -126,7 +170,7 @@ function ProjectCard({
   const hasImage = Boolean(project.imageUrl);
 
   return (
-    <article className="group flex flex-col overflow-hidden rounded-xl border border-white/12 bg-[#051018]/90 shadow-[0_12px_32px_rgba(0,0,0,0.35)] transition-colors hover:border-cyan-400/35">
+    <article className="group flex flex-col overflow-hidden rounded-curve-sm border border-white/12 bg-[#051018]/90 shadow-[0_12px_32px_rgba(0,0,0,0.35)] transition-colors hover:border-cyan-400/35">
       <button
         type="button"
         className="relative aspect-[4/3] w-full overflow-hidden bg-[#0a1e36] text-left"
@@ -136,13 +180,7 @@ function ProjectCard({
       >
         {hasImage ? (
           <>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={project.imageUrl}
-              alt=""
-              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-              loading="lazy"
-            />
+            <MapProjectImage src={project.imageUrl!} alt={project.title} />
             <span className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-transparent" />
             <span className="pointer-events-none absolute bottom-3 right-3 flex h-9 w-9 items-center justify-center rounded-full border border-white/25 bg-black/45 text-white opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100">
               <span className="material-symbols-outlined text-lg">zoom_in</span>
@@ -224,8 +262,8 @@ export function ProvinceProjectCardsGrid({
 
   if (projects.length === 0) {
     return (
-      <div className="rounded-[1.25rem] border border-dashed border-white/22 bg-[#071422]/80 p-5 text-base leading-relaxed text-slate-500">
-        No hay proyectos en esta provincia. Ejecutá{" "}
+      <div className="rounded-curve-md border border-dashed border-white/22 bg-[#071422]/80 p-5 text-base leading-relaxed text-slate-500">
+        No hay proyectos en esta provincia. Ejecute{" "}
         <code className="text-xs text-slate-400">npm run sync:mapa</code> para subir la carpeta MAPA a
         Supabase Storage.
       </div>

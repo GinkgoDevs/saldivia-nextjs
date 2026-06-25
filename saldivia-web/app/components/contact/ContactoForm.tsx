@@ -24,9 +24,9 @@ function SubmitButton() {
 
 function errorMessage(s: ContactQuoteState): string | null {
   if (!s || s.ok) return null;
-  if (s.error === "validation") return "Completá nombre, email válido y los campos obligatorios.";
-  if (s.error === "database") return "No pudimos guardar el pedido. Intentá de nuevo o escribinos por email.";
-  if (s.error === "email") return "El pedido se registró, pero el aviso por correo falló. Te contactaremos igualmente.";
+  if (s.error === "validation") return "Complete nombre, email válido y los campos obligatorios.";
+  if (s.error === "database") return "No pudimos guardar el pedido. Intente de nuevo o escríbanos por email.";
+  if (s.error === "email") return "El pedido se registró, pero el aviso por correo falló. Nos pondremos en contacto igualmente.";
   return null;
 }
 

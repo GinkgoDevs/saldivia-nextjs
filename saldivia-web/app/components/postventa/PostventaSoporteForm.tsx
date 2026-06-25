@@ -26,8 +26,8 @@ function SubmitButton() {
 function errorMessage(s: ServiceRequestState): string | null {
   if (!s || s.ok) return null;
   if (s.error === "validation")
-    return "Revisá empresa, VIN y descripción. Si completás email, que sea válido.";
-  if (s.error === "database") return "No pudimos registrar el pedido. Intentá de nuevo o escribinos por el 0800.";
+    return "Revise empresa, VIN y descripción. Si completa email, que sea válido.";
+  if (s.error === "database") return "No pudimos registrar el pedido. Intente de nuevo o contáctenos por el 0800.";
   return null;
 }
 

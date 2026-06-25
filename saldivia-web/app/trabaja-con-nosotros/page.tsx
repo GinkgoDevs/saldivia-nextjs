@@ -39,7 +39,7 @@ export default async function TrabajaConNosotrosPage() {
                   Trabaja con nosotros
                 </h1>
                 <p className="mt-4 max-w-2xl text-sm leading-relaxed text-white/85 sm:text-base">
-                  Escribinos para consultas y envianos tu CV para futuras busquedas.
+                  Envíenos su consulta comercial o su CV para futuras búsquedas laborales.
                 </p>
               </HeroStagger>
             </div>
@@ -101,8 +101,8 @@ export default async function TrabajaConNosotrosPage() {
                 </div>
               </div>
 
-              <div className="rounded border border-outline-variant/30 bg-surface-container-low p-6 text-sm text-on-surface-variant sm:p-8">
-                Si queres postularte, envia tu CV por mail y te contactaremos cuando haya vacantes.
+              <div className="rounded-curve-sm border border-outline-variant/30 bg-surface-container-low p-6 text-sm text-on-surface-variant sm:p-8">
+                Si desea postularse, envíe su CV por mail y nos pondremos en contacto cuando haya vacantes.
               </div>
             </aside>
 
@@ -112,7 +112,7 @@ export default async function TrabajaConNosotrosPage() {
                   Escribinos
                 </h3>
                 <p className="mt-3 text-sm text-on-surface-variant sm:text-base">
-                  Completá el formulario y nuestro equipo se pondrá en contacto.
+                  Complete el formulario y nuestro equipo se pondrá en contacto.
                 </p>
                 <div className="mt-8">
                   <ContactoForm modelOptions={modelOptions} />

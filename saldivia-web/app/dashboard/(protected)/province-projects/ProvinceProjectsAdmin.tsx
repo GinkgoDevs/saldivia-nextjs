@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { deleteProvinceProject, saveProvinceProject } from "@/app/actions/admin-content";
+import { deleteProvinceProject, reorderProvinceProjects, saveProvinceProject } from "@/app/actions/admin-content";
 import type { ProvinceProjectRow } from "@/types/province-project";
 import { Button } from "@/app/components/ui/Button";
 import { Input } from "@/app/components/ui/Input";
@@ -55,16 +55,51 @@ function rowToForm(row: ProvinceProjectRow): FormState {
 
 type Props = { initial: ProvinceProjectRow[]; provinceOptions: ProvinceOption[] };
 
+function reorderList<T>(items: T[], from: number, to: number): T[] {
+  const next = [...items];
+  const [moved] = next.splice(from, 1);
+  next.splice(to, 0, moved);
+  return next;
+}
+
 export function ProvinceProjectsAdmin({ initial, provinceOptions }: Props) {
   const router = useRouter();
   const [list, setList] = useState(initial);
   const [form, setForm] = useState<FormState>(emptyForm);
   const [message, setMessage] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [orderProvince, setOrderProvince] = useState(provinceOptions[0]?.id ?? "");
 
   useEffect(() => {
     setList(initial);
   }, [initial]);
+
+  const orderedForProvince = list
+    .filter((row) => row.province_slug === orderProvince)
+    .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0) || a.title.localeCompare(b.title, "es"));
+
+  async function onReorderMove(fromIndex: number, toIndex: number) {
+    if (!orderProvince || fromIndex === toIndex) return;
+    const reordered = reorderList(orderedForProvince, fromIndex, toIndex);
+    const orderedIds = reordered.map((r) => r.id);
+    setBusy(true);
+    setMessage(null);
+    const r = await reorderProvinceProjects(orderProvince, orderedIds);
+    setBusy(false);
+    if (!r.ok) {
+      setMessage(r.error === "validation" ? "No se pudo guardar el orden." : r.error);
+      return;
+    }
+    setList((prev) =>
+      prev.map((row) => {
+        const idx = orderedIds.indexOf(row.id);
+        if (idx === -1) return row;
+        return { ...row, sort_order: idx };
+      }),
+    );
+    setMessage("Orden actualizado.");
+    router.refresh();
+  }
 
   function load(row: ProvinceProjectRow) {
     setForm(rowToForm(row));
@@ -116,8 +151,69 @@ export function ProvinceProjectsAdmin({ initial, provinceOptions }: Props) {
 
   return (
     <div className="grid gap-10 lg:grid-cols-2">
-      <section>
-        <h2 className="text-sm font-bold uppercase tracking-widest text-primary">Listado</h2>
+      <section className="space-y-8">
+        <div>
+          <h2 className="text-sm font-bold uppercase tracking-widest text-primary">Orden por provincia</h2>
+          <p className="mt-1 text-xs text-on-surface-variant">
+            Las empresas con menor número aparecen primero en el mapa del sitio.
+          </p>
+          <div className="mt-3 space-y-1">
+            <label className="text-xs font-bold text-secondary" htmlFor="pp-order-prov">
+              Provincia
+            </label>
+            <select
+              id="pp-order-prov"
+              className="h-11 w-full rounded-curve-sm border border-outline-variant/40 bg-surface-container-lowest px-2 text-sm"
+              value={orderProvince}
+              onChange={(e) => setOrderProvince(e.target.value)}
+            >
+              {provinceOptions.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.name}
+                </option>
+              ))}
+            </select>
+          </div>
+          <ul className="mt-4 max-h-[280px] space-y-1 overflow-y-auto rounded-sm border border-outline-variant/30 p-2 text-sm">
+            {orderedForProvince.length === 0 ? (
+              <li className="px-3 py-2 text-on-surface-variant">Sin proyectos en esta provincia.</li>
+            ) : (
+              orderedForProvince.map((row, index) => (
+                <li
+                  key={row.id}
+                  className="flex items-center gap-2 rounded-sm bg-surface-container-high/40 px-2 py-1.5"
+                >
+                  <span className="min-w-0 flex-1 truncate font-bold">{row.title}</span>
+                  <div className="flex shrink-0 gap-1">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      disabled={busy || index === 0}
+                      onClick={() => void onReorderMove(index, index - 1)}
+                      aria-label={`Subir ${row.title}`}
+                    >
+                      ↑
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      disabled={busy || index === orderedForProvince.length - 1}
+                      onClick={() => void onReorderMove(index, index + 1)}
+                      aria-label={`Bajar ${row.title}`}
+                    >
+                      ↓
+                    </Button>
+                  </div>
+                </li>
+              ))
+            )}
+          </ul>
+        </div>
+
+        <div>
+          <h2 className="text-sm font-bold uppercase tracking-widest text-primary">Listado</h2>
         <ul className="mt-4 max-h-[480px] space-y-2 overflow-y-auto rounded-sm border border-outline-variant/30 p-2 text-sm">
           {list.map((row) => (
             <li key={row.id}>
@@ -139,6 +235,7 @@ export function ProvinceProjectsAdmin({ initial, provinceOptions }: Props) {
         <Button className="mt-4" type="button" variant="outline" size="sm" onClick={newRow}>
           Nuevo proyecto
         </Button>
+        </div>
       </section>
 
       <section>

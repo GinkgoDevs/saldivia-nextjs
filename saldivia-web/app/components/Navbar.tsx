@@ -7,10 +7,11 @@ import { usePathname } from "next/navigation";
 import ThemeToggle from "./ThemeToggle";
 import { Button, buttonClass } from "./ui/Button";
 
-/** Orden solicitado: Home · Nosotros · Modelos · Postventa · Trabajá con nosotros */
+/** Orden solicitado: Home · Nosotros · Modelos · Contacto · Postventa · Trabajá con nosotros */
 const NAV_LINKS = [
   { label: "Nosotros", href: "/nosotros" },
   { label: "Modelos", href: "/flota" },
+  { label: "Contacto", href: "/contacto" },
   { label: "Postventa", href: "/postventa" },
   { label: "Trabajá con nosotros", href: "/trabaja-con-nosotros" },
 ] as const;

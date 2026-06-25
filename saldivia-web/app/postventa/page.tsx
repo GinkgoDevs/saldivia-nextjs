@@ -50,7 +50,7 @@ export default async function PostventaPage() {
                   Solicitud de asistencia
                 </h2>
                 <p className="mt-3 text-sm text-on-surface-variant sm:text-base">
-                  Completá el formulario con los datos de la unidad y del requerimiento.
+                  Complete el formulario con los datos de la unidad y del requerimiento.
                 </p>
                 <div className="mt-8">
                   <PostventaSoporteForm modelOptions={modelOptions} />
