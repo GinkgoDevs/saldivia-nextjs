@@ -27,7 +27,7 @@ const SLIDES = [
     subtitle:
       "Procesos de manufactura controlados, materiales de primera calidad y estrictos estándares industriales en cada etapa de producción.",
     primary: { label: "Conocer la empresa", href: "/nosotros" },
-    secondary: { label: "Solicitar visita", href: "/trabaja-con-nosotros" },
+    secondary: { label: "Solicitar visita", href: "/contacto" },
   },
   {
     id: "buses",
@@ -39,7 +39,7 @@ const SLIDES = [
     subtitle:
       "Soluciones para cada tipo de operación, con el mismo compromiso de ingeniería y durabilidad en cada carrocería.",
     primary: { label: "Ver catálogo completo", href: "/flota" },
-    secondary: { label: "Contacto", href: "/trabaja-con-nosotros" },
+    secondary: { label: "Contacto", href: "/contacto" },
   },
 ] as const;
 

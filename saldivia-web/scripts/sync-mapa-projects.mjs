@@ -1,6 +1,6 @@
 /**
  * Sincroniza proyectos desde public/02  MAPA hacia Supabase:
- * 1. Sube la portada de cada empresa al bucket `media` (Storage)
+ * 1. Comprime y sube la portada de cada empresa al bucket `media` (JPEG ~1400px)
  * 2. Upsert en `province_projects` con la URL pública de Supabase
  *
  * Uso (desde saldivia-web/):
@@ -14,6 +14,8 @@ import { createClient } from "@supabase/supabase-js";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+
+import { compressMapaCoverImage } from "./mapa-image-compress.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, "..");
@@ -51,13 +53,6 @@ const MAPA_FOLDER_TO_SLUG = {
 
 const IMAGE_EXT = new Set([".jpg", ".jpeg", ".png", ".webp"]);
 
-const MIME_BY_EXT = {
-  ".jpg": "image/jpeg",
-  ".jpeg": "image/jpeg",
-  ".png": "image/png",
-  ".webp": "image/webp",
-};
-
 const dryRun = process.argv.includes("--dry-run");
 
 function loadEnv() {
@@ -85,11 +80,8 @@ function sanitizeStorageSegment(value) {
   );
 }
 
-function sanitizeFilename(filename) {
-  const ext = path.extname(filename).toLowerCase();
-  const base = path.basename(filename, ext);
-  const safeBase = sanitizeStorageSegment(base) || "cover";
-  return `${safeBase}${ext}`;
+function coverStoragePath(slug, company) {
+  return [STORAGE_PREFIX, slug, sanitizeStorageSegment(company), "cover.jpg"].join("/");
 }
 
 function pickCoverImage(files) {
@@ -131,12 +123,7 @@ function scanMapa() {
       }
 
       const localFilePath = path.join(companyPath, cover);
-      const storagePath = [
-        STORAGE_PREFIX,
-        slug,
-        sanitizeStorageSegment(company),
-        sanitizeFilename(cover),
-      ].join("/");
+      const storagePath = coverStoragePath(slug, company);
 
       rows.push({
         province_slug: slug,
@@ -185,9 +172,18 @@ async function uploadCover(supabase, row) {
     return { ...row, image_url: null, uploadError: "file_too_large" };
   }
 
-  const ext = path.extname(row.localFilePath).toLowerCase();
-  const contentType = MIME_BY_EXT[ext] ?? "application/octet-stream";
-  const buffer = fs.readFileSync(row.localFilePath);
+  let buffer;
+  let contentType;
+  try {
+    const compressed = await compressMapaCoverImage(row.localFilePath);
+    buffer = compressed.buffer;
+    contentType = compressed.contentType;
+    row._compressedFrom = compressed.originalBytes;
+    row._compressedTo = compressed.compressedBytes;
+  } catch (err) {
+    console.error(`✗ Comprimir ${row.title}: ${err.message}`);
+    return { ...row, image_url: null, uploadError: "compress_failed" };
+  }
 
   const { error } = await supabase.storage.from(STORAGE_BUCKET).upload(row.storagePath, buffer, {
     contentType,
@@ -241,7 +237,7 @@ async function main() {
 
   const supabase = createClient(url, key, { auth: { persistSession: false } });
 
-  console.log(`\nSubiendo portadas a ${STORAGE_BUCKET}/${STORAGE_PREFIX}/ …`);
+  console.log(`\nSubiendo portadas comprimidas a ${STORAGE_BUCKET}/${STORAGE_PREFIX}/ …`);
   let uploaded = 0;
   const withUrls = await mapPool(scanned, UPLOAD_CONCURRENCY, async (row, index) => {
     const result = await uploadCover(supabase, row);
@@ -257,6 +253,14 @@ async function main() {
   const failed = withUrls.filter((r) => !r.image_url);
   if (failed.length > 0) {
     console.warn(`\n⚠ ${failed.length} proyecto(s) sin imagen subida (ver warnings arriba).`);
+  }
+
+  const totalBefore = ready.reduce((n, r) => n + (r._compressedFrom ?? 0), 0);
+  const totalAfter = ready.reduce((n, r) => n + (r._compressedTo ?? 0), 0);
+  if (totalBefore > 0) {
+    const savedMb = ((totalBefore - totalAfter) / (1024 * 1024)).toFixed(1);
+    const pct = Math.round((1 - totalAfter / totalBefore) * 100);
+    console.log(`\nCompresión: ${(totalBefore / (1024 * 1024)).toFixed(1)} MB → ${(totalAfter / (1024 * 1024)).toFixed(1)} MB (−${savedMb} MB, ~${pct}%)`);
   }
 
   const BATCH = 100;

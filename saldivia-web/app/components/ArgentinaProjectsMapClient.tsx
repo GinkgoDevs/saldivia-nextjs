@@ -247,20 +247,20 @@ export default function ArgentinaProjectsMapClient({
                 Nuestras últimas unidades
               </h2>
               <p className="mt-3 text-base leading-relaxed text-slate-400 md:text-lg">
-                Elegí una provincia y explorá las empresas con unidades Saldivia en todo el país.
+                Seleccione una provincia y explore las empresas con unidades Saldivia en todo el país.
               </p>
             </div>
 
             <div className="flex flex-wrap gap-3 lg:max-w-md lg:justify-end">
-              <div className="rounded-xl border border-cyan-400/35 bg-[#081a30]/85 px-4 py-3 text-center font-headline sm:min-w-[7.5rem]">
+              <div className="rounded-curve-md border border-cyan-400/35 bg-[#081a30]/85 px-4 py-3 text-center font-headline sm:min-w-[7.5rem]">
                 <p className="text-2xl font-black tabular-nums text-white">{aggregate.provincesWith}</p>
                 <p className="ui-caption-caps mt-1 text-slate-400">Provincias</p>
               </div>
-              <div className="rounded-xl border border-cyan-400/35 bg-[#081a30]/85 px-4 py-3 text-center font-headline sm:min-w-[7.5rem]">
+              <div className="rounded-curve-md border border-cyan-400/35 bg-[#081a30]/85 px-4 py-3 text-center font-headline sm:min-w-[7.5rem]">
                 <p className="text-2xl font-black tabular-nums text-white">{aggregate.projectsTotal}</p>
                 <p className="ui-caption-caps mt-1 text-slate-400">Proyectos</p>
               </div>
-              <div className="rounded-xl border border-cyan-400/35 bg-[#081a30]/85 px-4 py-3 text-center font-headline sm:min-w-[7.5rem]">
+              <div className="rounded-curve-md border border-cyan-400/35 bg-[#081a30]/85 px-4 py-3 text-center font-headline sm:min-w-[7.5rem]">
                 <p className="text-2xl font-black tabular-nums text-white">
                   +{new Date().getFullYear() - 1995}
                 </p>
@@ -269,7 +269,7 @@ export default function ArgentinaProjectsMapClient({
             </div>
           </div>
 
-          <div className="rounded-[2rem] border border-cyan-400/25 bg-[#030b14] shadow-[0px_42px_100px_rgba(0,0,0,0.55)] lg:grid lg:grid-cols-[minmax(340px,44%)_minmax(0,1fr)] lg:items-start lg:overflow-hidden">
+          <div className="rounded-curve-md border border-cyan-400/25 bg-[#030b14] shadow-[0px_42px_100px_rgba(0,0,0,0.55)] lg:grid lg:grid-cols-[minmax(340px,44%)_minmax(0,1fr)] lg:items-start lg:overflow-hidden">
             <div ref={mapSurfaceRef} className="relative h-fit w-full min-w-0">
               <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_54%_20%,rgba(32,149,212,0.08),transparent_58%)]" />
 
@@ -469,7 +469,7 @@ export default function ArgentinaProjectsMapClient({
                       <select
                         value={activeProvince.id}
                         onChange={(e) => handleProvinceSelect(e.target.value)}
-                        className="w-full cursor-pointer appearance-none rounded-xl border border-white/15 bg-[#081a30]/90 py-3 pl-4 pr-10 font-headline text-sm font-bold uppercase tracking-[0.1em] text-white transition-colors hover:border-cyan-400/35 focus-visible:border-accent-blue focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue/40"
+                        className="w-full cursor-pointer appearance-none rounded-curve-sm border border-white/15 bg-[#081a30]/90 py-3 pl-4 pr-10 font-headline text-sm font-bold uppercase tracking-[0.1em] text-white transition-colors hover:border-cyan-400/35 focus-visible:border-accent-blue focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue/40"
                       >
                         {mapData.provinces.map((province) => {
                           const count = (projects[province.id] ?? []).length;

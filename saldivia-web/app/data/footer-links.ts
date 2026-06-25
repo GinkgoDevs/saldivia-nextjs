@@ -4,6 +4,7 @@ export const footerMainLinks = [
   { label: "Inicio", href: "/" },
   { label: "Nosotros", href: "/nosotros" },
   { label: "Modelos", href: "/flota" },
+  { label: "Contacto", href: "/contacto" },
   { label: "Postventa", href: "/postventa" },
   { label: "Trabajá con nosotros", href: "/trabaja-con-nosotros" },
 ] as const;
@@ -12,7 +13,7 @@ export const footerLegalLinks = [
   { label: "Privacidad", href: "/privacidad" },
   { label: "Términos", href: "/terminos" },
   { label: "Soporte", href: "/postventa" },
-  { label: "Distribuidores", href: "/contacto" },
+  { label: "Contacto", href: "/contacto" },
 ] as const;
 
 export function getSocialInstagramHref(): string {

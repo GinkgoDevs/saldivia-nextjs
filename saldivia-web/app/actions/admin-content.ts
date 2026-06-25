@@ -356,6 +356,51 @@ export async function deleteProvinceProject(id: string) {
   return { ok: true as const };
 }
 
+export async function reorderProvinceProjects(province_slug: string, ordered_project_ids: string[]) {
+  const { supabase, user } = await requireUser();
+  if (!user) return { ok: false as const, error: "unauthorized" };
+
+  const slug = province_slug.trim().toLowerCase();
+  if (!slug || ordered_project_ids.length === 0) {
+    return { ok: false as const, error: "validation" };
+  }
+
+  if (new Set(ordered_project_ids).size !== ordered_project_ids.length) {
+    return { ok: false as const, error: "validation" };
+  }
+
+  const { data: existing, error: fetchError } = await supabase
+    .from("province_projects")
+    .select("id")
+    .eq("province_slug", slug);
+
+  if (fetchError) return { ok: false as const, error: fetchError.message };
+  if (!existing || existing.length !== ordered_project_ids.length) {
+    return { ok: false as const, error: "validation" };
+  }
+
+  const existingSet = new Set(existing.map((r) => r.id));
+  for (const id of ordered_project_ids) {
+    if (!existingSet.has(id)) {
+      return { ok: false as const, error: "validation" };
+    }
+  }
+
+  const updates = ordered_project_ids.map((id, sort_order) =>
+    supabase.from("province_projects").update({ sort_order }).eq("id", id).eq("province_slug", slug),
+  );
+
+  const results = await Promise.all(updates);
+  const failed = results.find((r) => r.error);
+  if (failed?.error) {
+    return { ok: false as const, error: failed.error.message };
+  }
+
+  revalidatePath("/");
+  revalidatePath("/dashboard/province-projects");
+  return { ok: true as const };
+}
+
 function showcaseMetricsFromForm(input: {
   stat1_value: string;
   stat1_label: string;

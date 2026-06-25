@@ -46,10 +46,10 @@ export default function HomePage() {
                   Atención comercial personalizada
                 </p>
                 <h2 className="ui-section-title mb-8 text-primary dark:text-white">
-                  ¿Estás listo para renovar tu flota?
+                  ¿Está listo para renovar su flota?
                 </h2>
                 <p className="ui-section-intro mx-auto mb-8 max-w-2xl dark:text-slate-300">
-                  Te acompañamos desde la configuración inicial hasta la entrega de la unidad, con tiempos de fabricación líderes y soporte postventa dedicado.
+                  Lo acompañamos desde la configuración inicial hasta la entrega de la unidad, con tiempos de fabricación líderes y soporte postventa dedicado.
                 </p>
                 <Link
                   className={buttonClass({
@@ -57,7 +57,7 @@ export default function HomePage() {
                     size: "lg",
                     className: "inline-flex rounded-curve-pill px-10 shadow-elev-2",
                   })}
-                  href="/trabaja-con-nosotros"
+                  href="/contacto"
                 >
                   Contactar ventas
                 </Link>
