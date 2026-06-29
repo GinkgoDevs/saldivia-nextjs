@@ -21,8 +21,8 @@ export default function TerminosPage() {
         </p>
         <div className="mt-10 max-w-none space-y-4 font-headline text-sm leading-relaxed text-on-surface-variant">
           <p>
-            El acceso y uso de este sitio web implica la aceptación de estos términos. Si no estás
-            de acuerdo, te pedimos que no utilices el sitio.
+            El acceso y uso de este sitio web implica la aceptación de estos términos. Si no está
+            de acuerdo, le solicitamos que no utilice el sitio.
           </p>
           <h2 className="mt-8 text-lg font-bold text-primary">Información del sitio</h2>
           <p>
@@ -41,7 +41,7 @@ export default function TerminosPage() {
             sitio salvo lo exigido por ley.
           </p>
           <p className="mt-8 text-xs text-on-surface-variant/80">
-            Texto base para revisión legal. Completar cláusulas según tu modelo de negocio y
+            Texto base para revisión legal. Completar cláusulas según su modelo de negocio y
             jurisdicción.
           </p>
         </div>

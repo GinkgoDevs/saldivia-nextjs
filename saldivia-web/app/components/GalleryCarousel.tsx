@@ -16,7 +16,7 @@ const IMAGES = [
   { src: "/saldivia/3.jpg", alt: "Producción e ingeniería Saldivia" },
 ] as const;
 
-const GAP = 16;
+const GAP = 24;
 const N = IMAGES.length;
 /** Clones al inicio/fin: debe ser >= máximo de ítems visibles en cualquier breakpoint */
 const CLONE = 4;

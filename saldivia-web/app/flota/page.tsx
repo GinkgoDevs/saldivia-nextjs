@@ -56,7 +56,7 @@ export default async function FlotaPage() {
               </p>
               {error && (
                 <p className="mt-2 text-sm text-red-200 sm:mt-4">
-                  No pudimos cargar el catálogo. Configurá Supabase o revisá la consola.
+                  No pudimos cargar el catálogo en este momento. Intente más tarde.
                 </p>
               )}
             </HeroStagger>
@@ -69,7 +69,7 @@ export default async function FlotaPage() {
           <FadeUp>
             <section className="py-20 text-center text-on-surface-variant">
               <p className="text-sm">
-                Aún no hay modelos en la base. Cargá el seed SQL o usá el dashboard para publicar unidades.
+                El catálogo se encuentra en actualización. Consulte nuevamente más tarde.
               </p>
               <Link
                 href="/dashboard"

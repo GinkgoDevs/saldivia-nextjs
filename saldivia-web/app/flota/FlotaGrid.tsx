@@ -26,10 +26,10 @@ export function FlotaGrid({ models }: { models: FlotaModel[] }) {
   return (
     <section className="w-full bg-surface">
       {reduce ? (
-        <div className="grid grid-cols-1 gap-0 sm:grid-cols-2 lg:grid-cols-3">{inner}</div>
+        <div className="grid grid-cols-1 gap-4 px-4 sm:grid-cols-2 sm:gap-5 sm:px-6 lg:grid-cols-3 lg:gap-6 lg:px-8">{inner}</div>
       ) : (
         <motion.div
-          className="grid grid-cols-1 gap-0 sm:grid-cols-2 lg:grid-cols-3"
+          className="grid grid-cols-1 gap-4 px-4 sm:grid-cols-2 sm:gap-5 sm:px-6 lg:grid-cols-3 lg:gap-6 lg:px-8"
           initial="hidden"
           whileInView="show"
           viewport={{ once: true, amount: 0.04 }}

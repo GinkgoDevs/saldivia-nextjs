@@ -1,26 +1,17 @@
 import ArgentinaProjectsMapClient from "./ArgentinaProjectsMapClient";
 import { createClient } from "@/lib/supabase/server";
-import { getActiveLocationsForHomeMap } from "@/lib/supabase/locations";
-import {
-  getActiveProvinceProjects,
-  mergeProjectsAndLocations,
-} from "@/lib/supabase/province-projects";
+import { getActiveProvinceProjects, groupByProvince } from "@/lib/supabase/province-projects";
 
-/** Mapa del home: proyectos por provincia (`province_projects`) + ubicaciones activas (`locations`). */
+/** Mapa del home: solo proyectos con imagen (`province_projects`). */
 export default async function ArgentinaProjectsMap() {
   const supabase = await createClient();
-  const [ppRes, locRes] = await Promise.all([
-    getActiveProvinceProjects(supabase),
-    getActiveLocationsForHomeMap(supabase),
-  ]);
+  const ppRes = await getActiveProvinceProjects(supabase);
 
-  const byProvince =
-    ppRes.error && locRes.error
-      ? {}
-      : mergeProjectsAndLocations(ppRes.data ?? [], locRes.data ?? []);
+  const rows = (ppRes.data ?? []).filter((r) => Boolean(r.image_url?.trim()));
+  const byProvince = ppRes.error ? {} : groupByProvince(rows);
 
   const hasData = Object.values(byProvince).some((arr) => (arr?.length ?? 0) > 0);
-  const fetchError = !hasData ? (ppRes.error ?? locRes.error) : null;
+  const fetchError = !hasData ? ppRes.error : null;
 
   return (
     <ArgentinaProjectsMapClient byProvince={byProvince} fetchError={fetchError} />

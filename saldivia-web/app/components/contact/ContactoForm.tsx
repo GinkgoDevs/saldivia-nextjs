@@ -4,7 +4,8 @@ import { submitContactQuote, type ContactQuoteState } from "@/app/actions/contac
 import { Button } from "@/app/components/ui/Button";
 import { Input } from "@/app/components/ui/Input";
 import { Textarea } from "@/app/components/ui/Textarea";
-import { useFormState, useFormStatus } from "react-dom";
+import { useActionState } from "react";
+import { useFormStatus } from "react-dom";
 
 type ModelOption = { name: string; slug: string };
 
@@ -33,7 +34,7 @@ function errorMessage(s: ContactQuoteState): string | null {
 type Props = { modelOptions: ModelOption[] };
 
 export function ContactoForm({ modelOptions }: Props) {
-  const [state, formAction] = useFormState<ContactQuoteState, FormData>(submitContactQuote, null);
+  const [state, formAction] = useActionState<ContactQuoteState, FormData>(submitContactQuote, null);
   const err = errorMessage(state);
   const ok = state?.ok;
 

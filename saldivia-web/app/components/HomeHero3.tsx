@@ -19,7 +19,7 @@ const SLIDES = [
   },
   {
     id: "soldadura",
-    bg: "/hero-soldadura.png",
+    bg: "/saldivia/soldadura.jpg",
     bgAlt: "Proceso de soldadura certificado en planta Saldivia",
     eyebrow: "Fabricación nacional certificada",
     title: "Precisión en",
