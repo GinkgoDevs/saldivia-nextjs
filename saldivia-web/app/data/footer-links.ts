@@ -6,7 +6,7 @@ export const footerMainLinks = [
   { label: "Modelos", href: "/flota" },
   { label: "Contacto", href: "/contacto" },
   { label: "Postventa", href: "/postventa" },
-  { label: "Trabajá con nosotros", href: "/trabaja-con-nosotros" },
+  { label: "Trabaja con nosotros", href: "/trabaja-con-nosotros" },
 ] as const;
 
 export const footerLegalLinks = [

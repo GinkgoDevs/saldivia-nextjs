@@ -28,7 +28,7 @@ export default function PrivacidadPage() {
           <h2 className="mt-8 text-lg font-bold text-primary">Datos que podemos recibir</h2>
           <p>
             Al completar formularios de contacto, cotización o newsletter, podemos recibir nombre,
-            email, teléfono y el mensaje que nos envíes. También se registran datos técnicos
+            correo electrónico, teléfono y el mensaje que nos envíe. También se registran datos técnicos
             habituales del navegador (por ejemplo dirección IP aproximada) con fines de seguridad y
             estadísticas agregadas.
           </p>
@@ -37,16 +37,16 @@ export default function PrivacidadPage() {
             Usamos estos datos para responder consultas, gestionar relaciones comerciales y mejorar
             nuestros servicios. No vendemos listas de contacto a terceros.
           </p>
-          <h2 className="mt-8 text-lg font-bold text-primary">Tus derechos</h2>
+          <h2 className="mt-8 text-lg font-bold text-primary">Sus derechos</h2>
           <p>
-            Podés solicitar acceso, rectificación o baja de tus datos escribiendo a través de{" "}
+            Puede solicitar acceso, rectificación o baja de sus datos escribiendo a través de{" "}
             <Link href="/trabaja-con-nosotros" className="font-semibold text-accent-blue hover:underline">
               contacto
             </Link>
             .
           </p>
           <p className="mt-8 text-xs text-on-surface-variant/80">
-            Este texto es orientativo. Ajustalo con asesoría legal según la normativa aplicable en
+            Este texto es orientativo. Ajústelo con asesoría legal según la normativa aplicable en
             Argentina (Ley 25.326 y complementarias).
           </p>
         </div>

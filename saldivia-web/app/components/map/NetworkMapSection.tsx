@@ -70,7 +70,7 @@ export default function NetworkMapSection() {
           </h2>
           <div className="mt-4 h-px w-24 bg-gradient-to-r from-[#2095D4] to-transparent" />
           <p className="mt-4 max-w-xl font-headline text-sm leading-relaxed text-slate-400">
-            Encontrá el taller autorizado, distribuidor o concesionario más cercano en todo el país.
+            Encuentre el taller autorizado, distribuidor o concesionario más cercano en todo el país.
           </p>
         </div>
 
@@ -92,7 +92,7 @@ export default function NetworkMapSection() {
             {error ? (
               <div className="w-full h-full flex flex-col items-center justify-center bg-[#0d1520] text-slate-500 text-sm gap-2">
                 <span className="material-symbols-outlined text-3xl">map_off</span>
-                No se pudo cargar el mapa. Verificá tu conexión.
+                No se pudo cargar el mapa. Verifique su conexión.
               </div>
             ) : (
               <MapView

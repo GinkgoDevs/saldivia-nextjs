@@ -3,14 +3,14 @@ import { ContactoForm } from "../components/contact/ContactoForm";
 import { getModels } from "@/lib/supabase/models";
 import { createClient } from "@/lib/supabase/server";
 
-const PLANT_ADDRESS = "Ruta 21 km. 7, Parque Industrial Alvear, Santa Fe, Argentina";
+import { PLANT_ADDRESS, PLANT_MAPS_HREF } from "@/lib/site-location";
+
 const CONTACT_PHONE = "+54 0341 4921135";
 const CONTACT_PHONE_HREF = "tel:+543414921135";
 const CONTACT_EMAIL = "info@saldiviabuses.com.ar";
 const CONTACT_EMAIL_HREF = `mailto:${CONTACT_EMAIL}`;
 const RRHH_EMAIL = "rrhh@saldiviabuses.com.ar";
 const RRHH_EMAIL_HREF = `mailto:${RRHH_EMAIL}`;
-const MAPS_HREF = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(PLANT_ADDRESS)}`;
 
 export default async function TrabajaConNosotrosPage() {
   const supabase = await createClient();
@@ -90,7 +90,7 @@ export default async function TrabajaConNosotrosPage() {
                     <p className="mt-1 text-on-surface-variant">{PLANT_ADDRESS}</p>
                   </div>
                   <a
-                    href={MAPS_HREF}
+                    href={PLANT_MAPS_HREF}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 text-sm font-bold text-secondary hover:text-primary"
@@ -109,7 +109,7 @@ export default async function TrabajaConNosotrosPage() {
             <div className="lg:col-span-7">
               <div className="ui-surface-card p-6 sm:p-8 md:p-10">
                 <h3 className="text-2xl font-black uppercase tracking-tighter text-primary sm:text-3xl">
-                  Escribinos
+                  Escríbanos
                 </h3>
                 <p className="mt-3 text-sm text-on-surface-variant sm:text-base">
                   Complete el formulario y nuestro equipo se pondrá en contacto.

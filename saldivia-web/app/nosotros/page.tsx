@@ -48,7 +48,7 @@ export default function NosotrosPage() {
                     </h2>
                     <p className="mt-6 text-base leading-relaxed text-on-surface-variant sm:mt-8 sm:text-lg">
                       Hoy seguimos creciendo con la misma pasión que nos impulsó desde el primer día, respaldados por
-                      una sólida trayectoria, una red de atención postventa y un equipo comprometido con la excelencia.
+                      una sólida trayectoria, un servicio de postventa centralizado en planta y un equipo comprometido con la excelencia.
                     </p>
                     <ul className="mt-10 space-y-6">
                       <li className="flex items-start gap-4">

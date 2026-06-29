@@ -53,7 +53,7 @@ export default function FooterNewsletter() {
           autoComplete="email"
           disabled={pending}
           className="w-full border-white/15 bg-white/10 text-white placeholder:text-white/40"
-          placeholder="Tu email"
+          placeholder="Su correo electrónico"
           type="email"
           tone="inverse"
           required
@@ -78,8 +78,8 @@ export default function FooterNewsletter() {
       {status === "error" ? (
         <p className="text-sm text-error-container" role="alert">
           {errorReason === "validation"
-            ? "Ingresá un email válido."
-            : "No pudimos registrar tu email. Intentá de nuevo en unos segundos."}
+            ? "Ingrese un correo electrónico válido."
+            : "No pudimos registrar su correo. Intente de nuevo en unos segundos."}
         </p>
       ) : null}
     </div>

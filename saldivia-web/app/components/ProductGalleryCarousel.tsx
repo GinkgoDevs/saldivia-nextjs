@@ -189,14 +189,17 @@ function ThumbnailRail({
   const thumbRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
   useEffect(() => {
+    const rail = railRef.current;
     const el = thumbRefs.current[index];
-    el?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+    if (!rail || !el) return;
+    const left = el.offsetLeft - rail.clientWidth / 2 + el.offsetWidth / 2;
+    rail.scrollTo({ left: Math.max(0, left), behavior: "smooth" });
   }, [index]);
 
   return (
     <div
       ref={railRef}
-      className={`flex gap-2 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden ${
+      className={`flex gap-3 overflow-x-auto pb-1 sm:gap-4 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden ${
         showcase ? "mt-0 justify-start sm:justify-center" : "mt-3"
       }`}
       role="tablist"
@@ -392,11 +395,23 @@ export default function ProductGalleryCarousel({
   const [paused, setPaused] = useState(false);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [inView, setInView] = useState(true);
   const indexRef = useRef(0);
   const rootRef = useRef<HTMLDivElement>(null);
   indexRef.current = index;
 
   useEffect(() => setMounted(true), []);
+
+  useEffect(() => {
+    const el = rootRef.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => setInView(entry?.isIntersecting ?? false),
+      { threshold: 0.05 },
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
 
   const go = useCallback(
     (i: number, dir: number) => {
@@ -409,7 +424,7 @@ export default function ProductGalleryCarousel({
   const prev = useCallback(() => go(index - 1, -1), [go, index]);
   const next = useCallback(() => go(index + 1, 1), [go, index]);
 
-  const autoPlayEnabled = (showcase || !embedded) && !lightboxOpen && n > 1;
+  const autoPlayEnabled = (showcase || !embedded) && !lightboxOpen && n > 1 && inView;
 
   useEffect(() => {
     if (!autoPlayEnabled || paused) return;

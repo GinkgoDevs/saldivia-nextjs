@@ -23,33 +23,31 @@ export async function submitServiceRequest(
   _prev: ServiceRequestState,
   formData: FormData,
 ): Promise<ServiceRequestState> {
-  const vin = getStr(formData, "vin");
   const company = getStr(formData, "company");
-  const description = getStr(formData, "description");
-  const modelName = getStr(formData, "model_name");
   const contactName = getStr(formData, "contact_name");
   const email = getStr(formData, "email").toLowerCase();
-  const phone = getStr(formData, "phone");
+  const subject = getStr(formData, "subject");
+  const description = getStr(formData, "description");
 
-  if (!vin || !company || !description) {
+  if (!company || !contactName || !email || !description) {
     return { ok: false, error: "validation" };
   }
-  if (email && !EMAIL_RE.test(email)) {
+  if (!EMAIL_RE.test(email)) {
     return { ok: false, error: "validation" };
   }
 
-  const fullDescription = modelName
-    ? `Modelo referido: ${modelName}\n\n${description}`
+  const fullDescription = subject
+    ? `Asunto: ${subject}\n\n${description}`
     : description;
 
   const supabase = await createClient();
   const { error } = await supabase.from("service_requests").insert({
-    vin,
+    vin: "—",
     company,
     description: fullDescription,
-    contact_name: contactName || null,
-    email: email || null,
-    phone: phone || null,
+    contact_name: contactName,
+    email,
+    phone: null,
   });
 
   if (error) {

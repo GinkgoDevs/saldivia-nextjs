@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Saldivia — Excelencia en Carrocerías",
     description:
-      "Más de 40 años de ingeniería industrial: buses, interurbano y larga distancia, con postventa en todo el país.",
+      "Más de 40 años de ingeniería industrial: buses, interurbano y larga distancia, con servicio de postventa en planta.",
   },
 };
 

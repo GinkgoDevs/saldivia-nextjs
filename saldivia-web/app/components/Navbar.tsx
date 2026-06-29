@@ -7,13 +7,13 @@ import { usePathname } from "next/navigation";
 import ThemeToggle from "./ThemeToggle";
 import { Button, buttonClass } from "./ui/Button";
 
-/** Orden solicitado: Home · Nosotros · Modelos · Contacto · Postventa · Trabajá con nosotros */
+/** Orden solicitado: Home · Nosotros · Modelos · Contacto · Postventa · Trabaja con nosotros */
 const NAV_LINKS = [
   { label: "Nosotros", href: "/nosotros" },
   { label: "Modelos", href: "/flota" },
   { label: "Contacto", href: "/contacto" },
   { label: "Postventa", href: "/postventa" },
-  { label: "Trabajá con nosotros", href: "/trabaja-con-nosotros" },
+  { label: "Trabaja con nosotros", href: "/trabaja-con-nosotros" },
 ] as const;
 
 const SALES_TEL_DISPLAY = "+54 (0341) 492-1234";
@@ -157,7 +157,7 @@ function MobileNavDrawer({
           <div
             className="pointer-events-auto absolute inset-x-0 bottom-0 z-[2] border-t border-outline-variant/25 bg-[#faf9fc]/98 px-3 pt-2.5 shadow-[0_-10px_28px_-6px_rgba(13,44,79,0.12)] backdrop-blur-sm dark:border-white/10 dark:bg-[#111820]/98 dark:shadow-[0_-10px_28px_-6px_rgba(0,0,0,0.45)]"
             role="region"
-            aria-label="Trabajá con nosotros"
+            aria-label="Trabaja con nosotros"
           >
             <div className="grid grid-cols-2 gap-1.5 pb-[max(0.5rem,env(safe-area-inset-bottom,0px))]">
               <Link
@@ -169,7 +169,7 @@ function MobileNavDrawer({
                   className: "rounded-curve-md px-2 text-[12px]",
                 })}
               >
-                Trabajá
+                Trabaja
               </Link>
               <a
                 href={SALES_TEL_HREF}

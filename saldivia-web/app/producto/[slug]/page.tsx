@@ -215,8 +215,7 @@ export default async function ProductoPage({ params }: Props) {
           />
 
           <div className="container relative z-10 mx-auto px-4 sm:px-6 md:px-8">
-            <FadeUp size="sm">
-              <div className="mx-auto flex max-w-2xl flex-col rounded-curve-lg border border-white/15 bg-white p-8 shadow-[0px_32px_80px_rgba(0,0,0,0.35)] sm:p-10 md:p-12">
+            <div className="mx-auto flex max-w-2xl flex-col rounded-curve-lg border border-white/15 bg-white p-8 shadow-[0px_32px_80px_rgba(0,0,0,0.35)] sm:p-10 md:p-12">
                 <p className="ui-section-eyebrow mb-3 text-saldivia-blue">Saldivia Precision</p>
                 <h2
                   id="producto-cta-heading"
@@ -226,8 +225,8 @@ export default async function ProductoPage({ params }: Props) {
                 </h2>
                 <div className="technical-gradient mb-6 h-1 w-24" />
                 <p className="mb-8 text-base leading-relaxed text-on-surface-variant md:text-lg">
-                  Cada unidad se puede dimensionar con orientación comercial y técnica. Solicitá variantes,
-                  equipamiento y documentación bajo unidades de su flota.
+                  Cada unidad puede dimensionarse con orientación comercial y técnica. Solicite variantes,
+                  equipamiento y documentación para las unidades de su flota.
                 </p>
                 <Link
                   href="/trabaja-con-nosotros"
@@ -240,7 +239,6 @@ export default async function ProductoPage({ params }: Props) {
                   Contacto comercial
                 </Link>
               </div>
-            </FadeUp>
           </div>
         </section>
       </main>

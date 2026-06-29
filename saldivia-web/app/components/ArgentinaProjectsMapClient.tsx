@@ -231,8 +231,7 @@ export default function ArgentinaProjectsMapClient({
       <div className="container relative z-10 mx-auto px-4 md:px-6">
         {fetchError ? (
           <p className="mb-4 rounded-sm border border-amber-300/35 bg-amber-950/50 px-4 py-2 text-sm text-amber-100">
-            No se pudieron cargar proyectos destacados. Revisá la tabla{" "}
-            <code className="text-xs">province_projects</code> en Supabase. {fetchError.message}
+            No se pudieron cargar los proyectos destacados. Intente más tarde.
           </p>
         ) : null}
 

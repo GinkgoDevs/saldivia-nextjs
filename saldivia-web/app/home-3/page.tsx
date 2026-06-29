@@ -124,7 +124,7 @@ export default function Home3Page() {
         {/* Final CTA */}
         <section className="py-20 bg-slate-900 relative">
           <div className="container relative mx-auto px-4 md:px-6 text-center">
-            <h2 className="font-headline text-3xl md:text-5xl font-bold text-white mb-8">¿Estás listo para renovar tu flota?</h2>
+            <h2 className="font-headline text-3xl md:text-5xl font-bold text-white mb-8">¿Está listo para renovar su flota?</h2>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
               <a className="bg-accent-blue hover:bg-accent-blue-alt text-white px-10 py-4 rounded-full font-bold shadow-xl transition-all" href="/trabaja-con-nosotros">CONTACTAR VENTAS</a>
               <a className="bg-white text-primary px-10 py-4 rounded-full font-bold transition-all" href="/trabaja-con-nosotros">PEDIR PRESUPUESTO</a>
