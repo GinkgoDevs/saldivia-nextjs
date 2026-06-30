@@ -4,10 +4,17 @@ import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { GripVertical, Plus, Trash2 } from "lucide-react";
 import { deleteModel, reorderModels, saveModel, uploadMediaToBucket } from "@/app/actions/admin-content";
-import type { Model, ModelAdmin, ModelSegment } from "@/types/model";
+import type { Model, ModelAdmin, ModelSegment, ModelVariantAdmin } from "@/types/model";
 import { Button } from "@/app/components/ui/Button";
 import { Input } from "@/app/components/ui/Input";
 import { Textarea } from "@/app/components/ui/Textarea";
+import {
+  ModelVariantsEditor,
+  specRowEmpty,
+  variantRowEmpty,
+  type SpecRow,
+  type VariantFormRow,
+} from "./ModelVariantsEditor";
 
 const SEGMENTS: { value: ModelSegment; label: string }[] = [
   { value: "urbano", label: "Urbano" },
@@ -29,12 +36,14 @@ const empty: Omit<Model, "id" | "created_at"> & { id: string | null } = {
   sort_order: 0,
 };
 
-type SpecRow = { spec_key: string; spec_value: string };
+type SpecRowLocal = SpecRow;
 
-const specRowEmpty = (): SpecRow => ({ spec_key: "", spec_value: "" });
+const specRowEmptyLocal = specRowEmpty;
 
-function specsFromModel(m: ModelAdmin): SpecRow[] {
-  const rows = [...(m.products ?? [])].sort(
+function specsFromModel(m: ModelAdmin): SpecRowLocal[] {
+  const rows = [...(m.products ?? [])]
+    .filter((p) => !p.variant_id)
+    .sort(
     (a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0) || a.spec_key.localeCompare(b.spec_key),
   );
   return rows.map((p) => ({ spec_key: p.spec_key, spec_value: p.spec_value }));
@@ -42,8 +51,32 @@ function specsFromModel(m: ModelAdmin): SpecRow[] {
 
 function featuresFromModel(m: ModelAdmin): string[] {
   return [...(m.model_general_features ?? [])]
+    .filter((f) => !f.variant_id)
     .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))
     .map((f) => f.body);
+}
+
+function variantsFromModel(m: ModelAdmin): VariantFormRow[] {
+  const rows = [...(m.model_variants ?? [])].sort(
+    (a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0) || a.name.localeCompare(b.name),
+  );
+  if (rows.length === 0) return [];
+
+  return rows.map((v: ModelVariantAdmin) => ({
+    id: v.id,
+    code: v.code,
+    name: v.name,
+    description: v.description ?? "",
+    is_default: v.is_default,
+    tech_specs:
+      (v.products ?? []).length > 0
+        ? (v.products ?? []).map((p) => ({ spec_key: p.spec_key, spec_value: p.spec_value }))
+        : [specRowEmptyLocal()],
+    general_feature_bodies:
+      (v.model_general_features ?? []).length > 0
+        ? (v.model_general_features ?? []).map((f) => f.body)
+        : [""],
+  }));
 }
 
 type Props = { initial: ModelAdmin[] };
@@ -60,8 +93,10 @@ export function ModelsAdmin({ initial }: Props) {
   const router = useRouter();
   const [list, setList] = useState<ModelAdmin[]>(initial);
   const [form, setForm] = useState(empty);
-  const [specRows, setSpecRows] = useState<SpecRow[]>([specRowEmpty()]);
+  const [specRows, setSpecRows] = useState<SpecRowLocal[]>([specRowEmptyLocal()]);
   const [featureBodies, setFeatureBodies] = useState<string[]>([""]);
+  const [useVariants, setUseVariants] = useState(false);
+  const [variantRows, setVariantRows] = useState<VariantFormRow[]>([]);
   const [message, setMessage] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [draggingId, setDraggingId] = useState<string | null>(null);
@@ -95,15 +130,20 @@ export function ModelsAdmin({ initial }: Props) {
       sort_order: m.sort_order ?? 0,
     });
     const specs = specsFromModel(m);
-    setSpecRows(specs.length > 0 ? specs : [specRowEmpty()]);
+    setSpecRows(specs.length > 0 ? specs : [specRowEmptyLocal()]);
     const feats = featuresFromModel(m);
     setFeatureBodies(feats.length > 0 ? feats : [""]);
+    const vars = variantsFromModel(m);
+    setUseVariants(vars.length > 0);
+    setVariantRows(vars.length > 0 ? vars : [variantRowEmpty(true)]);
   }
 
   function newModel() {
     setForm({ ...empty, sort_order: list.length });
-    setSpecRows([specRowEmpty()]);
+    setSpecRows([specRowEmptyLocal()]);
     setFeatureBodies([""]);
+    setUseVariants(false);
+    setVariantRows([variantRowEmpty(true)]);
   }
 
   async function onReorderDrop(fromIndex: number, toIndex: number) {
@@ -152,6 +192,11 @@ export function ModelsAdmin({ initial }: Props) {
       active: form.active,
       tech_specs: specRows,
       general_feature_bodies: featureBodies,
+      variants: useVariants
+        ? variantRows.filter((v) => v.name.trim() || v.code.trim())
+        : form.id
+          ? []
+          : undefined,
     });
     setBusy(false);
     if (!r.ok) {
@@ -343,10 +388,43 @@ export function ModelsAdmin({ initial }: Props) {
           <div className="space-y-3 rounded-sm border border-outline-variant/25 bg-surface-container-low/40 p-4">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <div>
-                <p className="text-xs font-bold uppercase tracking-wide text-secondary">Especificaciones técnicas</p>
+                <p className="text-xs font-bold uppercase tracking-wide text-secondary">
+                  Configuraciones / variantes
+                </p>
                 <p className="mt-0.5 text-[11px] text-on-surface-variant">
-                  Tabla de la ficha (<code className="text-[10px]">products</code> en Supabase). Se guarda el orden de
-                  las filas.
+                  Ej. Aries 305 con <strong>4x2</strong> y <strong>4x4</strong>. Cada una puede tener specs y
+                  características propias; las de abajo son compartidas.
+                </p>
+              </div>
+              <label className="flex items-center gap-2 text-sm">
+                <input
+                  type="checkbox"
+                  checked={useVariants}
+                  onChange={(e) => {
+                    const on = e.target.checked;
+                    setUseVariants(on);
+                    if (on && variantRows.length === 0) {
+                      setVariantRows([variantRowEmpty(true)]);
+                    }
+                  }}
+                />
+                Habilitar variantes
+              </label>
+            </div>
+            {useVariants && (
+              <ModelVariantsEditor variants={variantRows} onChange={setVariantRows} busy={busy} />
+            )}
+          </div>
+          <div className="space-y-3 rounded-sm border border-outline-variant/25 bg-surface-container-low/40 p-4">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-wide text-secondary">
+                  {useVariants ? "Especificaciones compartidas" : "Especificaciones técnicas"}
+                </p>
+                <p className="mt-0.5 text-[11px] text-on-surface-variant">
+                  {useVariants
+                    ? "Aplican a todas las configuraciones (se combinan con las de cada variante en la ficha)."
+                    : "Tabla de la ficha (products en Supabase). Se guarda el orden de las filas."}
                 </p>
               </div>
               <Button
@@ -354,7 +432,7 @@ export function ModelsAdmin({ initial }: Props) {
                 variant="outline"
                 size="sm"
                 disabled={busy}
-                onClick={() => setSpecRows((rows) => [...rows, specRowEmpty()])}
+                onClick={() => setSpecRows((rows) => [...rows, specRowEmptyLocal()])}
                 className="gap-1"
               >
                 <Plus className="size-4" aria-hidden />
@@ -396,7 +474,7 @@ export function ModelsAdmin({ initial }: Props) {
                     onClick={() =>
                       setSpecRows((rows) => {
                         const next = rows.filter((_, j) => j !== i);
-                        return next.length > 0 ? next : [specRowEmpty()];
+                        return next.length > 0 ? next : [specRowEmptyLocal()];
                       })
                     }
                   >
@@ -409,9 +487,13 @@ export function ModelsAdmin({ initial }: Props) {
           <div className="space-y-3 rounded-sm border border-outline-variant/25 bg-surface-container-low/40 p-4">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <div>
-                <p className="text-xs font-bold uppercase tracking-wide text-secondary">Características generales</p>
+                <p className="text-xs font-bold uppercase tracking-wide text-secondary">
+                  {useVariants ? "Características compartidas" : "Características generales"}
+                </p>
                 <p className="mt-0.5 text-[11px] text-on-surface-variant">
-                  Listado con viñetas bajo la ficha (<code className="text-[10px]">model_general_features</code>).
+                  {useVariants
+                    ? "Ítems comunes a todas las configuraciones del modelo."
+                    : "Listado con viñetas bajo la ficha (model_general_features)."}
                 </p>
               </div>
               <Button

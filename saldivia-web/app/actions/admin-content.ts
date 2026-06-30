@@ -1,6 +1,7 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
+import { slugifyVariantCode } from "@/lib/model-variants";
 import { revalidatePath } from "next/cache";
 
 import type { ModelSegment } from "@/types/model";
@@ -63,6 +64,16 @@ export async function uploadMediaToBucket(formData: FormData) {
 
 type TechSpecRow = { spec_key: string; spec_value: string };
 
+type VariantInput = {
+  id: string | null;
+  code: string;
+  name: string;
+  description: string;
+  is_default: boolean;
+  tech_specs: TechSpecRow[];
+  general_feature_bodies: string[];
+};
+
 type SaveModelInput = {
   id: string | null;
   slug: string;
@@ -74,15 +85,43 @@ type SaveModelInput = {
   pdf_url: string;
   sort_order: number;
   active: boolean;
-  /** Si viene definido, reemplaza todas las filas de `products` del modelo. */
+  /** Specs compartidas (variant_id NULL). */
   tech_specs?: TechSpecRow[];
-  /** Si viene definido, reemplaza todas las filas de `model_general_features`. */
   general_feature_bodies?: string[];
+  /** Si se envía, sincroniza variantes del modelo (4x2, 4x4, etc.). */
+  variants?: VariantInput[];
 };
 
 const MAX_SPEC_ROWS = 80;
 const MAX_FEATURE_ROWS = 80;
 const MAX_SPEC_FIELD_LEN = 2000;
+const MAX_VARIANTS = 24;
+
+function normalizeSpecs(rows: TechSpecRow[] | undefined, limit = MAX_SPEC_ROWS) {
+  return (rows ?? [])
+    .map((s) => ({
+      spec_key: s.spec_key.trim(),
+      spec_value: s.spec_value.trim(),
+    }))
+    .filter((s) => s.spec_key.length > 0 && s.spec_value.length > 0)
+    .slice(0, limit)
+    .map((s, i) => ({
+      spec_key: s.spec_key.slice(0, MAX_SPEC_FIELD_LEN),
+      spec_value: s.spec_value.slice(0, MAX_SPEC_FIELD_LEN),
+      sort_order: i,
+    }));
+}
+
+function normalizeFeatureBodies(bodies: string[] | undefined, limit = MAX_FEATURE_ROWS) {
+  return (bodies ?? [])
+    .map((b) => b.trim())
+    .filter((b) => b.length > 0)
+    .slice(0, limit)
+    .map((body, i) => ({
+      body: body.slice(0, MAX_SPEC_FIELD_LEN),
+      sort_order: i,
+    }));
+}
 
 export async function saveModel(input: SaveModelInput) {
   const { supabase, user } = await requireUser();
@@ -124,20 +163,131 @@ export async function saveModel(input: SaveModelInput) {
     modelId = data.id;
   }
 
-  if (input.tech_specs !== undefined) {
-    const specs = input.tech_specs
-      .map((s) => ({
-        spec_key: s.spec_key.trim(),
-        spec_value: s.spec_value.trim(),
-      }))
-      .filter((s) => s.spec_key.length > 0 && s.spec_value.length > 0)
-      .slice(0, MAX_SPEC_ROWS)
-      .map((s, i) => ({
+  if (input.variants !== undefined) {
+    const { error: delProdErr } = await supabase.from("products").delete().eq("model_id", modelId);
+    if (delProdErr) return { ok: false as const, error: delProdErr.message };
+    const { error: delFeatErr } = await supabase
+      .from("model_general_features")
+      .delete()
+      .eq("model_id", modelId);
+    if (delFeatErr) return { ok: false as const, error: delFeatErr.message };
+
+    const rawVariants = input.variants.slice(0, MAX_VARIANTS).map((v, i) => ({
+      id: v.id,
+      code: slugifyVariantCode(v.code || v.name),
+      name: v.name.trim(),
+      description: v.description.trim() || null,
+      is_default: v.is_default,
+      sort_order: i,
+      tech_specs: normalizeSpecs(v.tech_specs),
+      general_feature_bodies: normalizeFeatureBodies(v.general_feature_bodies),
+    }));
+
+    const variants = rawVariants.filter((v) => v.code && v.name);
+    if (rawVariants.length > 0 && variants.length === 0) {
+      return { ok: false as const, error: "validation" };
+    }
+
+    let defaultSet = false;
+    for (const v of variants) {
+      if (v.is_default && !defaultSet) {
+        defaultSet = true;
+      } else {
+        v.is_default = false;
+      }
+    }
+    if (!defaultSet && variants.length > 0) {
+      variants[0].is_default = true;
+    }
+
+    const keptIds: string[] = [];
+
+    for (const v of variants) {
+      const variantRow = {
         model_id: modelId,
-        spec_key: s.spec_key.slice(0, MAX_SPEC_FIELD_LEN),
-        spec_value: s.spec_value.slice(0, MAX_SPEC_FIELD_LEN),
-        sort_order: i,
-      }));
+        code: v.code,
+        name: v.name,
+        description: v.description,
+        is_default: v.is_default,
+        sort_order: v.sort_order,
+      };
+
+      let variantId: string | null = v.id;
+
+      if (variantId) {
+        const { error } = await supabase.from("model_variants").update(variantRow).eq("id", variantId);
+        if (error) return { ok: false as const, error: error.message };
+      } else {
+        const { data, error } = await supabase
+          .from("model_variants")
+          .insert(variantRow)
+          .select("id")
+          .single();
+        if (error) return { ok: false as const, error: error.message };
+        if (!data?.id) return { ok: false as const, error: "validation" };
+        variantId = data.id;
+      }
+
+      if (!variantId) return { ok: false as const, error: "validation" };
+
+      keptIds.push(variantId);
+
+      if (v.tech_specs.length > 0) {
+        const { error: insErr } = await supabase.from("products").insert(
+          v.tech_specs.map((s) => ({
+            model_id: modelId,
+            variant_id: variantId,
+            ...s,
+          })),
+        );
+        if (insErr) return { ok: false as const, error: insErr.message };
+      }
+
+      if (v.general_feature_bodies.length > 0) {
+        const { error: insFErr } = await supabase.from("model_general_features").insert(
+          v.general_feature_bodies.map((f) => ({
+            model_id: modelId,
+            variant_id: variantId,
+            ...f,
+          })),
+        );
+        if (insFErr) return { ok: false as const, error: insFErr.message };
+      }
+    }
+
+    const { data: existingVariants } = await supabase
+      .from("model_variants")
+      .select("id")
+      .eq("model_id", modelId);
+    const removeVariantIds = (existingVariants ?? [])
+      .map((row) => (row as { id: string }).id)
+      .filter((id) => !keptIds.includes(id));
+    if (removeVariantIds.length > 0) {
+      const { error: delVarErr } = await supabase.from("model_variants").delete().in("id", removeVariantIds);
+      if (delVarErr) return { ok: false as const, error: delVarErr.message };
+    }
+
+    const sharedSpecs = normalizeSpecs(input.tech_specs);
+    if (sharedSpecs.length > 0) {
+      const { error: insErr } = await supabase.from("products").insert(
+        sharedSpecs.map((s) => ({ model_id: modelId, variant_id: null, ...s })),
+      );
+      if (insErr) return { ok: false as const, error: insErr.message };
+    }
+
+    const sharedFeatures = normalizeFeatureBodies(input.general_feature_bodies);
+    if (sharedFeatures.length > 0) {
+      const { error: insFErr } = await supabase.from("model_general_features").insert(
+        sharedFeatures.map((f) => ({ model_id: modelId, variant_id: null, ...f })),
+      );
+      if (insFErr) return { ok: false as const, error: insFErr.message };
+    }
+  } else if (input.tech_specs !== undefined) {
+    const specs = normalizeSpecs(input.tech_specs).map((s) => ({
+      model_id: modelId,
+      variant_id: null as string | null,
+      ...s,
+    }));
 
     const { error: delErr } = await supabase.from("products").delete().eq("model_id", modelId);
     if (delErr) return { ok: false as const, error: delErr.message };
@@ -148,16 +298,12 @@ export async function saveModel(input: SaveModelInput) {
     }
   }
 
-  if (input.general_feature_bodies !== undefined) {
-    const bodies = input.general_feature_bodies
-      .map((b) => b.trim())
-      .filter((b) => b.length > 0)
-      .slice(0, MAX_FEATURE_ROWS)
-      .map((body, i) => ({
-        model_id: modelId,
-        body: body.slice(0, MAX_SPEC_FIELD_LEN),
-        sort_order: i,
-      }));
+  if (input.variants === undefined && input.general_feature_bodies !== undefined) {
+    const bodies = normalizeFeatureBodies(input.general_feature_bodies).map((f) => ({
+      model_id: modelId,
+      variant_id: null as string | null,
+      ...f,
+    }));
 
     const { error: delFErr } = await supabase
       .from("model_general_features")
