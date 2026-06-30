@@ -5,8 +5,26 @@ export type ModelSegment = "urbano" | "interurbano" | "interprovincial" | "espec
 export type ModelGeneralFeature = {
   id: string;
   model_id: string;
+  /** NULL = compartida entre todas las variantes del modelo */
+  variant_id?: string | null;
   body: string;
   sort_order: number | null;
+};
+
+/** Configuración / variante de un modelo (ej. 4x2, 4x4, motor delantero). */
+export type ModelVariant = {
+  id: string;
+  model_id: string;
+  code: string;
+  name: string;
+  description: string | null;
+  is_default: boolean;
+  sort_order: number | null;
+};
+
+export type ModelVariantAdmin = ModelVariant & {
+  products?: Product[];
+  model_general_features?: ModelGeneralFeature[];
 };
 
 export type ModelImage = {
@@ -34,6 +52,8 @@ export type Model = {
 
 /** Listado admin con relaciones embebidas desde Supabase. */
 export type ModelAdmin = Model & {
+  model_variants?: ModelVariantAdmin[];
+  /** Specs compartidas (variant_id NULL) */
   model_general_features?: ModelGeneralFeature[];
   products?: Product[];
 };

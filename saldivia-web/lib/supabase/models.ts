@@ -1,6 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-import type { Model, ModelAdmin, ModelGeneralFeature, ModelSegment } from "@/types/model";
+import type { Model, ModelAdmin, ModelGeneralFeature, ModelSegment, ModelVariant, ModelVariantAdmin } from "@/types/model";
 import type { Product } from "@/types/product";
 
 function groupRowsByModelId<T extends { model_id: string | null }>(rows: T[]): Map<string, T[]> {
@@ -100,15 +100,20 @@ export async function getAllModelsForAdmin(
 
   const ids = modelList.map((m) => m.id);
 
-  const [prodRes, featRes] = await Promise.all([
+  const [prodRes, featRes, varRes] = await Promise.all([
     supabase
       .from("products")
-      .select("id, model_id, spec_key, spec_value, sort_order")
+      .select("id, model_id, variant_id, spec_key, spec_value, sort_order")
       .in("model_id", ids),
     supabase
       .from("model_general_features")
-      .select("id, model_id, body, sort_order")
+      .select("id, model_id, variant_id, body, sort_order")
       .in("model_id", ids),
+    supabase
+      .from("model_variants")
+      .select("id, model_id, code, name, description, is_default, sort_order")
+      .in("model_id", ids)
+      .order("sort_order", { ascending: true, nullsFirst: false }),
   ]);
 
   if (prodRes.error) {
@@ -117,18 +122,35 @@ export async function getAllModelsForAdmin(
   if (featRes.error) {
     return { data: null, error: new Error(featRes.error.message) };
   }
+  if (varRes.error) {
+    return { data: null, error: new Error(varRes.error.message) };
+  }
 
   const productsByModel = groupRowsByModelId((prodRes.data ?? []) as Product[]);
   const featuresByModel = groupRowsByModelId((featRes.data ?? []) as ModelGeneralFeature[]);
+  const variantsByModel = groupRowsByModelId((varRes.data ?? []) as ModelVariant[]);
 
   const data: ModelAdmin[] = modelList.map((m) => {
-    const products = [...(productsByModel.get(m.id) ?? [])].sort(
+    const allProducts = [...(productsByModel.get(m.id) ?? [])].sort(
       (a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0) || a.spec_key.localeCompare(b.spec_key),
     );
-    const model_general_features = [...(featuresByModel.get(m.id) ?? [])].sort(
+    const allFeatures = [...(featuresByModel.get(m.id) ?? [])].sort(
       (a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0),
     );
-    return { ...m, products, model_general_features };
+    const variantRows = [...(variantsByModel.get(m.id) ?? [])].sort(
+      (a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0) || a.name.localeCompare(b.name),
+    );
+
+    const products = allProducts.filter((p) => !p.variant_id);
+    const model_general_features = allFeatures.filter((f) => !f.variant_id);
+
+    const model_variants: ModelVariantAdmin[] = variantRows.map((variant) => ({
+      ...variant,
+      products: allProducts.filter((p) => p.variant_id === variant.id),
+      model_general_features: allFeatures.filter((f) => f.variant_id === variant.id),
+    }));
+
+    return { ...m, products, model_general_features, model_variants };
   });
 
   return { data, error: null };

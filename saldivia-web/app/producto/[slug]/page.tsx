@@ -1,8 +1,7 @@
 import ProductGalleryCarousel from "@/app/components/ProductGalleryCarousel";
 import { ProductJsonLd } from "@/app/components/ProductJsonLd";
-import { ProductoFeatureList } from "@/app/components/producto/ProductoFeatureList";
+import { ProductVariantSpecs } from "@/app/components/producto/ProductVariantSpecs";
 import { ProductoHeroStagger } from "@/app/components/producto/ProductoHeroStagger";
-import { ProductSpecTable } from "@/app/components/producto/ProductSpecTable";
 import { FadeUp } from "@/app/components/motion";
 import { getAries305GalleryPaths } from "@/lib/aries-305-gallery";
 import { getModelBySlug, getActiveModelSlugs } from "@/lib/supabase/model-detail";
@@ -70,17 +69,11 @@ export default async function ProductoPage({ params }: Props) {
   if (!detail) {
     notFound();
   }
-  const { model, products, general_features } = detail;
+  const { model, products, general_features, variants } = detail;
   const gallery = galleryFor(slug, detail);
   const altPrefix = model.name;
   const hero =
     model.hero_background_image_url ?? model.cover_image_url ?? gallery[0] ?? DEFAULT_HERO;
-  const sortedSpecs = [...products].sort(
-    (a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0) || a.spec_key.localeCompare(b.spec_key),
-  );
-  const generalFeatureTexts = [...general_features]
-    .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))
-    .map((f) => f.body);
   const defaultDesc =
     "Uniendo caminos. El estándar de eficiencia para traslados de media y larga distancia, con la precisión Saldivia en cada unidad.";
 
@@ -154,24 +147,19 @@ export default async function ProductoPage({ params }: Props) {
               </div>
             </FadeUp>
 
-            {sortedSpecs.length > 0 ? (
-              <ProductSpecTable
-                rows={sortedSpecs.map((row) => ({
-                  id: row.id,
-                  spec_key: row.spec_key,
-                  spec_value: row.spec_value,
-                }))}
-              />
-            ) : (
-              <FadeUp>
-                <p className="text-base text-on-surface-variant md:text-lg">
-                  Las especificaciones detalladas se publican desde el panel de administración o consulte con
-                  nuestro equipo.
-                </p>
-              </FadeUp>
-            )}
-
-            <ProductoFeatureList items={generalFeatureTexts} columns={1} />
+            <ProductVariantSpecs
+              sharedProducts={products}
+              sharedFeatures={general_features}
+              variants={variants.map((v) => ({
+                id: v.id,
+                code: v.code,
+                name: v.name,
+                description: v.description,
+                is_default: v.is_default,
+                products: v.products,
+                general_features: v.general_features,
+              }))}
+            />
           </div>
         </section>
 
