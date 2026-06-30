@@ -1,6 +1,5 @@
--- Configuraciones / variantes por modelo (ej. Aries 305: 4x2, 4x4).
--- Specs y características con variant_id NULL son compartidas; con variant_id aplican a esa variante.
--- Si la tabla ya existía incompleta, ver también 012_model_variants_columns_fix.sql.
+-- Repara model_variants si la tabla existía antes sin todas las columnas
+-- (CREATE TABLE IF NOT EXISTS en 011 no agrega columnas faltantes).
 
 CREATE TABLE IF NOT EXISTS public.model_variants (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),

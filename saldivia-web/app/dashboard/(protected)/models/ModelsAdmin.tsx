@@ -11,7 +11,6 @@ import { Textarea } from "@/app/components/ui/Textarea";
 import {
   ModelVariantsEditor,
   specRowEmpty,
-  variantRowEmpty,
   type SpecRow,
   type VariantFormRow,
 } from "./ModelVariantsEditor";
@@ -95,7 +94,6 @@ export function ModelsAdmin({ initial }: Props) {
   const [form, setForm] = useState(empty);
   const [specRows, setSpecRows] = useState<SpecRowLocal[]>([specRowEmptyLocal()]);
   const [featureBodies, setFeatureBodies] = useState<string[]>([""]);
-  const [useVariants, setUseVariants] = useState(false);
   const [variantRows, setVariantRows] = useState<VariantFormRow[]>([]);
   const [message, setMessage] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -116,6 +114,11 @@ export function ModelsAdmin({ initial }: Props) {
 
   const editing = useMemo(() => form.id, [form.id]);
 
+  const hasActiveVariants = useMemo(
+    () => variantRows.some((v) => v.name.trim() || v.code.trim()),
+    [variantRows],
+  );
+
   function load(m: ModelAdmin) {
     setForm({
       id: m.id,
@@ -134,16 +137,14 @@ export function ModelsAdmin({ initial }: Props) {
     const feats = featuresFromModel(m);
     setFeatureBodies(feats.length > 0 ? feats : [""]);
     const vars = variantsFromModel(m);
-    setUseVariants(vars.length > 0);
-    setVariantRows(vars.length > 0 ? vars : [variantRowEmpty(true)]);
+    setVariantRows(vars);
   }
 
   function newModel() {
     setForm({ ...empty, sort_order: list.length });
     setSpecRows([specRowEmptyLocal()]);
     setFeatureBodies([""]);
-    setUseVariants(false);
-    setVariantRows([variantRowEmpty(true)]);
+    setVariantRows([]);
   }
 
   async function onReorderDrop(fromIndex: number, toIndex: number) {
@@ -192,11 +193,7 @@ export function ModelsAdmin({ initial }: Props) {
       active: form.active,
       tech_specs: specRows,
       general_feature_bodies: featureBodies,
-      variants: useVariants
-        ? variantRows.filter((v) => v.name.trim() || v.code.trim())
-        : form.id
-          ? []
-          : undefined,
+      variants: variantRows.filter((v) => v.name.trim() || v.code.trim()),
     });
     setBusy(false);
     if (!r.ok) {
@@ -205,6 +202,7 @@ export function ModelsAdmin({ initial }: Props) {
     }
     setMessage("Guardado.");
     setForm(empty);
+    setVariantRows([]);
     router.refresh();
   }
 
@@ -315,6 +313,9 @@ export function ModelsAdmin({ initial }: Props) {
                 <span className="block font-bold">{m.name}</span>
                 <span className="text-xs text-on-surface-variant">
                   orden {m.sort_order ?? 0} · {m.slug} · {m.segment} {m.active ? "" : "· inactivo"}
+                  {(m.model_variants?.length ?? 0) > 0
+                    ? ` · ${m.model_variants!.length} config.`
+                    : ""}
                 </span>
               </button>
             </li>
@@ -386,45 +387,28 @@ export function ModelsAdmin({ initial }: Props) {
             />
           </div>
           <div className="space-y-3 rounded-sm border border-outline-variant/25 bg-surface-container-low/40 p-4">
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <div>
-                <p className="text-xs font-bold uppercase tracking-wide text-secondary">
-                  Configuraciones / variantes
-                </p>
-                <p className="mt-0.5 text-[11px] text-on-surface-variant">
-                  Ej. Aries 305 con <strong>4x2</strong> y <strong>4x4</strong>. Cada una puede tener specs y
-                  características propias; las de abajo son compartidas.
-                </p>
-              </div>
-              <label className="flex items-center gap-2 text-sm">
-                <input
-                  type="checkbox"
-                  checked={useVariants}
-                  onChange={(e) => {
-                    const on = e.target.checked;
-                    setUseVariants(on);
-                    if (on && variantRows.length === 0) {
-                      setVariantRows([variantRowEmpty(true)]);
-                    }
-                  }}
-                />
-                Habilitar variantes
-              </label>
+            <div>
+              <p className="text-xs font-bold uppercase tracking-wide text-secondary">
+                Configuraciones / variantes
+              </p>
+              <p className="mt-0.5 text-[11px] text-on-surface-variant">
+                Opcional en cualquier modelo. Agregá distintas versiones (ej. 4x2, 4x4, motor delantero) con
+                specs y características propias. Si no agregás ninguna, la ficha usa solo los datos compartidos
+                de abajo.
+              </p>
             </div>
-            {useVariants && (
-              <ModelVariantsEditor variants={variantRows} onChange={setVariantRows} busy={busy} />
-            )}
+            <ModelVariantsEditor variants={variantRows} onChange={setVariantRows} busy={busy} />
           </div>
           <div className="space-y-3 rounded-sm border border-outline-variant/25 bg-surface-container-low/40 p-4">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <div>
                 <p className="text-xs font-bold uppercase tracking-wide text-secondary">
-                  {useVariants ? "Especificaciones compartidas" : "Especificaciones técnicas"}
+                  {hasActiveVariants ? "Especificaciones compartidas" : "Especificaciones técnicas"}
                 </p>
                 <p className="mt-0.5 text-[11px] text-on-surface-variant">
-                  {useVariants
+                  {hasActiveVariants
                     ? "Aplican a todas las configuraciones (se combinan con las de cada variante en la ficha)."
-                    : "Tabla de la ficha (products en Supabase). Se guarda el orden de las filas."}
+                    : "Tabla de la ficha del producto. Se guarda el orden de las filas."}
                 </p>
               </div>
               <Button
@@ -488,12 +472,12 @@ export function ModelsAdmin({ initial }: Props) {
             <div className="flex flex-wrap items-center justify-between gap-2">
               <div>
                 <p className="text-xs font-bold uppercase tracking-wide text-secondary">
-                  {useVariants ? "Características compartidas" : "Características generales"}
+                  {hasActiveVariants ? "Características compartidas" : "Características generales"}
                 </p>
                 <p className="mt-0.5 text-[11px] text-on-surface-variant">
-                  {useVariants
+                  {hasActiveVariants
                     ? "Ítems comunes a todas las configuraciones del modelo."
-                    : "Listado con viñetas bajo la ficha (model_general_features)."}
+                    : "Listado con viñetas bajo la ficha del producto."}
                 </p>
               </div>
               <Button
