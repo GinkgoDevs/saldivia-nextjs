@@ -116,19 +116,44 @@ export async function getAllModelsForAdmin(
       .order("sort_order", { ascending: true, nullsFirst: false }),
   ]);
 
-  if (prodRes.error) {
+  let productsData = prodRes.data;
+  let featuresData = featRes.data;
+
+  if (prodRes.error?.message?.includes("variant_id")) {
+    const fallback = await supabase
+      .from("products")
+      .select("id, model_id, spec_key, spec_value, sort_order")
+      .in("model_id", ids);
+    if (fallback.error) {
+      return { data: null, error: new Error(fallback.error.message) };
+    }
+    productsData = (fallback.data ?? []).map((row) => ({ ...row, variant_id: null }));
+  } else if (prodRes.error) {
     return { data: null, error: new Error(prodRes.error.message) };
   }
-  if (featRes.error) {
+
+  if (featRes.error?.message?.includes("variant_id")) {
+    const fallback = await supabase
+      .from("model_general_features")
+      .select("id, model_id, body, sort_order")
+      .in("model_id", ids);
+    if (fallback.error) {
+      return { data: null, error: new Error(fallback.error.message) };
+    }
+    featuresData = (fallback.data ?? []).map((row) => ({ ...row, variant_id: null }));
+  } else if (featRes.error) {
     return { data: null, error: new Error(featRes.error.message) };
   }
+
   if (varRes.error) {
-    return { data: null, error: new Error(varRes.error.message) };
+    console.warn("[getAllModelsForAdmin] model_variants:", varRes.error.message);
   }
 
-  const productsByModel = groupRowsByModelId((prodRes.data ?? []) as Product[]);
-  const featuresByModel = groupRowsByModelId((featRes.data ?? []) as ModelGeneralFeature[]);
-  const variantsByModel = groupRowsByModelId((varRes.data ?? []) as ModelVariant[]);
+  const productsByModel = groupRowsByModelId((productsData ?? []) as Product[]);
+  const featuresByModel = groupRowsByModelId((featuresData ?? []) as ModelGeneralFeature[]);
+  const variantsByModel = varRes.error
+    ? new Map<string, ModelVariant[]>()
+    : groupRowsByModelId((varRes.data ?? []) as ModelVariant[]);
 
   const data: ModelAdmin[] = modelList.map((m) => {
     const allProducts = [...(productsByModel.get(m.id) ?? [])].sort(

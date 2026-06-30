@@ -50,7 +50,7 @@ VALUES
     'aries-305',
     'Aries 305',
     'interprovincial',
-    'Bus versátil de la familia Aries. Disponible en versiones turismo 4x2, 4x4 y urbano para adaptarse a distintos servicios y rutas.',
+    'Bus versátil de la familia Aries. Minibús disponible en tracción 4x2 y 4x4 para turismo y servicios en ruta o terrenos exigentes.',
     'https://saldiviabuses.com.ar/wp-content/uploads/2019/09/365-web-2022-01.jpg',
     NULL,
     1,
@@ -148,8 +148,7 @@ SELECT m.id, v.spec_key, v.spec_value, v.sort_order
 FROM public.models m
 CROSS JOIN (VALUES
   ('aries-305', 'Largo', '12,00 m (referencia)', 0),
-  ('aries-305', 'Carrocería', 'Estructura perfiles de acero', 1),
-  ('aries-305', 'Aplicación', 'Turismo, 4x4, urbano', 2)
+  ('aries-305', 'Carrocería', 'Estructura perfiles de acero', 1)
 ) AS v(slug, spec_key, spec_value, sort_order)
 WHERE m.slug = v.slug
   AND NOT EXISTS (

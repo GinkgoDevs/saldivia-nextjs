@@ -88,11 +88,36 @@ export async function getModelBySlug(
   if (pErr) console.error("[getModelBySlug] products", pErr.message);
   if (iErr) console.error("[getModelBySlug] images", iErr.message);
   if (fErr) console.error("[getModelBySlug] model_general_features", fErr.message);
-  if (vErr) console.error("[getModelBySlug] model_variants", vErr.message);
+  if (vErr) console.warn("[getModelBySlug] model_variants", vErr.message);
 
-  const allProducts = (products ?? []) as Product[];
-  const allFeatures = (general_features ?? []) as ModelGeneralFeature[];
-  const variantRows = (variants ?? []) as ModelVariant[];
+  let allProducts = (products ?? []) as Product[];
+  let allFeatures = (general_features ?? []) as ModelGeneralFeature[];
+
+  if (pErr?.message?.includes("variant_id")) {
+    const { data: fallbackProducts } = await supabase
+      .from("products")
+      .select("id, model_id, spec_key, spec_value, sort_order")
+      .eq("model_id", modelId)
+      .order("sort_order", { ascending: true, nullsFirst: false })
+      .order("spec_key")
+      .limit(200);
+    allProducts = ((fallbackProducts ?? []) as Product[]).map((row) => ({ ...row, variant_id: null }));
+  }
+
+  if (fErr?.message?.includes("variant_id")) {
+    const { data: fallbackFeatures } = await supabase
+      .from("model_general_features")
+      .select("id, model_id, body, sort_order")
+      .eq("model_id", modelId)
+      .order("sort_order", { ascending: true, nullsFirst: false })
+      .limit(200);
+    allFeatures = ((fallbackFeatures ?? []) as ModelGeneralFeature[]).map((row) => ({
+      ...row,
+      variant_id: null,
+    }));
+  }
+
+  const variantRows = vErr ? [] : ((variants ?? []) as ModelVariant[]);
 
   const sharedProducts = allProducts.filter((p) => !p.variant_id);
   const sharedFeatures = allFeatures.filter((f) => !f.variant_id);

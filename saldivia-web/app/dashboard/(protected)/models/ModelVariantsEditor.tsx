@@ -172,6 +172,12 @@ export function ModelVariantsEditor({ variants, onChange, busy }: Props) {
 
   return (
     <div className="space-y-4">
+      {variants.length === 0 ? (
+        <p className="rounded-sm border border-dashed border-outline-variant/40 bg-surface-container-low/30 px-4 py-3 text-[11px] text-on-surface-variant">
+          Sin configuraciones todavía. Usá el botón de abajo para agregar la primera (4x2, 4x4, largo 12 m,
+          etc.).
+        </p>
+      ) : null}
       {variants.map((variant, index) => (
         <div
           key={variant.id ?? `new-${index}`}
