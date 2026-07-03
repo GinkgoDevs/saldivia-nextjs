@@ -119,7 +119,7 @@ export function TechnicalShowcaseClient({ slides }: { slides: ResolvedHomeShowca
             <img
               src={slide.heroSrc}
               alt={slide.name}
-              className="h-full w-full object-cover object-center"
+              className="h-full w-full object-contain object-center p-6 md:p-10 lg:p-12"
             />
             {/* Blend edge into right panel on desktop */}
             <div className="absolute inset-y-0 right-0 hidden w-24 bg-gradient-to-l from-industrial-charcoal to-transparent lg:block" />
