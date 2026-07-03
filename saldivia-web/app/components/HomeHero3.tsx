@@ -4,51 +4,22 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect, useRef, useCallback } from "react";
 
-const SLIDES = [
-  {
-    id: "aries-405",
-    bg: "/background.png",
-    bgAlt: "Unidad Saldivia Aries en ruta",
-    eyebrow: "Ingeniería de clase mundial",
-    title: "Nuevo ARIES",
-    highlight: "405 DD",
-    subtitle:
-      "Redefiniendo los estándares del transporte de pasajeros: potencia, seguridad y presencia imponente con el sello industrial Saldivia.",
-    primary: { label: "Explorar modelos", href: "/flota" },
-    secondary: { label: "Tour industrial", href: "/nosotros" },
-  },
-  {
-    id: "soldadura",
-    bg: "/saldivia/soldadura.jpg",
-    bgAlt: "Proceso de soldadura certificado en planta Saldivia",
-    eyebrow: "Fabricación nacional certificada",
-    title: "Precisión en",
-    highlight: "cada soldadura",
-    subtitle:
-      "Procesos de manufactura controlados, materiales de primera calidad y estrictos estándares industriales en cada etapa de producción.",
-    primary: { label: "Conocer la empresa", href: "/nosotros" },
-    secondary: { label: "Solicitar visita", href: "/contacto" },
-  },
-  {
-    id: "buses",
-    bg: "/hero-buses.png",
-    bgAlt: "Flota completa de buses Saldivia",
-    eyebrow: "Flota completa para cada operación",
-    title: "De la ciudad",
-    highlight: "a la ruta",
-    subtitle:
-      "Soluciones para cada tipo de operación, con el mismo compromiso de ingeniería y durabilidad en cada carrocería.",
-    primary: { label: "Ver catálogo completo", href: "/flota" },
-    secondary: { label: "Contacto", href: "/contacto" },
-  },
-] as const;
+import { getStaticHeroSlides } from "@/lib/supabase/home-hero";
+import type { ResolvedHeroSlide } from "@/types/home-hero";
 
 const INTERVAL_MS = 11_000;
 const TRANSITION_MS = 1800;
 
-export default function HomeHero3({ fullHeight = false }: { fullHeight?: boolean }) {
+export default function HomeHero3({
+  fullHeight = false,
+  slides,
+}: {
+  fullHeight?: boolean;
+  slides?: ResolvedHeroSlide[];
+}) {
+  const SLIDES = slides && slides.length > 0 ? slides : getStaticHeroSlides();
   const [active, setActive] = useState(0);
-  const bgRefs = useRef<(HTMLDivElement | null)[]>([null, null, null]);
+  const bgRefs = useRef<(HTMLDivElement | null)[]>([]);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // Restart Ken Burns animation every time a slide becomes active
@@ -145,31 +116,43 @@ export default function HomeHero3({ fullHeight = false }: { fullHeight?: boolean
                   className="font-headline text-5xl font-black uppercase leading-[0.92] tracking-tighter text-white sm:text-6xl md:text-7xl lg:text-[4.25rem] xl:text-8xl"
                 >
                   {slide.title}
-                  <br />
-                  <span className="text-white/90">{slide.highlight}</span>
+                  {slide.highlight ? (
+                    <>
+                      {slide.title ? <br /> : null}
+                      <span className="text-white/90">{slide.highlight}</span>
+                    </>
+                  ) : null}
                 </h1>
 
-                <p className="mt-6 max-w-xl font-headline text-base font-medium leading-relaxed text-slate-200 md:mt-8 md:max-w-2xl md:text-lg md:leading-relaxed lg:text-xl lg:font-light">
-                  {slide.subtitle}
-                </p>
+                {slide.subtitle ? (
+                  <p className="mt-6 max-w-xl font-headline text-base font-medium leading-relaxed text-slate-200 md:mt-8 md:max-w-2xl md:text-lg md:leading-relaxed lg:text-xl lg:font-light">
+                    {slide.subtitle}
+                  </p>
+                ) : null}
 
-                <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center sm:gap-5 md:mt-10">
-                  <Link
-                    href={slide.primary.href}
-                    className="inline-flex min-h-[48px] cursor-pointer items-center justify-center rounded-sm bg-white px-8 py-4 font-headline text-sm font-black uppercase tracking-widest text-slate-900 shadow-xl transition-colors duration-200 hover:bg-white/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 md:px-10 md:py-5"
-                  >
-                    {slide.primary.label}
-                    <span className="material-symbols-outlined ml-2 text-xl" aria-hidden>
-                      arrow_forward
-                    </span>
-                  </Link>
-                  <Link
-                    href={slide.secondary.href}
-                    className="inline-flex min-h-[48px] cursor-pointer items-center justify-center rounded-sm border border-white/25 bg-white/5 px-8 py-4 font-headline text-sm font-black uppercase tracking-widest text-white backdrop-blur-md transition-colors duration-200 hover:border-white/40 hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 md:px-10 md:py-5"
-                  >
-                    {slide.secondary.label}
-                  </Link>
-                </div>
+                {(slide.primary || slide.secondary) && (
+                  <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center sm:gap-5 md:mt-10">
+                    {slide.primary && (
+                      <Link
+                        href={slide.primary.href}
+                        className="inline-flex min-h-[48px] cursor-pointer items-center justify-center rounded-sm bg-white px-8 py-4 font-headline text-sm font-black uppercase tracking-widest text-slate-900 shadow-xl transition-colors duration-200 hover:bg-white/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 md:px-10 md:py-5"
+                      >
+                        {slide.primary.label}
+                        <span className="material-symbols-outlined ml-2 text-xl" aria-hidden>
+                          arrow_forward
+                        </span>
+                      </Link>
+                    )}
+                    {slide.secondary && (
+                      <Link
+                        href={slide.secondary.href}
+                        className="inline-flex min-h-[48px] cursor-pointer items-center justify-center rounded-sm border border-white/25 bg-white/5 px-8 py-4 font-headline text-sm font-black uppercase tracking-widest text-white backdrop-blur-md transition-colors duration-200 hover:border-white/40 hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 md:px-10 md:py-5"
+                      >
+                        {slide.secondary.label}
+                      </Link>
+                    )}
+                  </div>
+                )}
 
               </div>
             ))}

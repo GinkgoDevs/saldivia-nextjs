@@ -8,6 +8,8 @@ import { TechnicalShowcase } from "./components/home/TechnicalShowcase";
 import { TrajectoryRail } from "./components/motion";
 import Link from "next/link";
 import { buttonClass } from "./components/ui/Button";
+import { getHomeHeroSlides } from "@/lib/supabase/home-hero";
+import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
   title: "Inicio",
@@ -20,12 +22,20 @@ export const metadata: Metadata = {
   },
 };
 
-export default function HomePage() {
+export default async function HomePage() {
+  let heroSlides;
+  try {
+    const supabase = await createClient();
+    heroSlides = await getHomeHeroSlides(supabase);
+  } catch (err) {
+    console.error("[HomePage] hero slides fallback:", err);
+  }
+
   return (
     <div className="font-body bg-surface text-on-surface antialiased">
 
       <main>
-        <HomeHero3 fullHeight />
+        <HomeHero3 fullHeight slides={heroSlides} />
 
         {/* Stats Row */}
         <CountUpStatsRow />

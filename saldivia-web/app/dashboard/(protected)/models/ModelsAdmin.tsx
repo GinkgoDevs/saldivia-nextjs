@@ -32,6 +32,7 @@ const empty: Omit<Model, "id" | "created_at"> & { id: string | null } = {
   hero_background_image_url: null,
   pdf_url: null,
   active: true,
+  show_in_showcase: false,
   sort_order: 0,
 };
 
@@ -130,6 +131,7 @@ export function ModelsAdmin({ initial }: Props) {
       hero_background_image_url: m.hero_background_image_url,
       pdf_url: m.pdf_url,
       active: m.active,
+      show_in_showcase: m.show_in_showcase ?? false,
       sort_order: m.sort_order ?? 0,
     });
     const specs = specsFromModel(m);
@@ -191,6 +193,7 @@ export function ModelsAdmin({ initial }: Props) {
       pdf_url: form.pdf_url ?? "",
       sort_order: form.sort_order ?? 0,
       active: form.active,
+      show_in_showcase: form.show_in_showcase,
       tech_specs: specRows,
       general_feature_bodies: featureBodies,
       variants: variantRows.filter((v) => v.name.trim() || v.code.trim()),
@@ -316,6 +319,7 @@ export function ModelsAdmin({ initial }: Props) {
                   {(m.model_variants?.length ?? 0) > 0
                     ? ` · ${m.model_variants!.length} config.`
                     : ""}
+                  {m.show_in_showcase ? " · showcase" : ""}
                 </span>
               </button>
             </li>
@@ -598,6 +602,23 @@ export function ModelsAdmin({ initial }: Props) {
                 Activo (visible en web)
               </label>
             </div>
+          </div>
+          <div className="flex items-start gap-2 rounded-sm border border-outline-variant/25 bg-surface-container-low/40 p-4">
+            <input
+              id="show_in_showcase"
+              type="checkbox"
+              className="mt-0.5"
+              checked={form.show_in_showcase}
+              onChange={(e) => setForm((f) => ({ ...f, show_in_showcase: e.target.checked }))}
+            />
+            <label htmlFor="show_in_showcase" className="text-sm">
+              Mostrar en el Showcase técnico del home
+              <span className="mt-0.5 block text-[11px] font-normal text-on-surface-variant">
+                El carrusel del inicio muestra los modelos activos marcados aquí, en el mismo orden
+                (<code className="text-[10px]">sort_order</code>). Usa la portada, descripción y las 2 primeras
+                especificaciones del modelo.
+              </span>
+            </label>
           </div>
           <div className="flex flex-wrap gap-3">
             <Button type="submit" disabled={busy}>

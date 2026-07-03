@@ -222,6 +222,91 @@ export async function getHomeShowcaseSlides(
   return resolved;
 }
 
+type ShowcaseModelRow = {
+  id: string;
+  slug: string;
+  name: string;
+  segment: ModelSegment;
+  description: string | null;
+  cover_image_url: string | null;
+  pdf_url: string | null;
+  sort_order: number | null;
+};
+
+/**
+ * Slides del showcase del home construidas desde los modelos marcados con
+ * `show_in_showcase = true` en el dashboard. Si la columna no existe todavía,
+ * la consulta falla o no hay modelos marcados, devuelve [] (el home usa fallback).
+ */
+export async function getShowcaseSlidesFromModels(
+  supabase: SupabaseClient,
+): Promise<ResolvedHomeShowcaseSlide[]> {
+  const { data, error } = await supabase
+    .from("models")
+    .select("id, slug, name, segment, description, cover_image_url, pdf_url, sort_order")
+    .eq("active", true)
+    .eq("show_in_showcase", true)
+    .order("sort_order", { ascending: true, nullsFirst: false })
+    .order("name");
+
+  if (error) {
+    if (!error.message?.includes("show_in_showcase")) {
+      console.error("[getShowcaseSlidesFromModels]", error.message);
+    }
+    return [];
+  }
+
+  const models = (data ?? []) as ShowcaseModelRow[];
+  if (models.length === 0) return [];
+
+  const modelIds = models.map((m) => m.id);
+
+  const [productsRes, imagesRes] = await Promise.all([
+    supabase
+      .from("products")
+      .select("model_id, spec_key, spec_value, sort_order")
+      .in("model_id", modelIds),
+    supabase
+      .from("model_images")
+      .select("model_id, image_url, sort_order")
+      .in("model_id", modelIds),
+  ]);
+
+  if (productsRes.error) {
+    console.error("[getShowcaseSlidesFromModels] products", productsRes.error.message);
+  }
+  if (imagesRes.error) {
+    console.error("[getShowcaseSlidesFromModels] model_images", imagesRes.error.message);
+  }
+
+  const productsByModel = groupByModelId((productsRes.data ?? []) as ProductRow[]);
+  const imagesByModel = groupByModelId((imagesRes.data ?? []) as ImageRow[]);
+
+  return models.map((m) => {
+    const specs = sortSpecs(productsByModel.get(m.id) ?? [])
+      .slice(0, 2)
+      .map((p) => ({ key: p.spec_key, value: p.spec_value }));
+
+    const imgs = sortImages(imagesByModel.get(m.id) ?? []);
+    const heroSrc =
+      m.cover_image_url?.trim() || imgs[0]?.image_url?.trim() || FALLBACK_HERO;
+
+    const seg = m.segment in SEGMENT_EYEBROW ? m.segment : "interprovincial";
+
+    return {
+      id: `model-${m.id}`,
+      slug: m.slug,
+      name: m.name,
+      heroSrc,
+      eyebrow: SEGMENT_EYEBROW[seg],
+      lead: m.description?.trim() || "",
+      specRows: specs,
+      metrics: [],
+      pdfUrl: m.pdf_url?.trim() || null,
+    };
+  });
+}
+
 export type AdminShowcaseSlide = HomeShowcaseSlideRow & {
   model: { id: string; name: string; slug: string; active: boolean } | null | undefined;
 };

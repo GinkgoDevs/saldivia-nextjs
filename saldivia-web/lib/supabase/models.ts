@@ -14,6 +14,15 @@ function groupRowsByModelId<T extends { model_id: string | null }>(rows: T[]): M
   return map;
 }
 
+const MODEL_COLUMNS =
+  "id, slug, name, segment, description, cover_image_url, hero_background_image_url, pdf_url, active, show_in_showcase, created_at, sort_order";
+const MODEL_COLUMNS_LEGACY =
+  "id, slug, name, segment, description, cover_image_url, hero_background_image_url, pdf_url, active, created_at, sort_order";
+
+function withShowcaseDefault<T extends Record<string, unknown>>(rows: T[]): T[] {
+  return rows.map((r) => ("show_in_showcase" in r ? r : { ...r, show_in_showcase: false }));
+}
+
 export type ModelFilters = {
   segment?: ModelSegment;
 };
@@ -30,26 +39,26 @@ export async function getModels(
   supabase: SupabaseClient,
   filters: ModelFilters = {},
 ): Promise<GetModelsResult> {
-  let q = supabase
-    .from("models")
-    .select(
-      "id, slug, name, segment, description, cover_image_url, hero_background_image_url, pdf_url, active, created_at, sort_order",
-    )
-    .eq("active", true);
+  const runQuery = (columns: string) => {
+    let q = supabase.from("models").select(columns).eq("active", true);
+    if (filters.segment) q = q.eq("segment", filters.segment);
+    return q
+      .order("segment")
+      .order("sort_order", { ascending: true, nullsFirst: false })
+      .order("name");
+  };
 
-  if (filters.segment) q = q.eq("segment", filters.segment);
-
-  const { data, error } = await q
-    .order("segment")
-    .order("sort_order", { ascending: true, nullsFirst: false })
-    .order("name");
+  let { data, error } = await runQuery(MODEL_COLUMNS);
+  if (error?.message?.includes("show_in_showcase")) {
+    ({ data, error } = await runQuery(MODEL_COLUMNS_LEGACY));
+  }
 
   if (error) {
     return { data: null, error: new Error(error.message) };
   }
 
   return {
-    data: (data ?? []) as Model[],
+    data: withShowcaseDefault((data ?? []) as unknown as Model[]),
     error: null,
   };
 }
@@ -62,38 +71,41 @@ export async function getModelBySlug(
   supabase: SupabaseClient,
   slug: string,
 ): Promise<GetModelResult> {
-  const { data, error } = await supabase
-    .from("models")
-    .select(
-      "id, slug, name, segment, description, cover_image_url, hero_background_image_url, pdf_url, active, created_at, sort_order",
-    )
-    .eq("slug", slug)
-    .eq("active", true)
-    .maybeSingle();
+  const runQuery = (columns: string) =>
+    supabase.from("models").select(columns).eq("slug", slug).eq("active", true).maybeSingle();
+
+  let { data, error } = await runQuery(MODEL_COLUMNS);
+  if (error?.message?.includes("show_in_showcase")) {
+    ({ data, error } = await runQuery(MODEL_COLUMNS_LEGACY));
+  }
 
   if (error) return { data: null, error: new Error(error.message) };
   if (!data) return { data: null, error: new Error(`Model not found: ${slug}`) };
 
-  return { data: data as Model, error: null };
+  return { data: withShowcaseDefault([data as unknown as Model])[0], error: null };
 }
 
 export async function getAllModelsForAdmin(
   supabase: SupabaseClient,
 ): Promise<GetModelsAdminResult> {
-  const { data: models, error: modelsError } = await supabase
-    .from("models")
-    .select(
-      "id, slug, name, segment, description, cover_image_url, hero_background_image_url, pdf_url, active, created_at, sort_order",
-    )
-    .order("segment")
-    .order("sort_order", { ascending: true, nullsFirst: false })
-    .order("name");
+  const runModelsQuery = (columns: string) =>
+    supabase
+      .from("models")
+      .select(columns)
+      .order("segment")
+      .order("sort_order", { ascending: true, nullsFirst: false })
+      .order("name");
+
+  let { data: models, error: modelsError } = await runModelsQuery(MODEL_COLUMNS);
+  if (modelsError?.message?.includes("show_in_showcase")) {
+    ({ data: models, error: modelsError } = await runModelsQuery(MODEL_COLUMNS_LEGACY));
+  }
 
   if (modelsError) {
     return { data: null, error: new Error(modelsError.message) };
   }
 
-  const modelList = (models ?? []) as Model[];
+  const modelList = withShowcaseDefault((models ?? []) as unknown as Model[]);
   if (modelList.length === 0) {
     return { data: [], error: null };
   }

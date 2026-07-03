@@ -85,6 +85,8 @@ type SaveModelInput = {
   pdf_url: string;
   sort_order: number;
   active: boolean;
+  /** Mostrar en el "Showcase técnico" del home. */
+  show_in_showcase?: boolean;
   /** Specs compartidas (variant_id NULL). */
   tech_specs?: TechSpecRow[];
   general_feature_bodies?: string[];
@@ -144,20 +146,30 @@ export async function saveModel(input: SaveModelInput) {
     pdf_url: input.pdf_url.trim() || null,
     sort_order: Number.isFinite(input.sort_order) ? input.sort_order : 0,
     active: input.active,
+    show_in_showcase: input.show_in_showcase ?? false,
   };
 
   if (!row.slug || !row.name) {
     return { ok: false as const, error: "validation" };
   }
 
+  const { show_in_showcase: _drop, ...rowLegacy } = row;
+  const isMissingShowcaseColumn = (msg?: string) => !!msg?.includes("show_in_showcase");
+
   let modelId: string;
 
   if (input.id) {
     modelId = input.id;
-    const { error } = await supabase.from("models").update(row).eq("id", modelId);
+    let { error } = await supabase.from("models").update(row).eq("id", modelId);
+    if (isMissingShowcaseColumn(error?.message)) {
+      ({ error } = await supabase.from("models").update(rowLegacy).eq("id", modelId));
+    }
     if (error) return { ok: false as const, error: error.message };
   } else {
-    const { data, error } = await supabase.from("models").insert(row).select("id").single();
+    let { data, error } = await supabase.from("models").insert(row).select("id").single();
+    if (isMissingShowcaseColumn(error?.message)) {
+      ({ data, error } = await supabase.from("models").insert(rowLegacy).select("id").single());
+    }
     if (error) return { ok: false as const, error: error.message };
     if (!data?.id) return { ok: false as const, error: "validation" };
     modelId = data.id;
@@ -623,6 +635,95 @@ export async function deleteHomeShowcaseSlide(id: string) {
   if (error) return { ok: false as const, error: error.message };
   revalidateContent();
   revalidatePath("/dashboard/home-showcase");
+  return { ok: true as const };
+}
+
+type SaveHomeHeroSlideInput = {
+  id: string | null;
+  sort_order: number;
+  image_url: string;
+  image_alt: string;
+  eyebrow: string;
+  title: string;
+  highlight: string;
+  subtitle: string;
+  primary_label: string;
+  primary_href: string;
+  secondary_label: string;
+  secondary_href: string;
+  active: boolean;
+};
+
+export async function saveHomeHeroSlide(input: SaveHomeHeroSlideInput) {
+  const { supabase, user } = await requireUser();
+  if (!user) {
+    return { ok: false as const, error: "unauthorized" };
+  }
+
+  const clean = (v: string) => v.trim() || null;
+
+  const row = {
+    sort_order: Number.isFinite(input.sort_order) ? input.sort_order : 0,
+    image_url: clean(input.image_url),
+    image_alt: clean(input.image_alt),
+    eyebrow: clean(input.eyebrow),
+    title: clean(input.title),
+    highlight: clean(input.highlight),
+    subtitle: clean(input.subtitle),
+    primary_label: clean(input.primary_label),
+    primary_href: clean(input.primary_href),
+    secondary_label: clean(input.secondary_label),
+    secondary_href: clean(input.secondary_href),
+    active: input.active,
+  };
+
+  if (!row.title && !row.highlight && !row.subtitle && !row.image_url) {
+    return { ok: false as const, error: "validation" };
+  }
+
+  if (input.id) {
+    const { error } = await supabase.from("home_hero_slides").update(row).eq("id", input.id);
+    if (error) return { ok: false as const, error: error.message };
+  } else {
+    const { error } = await supabase.from("home_hero_slides").insert(row);
+    if (error) return { ok: false as const, error: error.message };
+  }
+
+  revalidateContent();
+  revalidatePath("/dashboard/home-hero");
+  return { ok: true as const };
+}
+
+export async function deleteHomeHeroSlide(id: string) {
+  const { supabase, user } = await requireUser();
+  if (!user) {
+    return { ok: false as const, error: "unauthorized" };
+  }
+  const { error } = await supabase.from("home_hero_slides").delete().eq("id", id);
+  if (error) return { ok: false as const, error: error.message };
+  revalidateContent();
+  revalidatePath("/dashboard/home-hero");
+  return { ok: true as const };
+}
+
+export async function reorderHomeHeroSlides(ordered_ids: string[]) {
+  const { supabase, user } = await requireUser();
+  if (!user) return { ok: false as const, error: "unauthorized" };
+
+  if (ordered_ids.length === 0 || new Set(ordered_ids).size !== ordered_ids.length) {
+    return { ok: false as const, error: "validation" };
+  }
+
+  for (let i = 0; i < ordered_ids.length; i++) {
+    const { error } = await supabase
+      .from("home_hero_slides")
+      .update({ sort_order: i })
+      .eq("id", ordered_ids[i]);
+    if (error) return { ok: false as const, error: error.message };
+  }
+
+  revalidateContent();
+  revalidatePath("/dashboard/home-hero");
   return { ok: true as const };
 }
 
