@@ -23,6 +23,9 @@
 # Mapa: fotos locales (~2GB). Metadatos en Supabase vía npm run sync:mapa
 /public/02  MAPA/
 
+# Videos pesados sin uso en la web (no versionar en git)
+/public/Imagenes para la web/**/*.mp4
+
 # debug
 npm-debug.log*
 yarn-debug.log*
