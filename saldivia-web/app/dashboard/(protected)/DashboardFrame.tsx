@@ -9,6 +9,7 @@ const nav = [
   { href: "/dashboard", label: "Inicio" },
   { href: "/dashboard/models", label: "Modelos" },
   { href: "/dashboard/model-images", label: "Imágenes" },
+  { href: "/dashboard/home-hero", label: "Hero home" },
   { href: "/dashboard/home-showcase", label: "Showcase home" },
   { href: "/dashboard/locations", label: "Ubicaciones" },
   { href: "/dashboard/province-projects", label: "Mapa prov." },

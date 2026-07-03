@@ -3,17 +3,19 @@
 import { animate, motion, useMotionValue } from "framer-motion";
 import { useCallback, useEffect, useRef, useState } from "react";
 
+const PLANTA_BASE = "/Imagenes%20para%20la%20web/1/planta%20y%20proceso%20fabricacion";
+const SCANIA_BASE = `${PLANTA_BASE}/El%20Expreso%20TV%20-%20Proceso%20Scania`;
+
 const IMAGES = [
-  { src: "/saldivia/buses.jpg", alt: "Flota de buses Saldivia" },
-  { src: "/saldivia/buses_1.jpg", alt: "Unidades Saldivia en ruta" },
-  { src: "/saldivia/carroceria.jpg", alt: "Carrocería y producción Saldivia" },
-  { src: "/saldivia/soldadura.jpg", alt: "Soldadura y fabricación en planta" },
-  { src: "/saldivia/taller_1.jpg", alt: "Taller Saldivia" },
-  { src: "/saldivia/taller_2.jpg", alt: "Línea de mantenimiento y ensamble" },
-  { src: "/saldivia/taller_3.jpg", alt: "Instalaciones de taller" },
-  { src: "/saldivia/taller_4.jpg", alt: "Procesos en planta industrial" },
-  { src: "/saldivia/img-20210910-wa0010.jpg", alt: "Instalaciones Saldivia" },
-  { src: "/saldivia/3.jpg", alt: "Producción e ingeniería Saldivia" },
+  { src: `${PLANTA_BASE}/20240506_153804.jpg`, alt: "Unidades Saldivia en planta de fabricación" },
+  { src: `${PLANTA_BASE}/20250331_094852.jpg`, alt: "Flota Saldivia lista para entrega" },
+  { src: `${PLANTA_BASE}/BF1FAE22-547C-46F9-96AE-F6C5745F5DFC.png`, alt: "Buses Saldivia terminados" },
+  { src: `${PLANTA_BASE}/DJI_0490.JPG.jpeg`, alt: "Vista aérea de la planta Saldivia" },
+  { src: `${PLANTA_BASE}/DJI_0500.JPG.jpeg`, alt: "Vista aérea de las instalaciones Saldivia" },
+  { src: `${PLANTA_BASE}/IMG_20241128_121215_812.jpg`, alt: "Carrocería Saldivia sobre elevador" },
+  { src: `${PLANTA_BASE}/IMG_20250207_053351_238.jpg`, alt: "Línea de producción y taller Saldivia" },
+  { src: `${SCANIA_BASE}/2-Estructura%20A.jpg`, alt: "Estructura de carrocería en fabricación" },
+  { src: `${SCANIA_BASE}/16-Interior%20copy.jpg`, alt: "Interior terminado de unidad Saldivia" },
 ] as const;
 
 const GAP = 24;
@@ -46,6 +48,7 @@ export default function GalleryCarousel() {
   const [itemW, setItemW] = useState(0);
   const [paused, setPaused] = useState(false);
   const [visible, setVisible] = useState(3);
+  const [lightboxIdx, setLightboxIdx] = useState<number | null>(null);
 
   const recalcLayout = useCallback(() => {
     const el = viewportRef.current;
@@ -111,11 +114,38 @@ export default function GalleryCarousel() {
   const next = useCallback(() => go(posRef.current + 1), [go]);
   const prev = useCallback(() => go(posRef.current - 1), [go]);
 
+  const openLightbox = useCallback((realIdx: number) => setLightboxIdx(realIdx), []);
+  const closeLightbox = useCallback(() => setLightboxIdx(null), []);
+  const lightboxNext = useCallback(
+    () => setLightboxIdx((i) => (i === null ? i : (i + 1) % N)),
+    [],
+  );
+  const lightboxPrev = useCallback(
+    () => setLightboxIdx((i) => (i === null ? i : (i - 1 + N) % N)),
+    [],
+  );
+
   useEffect(() => {
-    if (paused) return;
+    if (paused || lightboxIdx !== null) return;
     const id = setInterval(next, 4000);
     return () => clearInterval(id);
-  }, [paused, next]);
+  }, [paused, next, lightboxIdx]);
+
+  useEffect(() => {
+    if (lightboxIdx === null) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") closeLightbox();
+      else if (e.key === "ArrowRight") lightboxNext();
+      else if (e.key === "ArrowLeft") lightboxPrev();
+    };
+    window.addEventListener("keydown", onKey);
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [lightboxIdx, closeLightbox, lightboxNext, lightboxPrev]);
 
   const slideWidth =
     itemW > 0 ? `${itemW}px` : `calc((100% - ${GAP * (visible - 1)}px) / ${visible})`;
@@ -143,21 +173,36 @@ export default function GalleryCarousel() {
         <div className="mx-auto w-full max-w-[min(100%,1920px)] px-3 sm:px-5 md:px-8 lg:px-10 xl:px-12">
           <div className="relative overflow-hidden rounded-md md:rounded-lg" ref={viewportRef}>
             <motion.div className="flex" style={{ x, gap: `${GAP}px` }} aria-live="polite">
-              {extended.map((img, i) => (
-                <div
-                  key={`${img.src}-${i}`}
-                  className="aspect-[16/10] shrink-0 overflow-hidden rounded-md md:aspect-[16/9] md:rounded-lg"
-                  style={{ width: slideWidth }}
-                >
-                  <img
-                    src={img.src}
-                    alt={img.alt}
-                    loading={i >= CLONE && i < CLONE + 3 ? "eager" : "lazy"}
-                    className="h-full w-full object-cover"
-                    draggable={false}
-                  />
-                </div>
-              ))}
+              {extended.map((img, i) => {
+                const realIdx = (((i - CLONE) % N) + N) % N;
+                return (
+                  <div
+                    key={`${img.src}-${i}`}
+                    className="aspect-[16/10] shrink-0 overflow-hidden rounded-md md:aspect-[16/9] md:rounded-lg"
+                    style={{ width: slideWidth }}
+                  >
+                    <button
+                      type="button"
+                      onClick={() => openLightbox(realIdx)}
+                      aria-label={`Ampliar imagen: ${img.alt}`}
+                      className="group relative block h-full w-full cursor-zoom-in focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue focus-visible:ring-offset-2"
+                    >
+                      <img
+                        src={img.src}
+                        alt={img.alt}
+                        loading={i >= CLONE && i < CLONE + 3 ? "eager" : "lazy"}
+                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        draggable={false}
+                      />
+                      <span className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/0 opacity-0 transition group-hover:bg-black/25 group-hover:opacity-100">
+                        <span className="material-symbols-outlined rounded-full bg-black/55 p-2 text-2xl text-white backdrop-blur-sm">
+                          zoom_in
+                        </span>
+                      </span>
+                    </button>
+                  </div>
+                );
+              })}
             </motion.div>
 
             <button
@@ -203,6 +248,64 @@ export default function GalleryCarousel() {
           </div>
         </div>
       </div>
+
+      {lightboxIdx !== null && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="Imagen ampliada"
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-sm"
+          onClick={closeLightbox}
+        >
+          <button
+            type="button"
+            onClick={closeLightbox}
+            aria-label="Cerrar"
+            className="absolute right-4 top-4 z-10 flex h-11 w-11 items-center justify-center rounded-full border border-white/25 bg-black/50 text-white transition hover:bg-black/70 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue"
+          >
+            <span className="material-symbols-outlined text-2xl">close</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              lightboxPrev();
+            }}
+            aria-label="Imagen anterior"
+            className="absolute left-2 top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-white/25 bg-black/50 text-white transition hover:bg-black/70 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue sm:left-5"
+          >
+            <span className="material-symbols-outlined text-3xl">chevron_left</span>
+          </button>
+
+          <figure className="mx-4 max-h-[90vh] max-w-[92vw]" onClick={(e) => e.stopPropagation()}>
+            <img
+              src={IMAGES[lightboxIdx].src}
+              alt={IMAGES[lightboxIdx].alt}
+              className="mx-auto max-h-[82vh] w-auto max-w-full rounded-md object-contain shadow-2xl"
+              draggable={false}
+            />
+            <figcaption className="mt-3 text-center text-sm text-white/80">
+              {IMAGES[lightboxIdx].alt}
+              <span className="ml-2 text-white/40">
+                {lightboxIdx + 1} / {N}
+              </span>
+            </figcaption>
+          </figure>
+
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              lightboxNext();
+            }}
+            aria-label="Imagen siguiente"
+            className="absolute right-2 top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-white/25 bg-black/50 text-white transition hover:bg-black/70 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue sm:right-5"
+          >
+            <span className="material-symbols-outlined text-3xl">chevron_right</span>
+          </button>
+        </div>
+      )}
     </section>
   );
 }

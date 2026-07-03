@@ -1,4 +1,6 @@
 import { TechnicalShowcaseClient } from "@/app/components/home/TechnicalShowcaseClient";
+import { getShowcaseSlidesFromModels } from "@/lib/supabase/home-showcase";
+import { createClient } from "@/lib/supabase/server";
 import type { ResolvedHomeShowcaseSlide } from "@/types/home-showcase";
 
 const SLIDES: ResolvedHomeShowcaseSlide[] = [
@@ -55,6 +57,17 @@ const SLIDES: ResolvedHomeShowcaseSlide[] = [
   },
 ];
 
-export function TechnicalShowcase() {
-  return <TechnicalShowcaseClient slides={SLIDES} />;
+export async function TechnicalShowcase() {
+  let slides = SLIDES;
+  try {
+    const supabase = await createClient();
+    const fromModels = await getShowcaseSlidesFromModels(supabase);
+    if (fromModels.length > 0) {
+      slides = fromModels;
+    }
+  } catch (err) {
+    console.error("[TechnicalShowcase] fallback to static slides:", err);
+  }
+
+  return <TechnicalShowcaseClient slides={slides} />;
 }

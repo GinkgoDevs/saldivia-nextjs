@@ -46,6 +46,8 @@ export type Model = {
   hero_background_image_url: string | null;
   pdf_url: string | null;
   active: boolean;
+  /** Si true, el modelo se muestra en el "Showcase técnico" del home. */
+  show_in_showcase: boolean;
   created_at: string;
   sort_order: number | null;
 };
