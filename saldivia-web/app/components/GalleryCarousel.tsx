@@ -3,19 +3,18 @@
 import { animate, motion, useMotionValue } from "framer-motion";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-const PLANTA_BASE = "/Imagenes%20para%20la%20web/1/planta%20y%20proceso%20fabricacion";
-const SCANIA_BASE = `${PLANTA_BASE}/El%20Expreso%20TV%20-%20Proceso%20Scania`;
+const GALLERY_BASE = "/galeria-innovacion";
 
 const IMAGES = [
-  { src: `${PLANTA_BASE}/20240506_153804.jpg`, alt: "Unidades Saldivia en planta de fabricación" },
-  { src: `${PLANTA_BASE}/20250331_094852.jpg`, alt: "Flota Saldivia lista para entrega" },
-  { src: `${PLANTA_BASE}/BF1FAE22-547C-46F9-96AE-F6C5745F5DFC.png`, alt: "Buses Saldivia terminados" },
-  { src: `${PLANTA_BASE}/DJI_0490.JPG.jpeg`, alt: "Vista aérea de la planta Saldivia" },
-  { src: `${PLANTA_BASE}/DJI_0500.JPG.jpeg`, alt: "Vista aérea de las instalaciones Saldivia" },
-  { src: `${PLANTA_BASE}/IMG_20241128_121215_812.jpg`, alt: "Carrocería Saldivia sobre elevador" },
-  { src: `${PLANTA_BASE}/IMG_20250207_053351_238.jpg`, alt: "Línea de producción y taller Saldivia" },
-  { src: `${SCANIA_BASE}/2-Estructura%20A.jpg`, alt: "Estructura de carrocería en fabricación" },
-  { src: `${SCANIA_BASE}/16-Interior%20copy.jpg`, alt: "Interior terminado de unidad Saldivia" },
+  { src: `${GALLERY_BASE}/01-planta.webp`, alt: "Unidades Saldivia en planta de fabricación" },
+  { src: `${GALLERY_BASE}/02-flota-entrega.webp`, alt: "Flota Saldivia lista para entrega" },
+  { src: `${GALLERY_BASE}/03-buses-terminados.webp`, alt: "Buses Saldivia terminados" },
+  { src: `${GALLERY_BASE}/04-aerea-planta.webp`, alt: "Vista aérea de la planta Saldivia" },
+  { src: `${GALLERY_BASE}/05-aerea-instalaciones.webp`, alt: "Vista aérea de las instalaciones Saldivia" },
+  { src: `${GALLERY_BASE}/06-carroceria-elevador.webp`, alt: "Carrocería Saldivia sobre elevador" },
+  { src: `${GALLERY_BASE}/07-linea-produccion.webp`, alt: "Línea de producción y taller Saldivia" },
+  { src: `${GALLERY_BASE}/08-estructura-carroceria.webp`, alt: "Estructura de carrocería en fabricación" },
+  { src: `${GALLERY_BASE}/09-interior-terminado.webp`, alt: "Interior terminado de unidad Saldivia" },
 ] as const;
 
 const GAP = 24;
@@ -191,6 +190,7 @@ export default function GalleryCarousel() {
                         src={img.src}
                         alt={img.alt}
                         loading={i >= CLONE && i < CLONE + 3 ? "eager" : "lazy"}
+                        decoding="async"
                         className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                         draggable={false}
                       />
