@@ -56,15 +56,24 @@ export function TechnicalShowcaseClient({ slides }: { slides: ResolvedHomeShowca
           className="h-full w-full object-cover object-center"
         />
         <div className="absolute inset-0 bg-industrial-charcoal/80" />
+        <div
+          className="pointer-events-none absolute inset-x-0 top-0 z-[5] h-[min(52vh,380px)] bg-gradient-to-b from-industrial-charcoal from-0% via-industrial-charcoal/75 via-35% to-transparent to-100%"
+          aria-hidden
+        />
       </div>
 
-      {/* ── Header bar ─────────────────────────────────────────── */}
+      {/* Desktop: viñeta divisoria imagen → panel (altura total de la sección) */}
+      <div
+        className="pointer-events-none absolute inset-y-0 right-[420px] z-[11] hidden w-32 bg-gradient-to-l from-industrial-charcoal to-transparent lg:block xl:right-[480px]"
+        aria-hidden
+      />
+
+      {/* ── Header ─────────────────────────────────────────────── */}
       <motion.div
         variants={reduce ? {} : stagger}
         initial="hidden"
         animate={animState}
-        className="absolute left-0 right-0 top-0 z-20 flex items-start justify-between px-8 pb-1 pt-16 md:px-12 md:pt-16"
-        style={{ background: "linear-gradient(to bottom, rgba(18,18,18,0.92) 0%, rgba(18,18,18,0.55) 55%, transparent 100%)" }}
+        className="absolute inset-x-0 top-0 z-20 flex items-start justify-between px-8 pb-4 pt-20 md:px-12 md:pb-6 md:pt-24"
       >
         <div>
           <motion.p
@@ -104,29 +113,29 @@ export function TechnicalShowcaseClient({ slides }: { slides: ResolvedHomeShowca
       </motion.div>
 
       {/* ── Body: image + content panel ────────────────────────── */}
-      <div className="relative z-10 flex flex-grow flex-col pt-24 md:pt-28 lg:flex-row lg:pt-32">
+      <div className="relative z-10 flex flex-grow flex-col pt-24 md:pt-28 lg:flex-row lg:items-stretch lg:pt-32">
 
         {/* Hero image */}
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={`img-${slide.id}`}
-            className="relative h-[45vh] lg:h-auto lg:flex-1"
-            initial={reduce ? {} : { x: -20 }}
-            animate={reduce ? {} : { x: 0 }}
-            exit={reduce ? {} : { x: 16 }}
-            transition={SLOW}
-          >
-            <img
-              src={slide.heroSrc}
-              alt={slide.name}
-              className="h-full w-full object-contain object-center p-6 md:p-10 lg:p-12"
-            />
-            {/* Blend edge into right panel on desktop */}
-            <div className="absolute inset-y-0 right-0 hidden w-24 bg-gradient-to-l from-industrial-charcoal to-transparent lg:block" />
-            {/* Blend bottom on mobile */}
-            <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-industrial-charcoal to-transparent lg:hidden" />
-          </motion.div>
-        </AnimatePresence>
+        <div className="relative flex min-h-0 flex-1 self-stretch">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={`img-${slide.id}`}
+              className="relative h-[45vh] w-full lg:h-full lg:min-h-0"
+              initial={reduce ? {} : { x: -20 }}
+              animate={reduce ? {} : { x: 0 }}
+              exit={reduce ? {} : { x: 16 }}
+              transition={SLOW}
+            >
+              <img
+                src={slide.heroSrc}
+                alt={slide.name}
+                className="h-full w-full object-contain object-center p-6 md:p-10 lg:p-12"
+              />
+              {/* Blend bottom on mobile */}
+              <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-industrial-charcoal to-transparent lg:hidden" />
+            </motion.div>
+          </AnimatePresence>
+        </div>
 
         {/* Content panel */}
         <AnimatePresence mode="wait">
