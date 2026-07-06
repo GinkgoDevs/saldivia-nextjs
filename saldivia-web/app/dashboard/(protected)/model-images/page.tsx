@@ -9,7 +9,7 @@ export default async function DashboardModelImagesPage() {
     getAllModelsForAdmin(supabase),
     supabase
       .from("model_images")
-      .select("id, model_id, image_url, sort_order")
+      .select("id, model_id, image_url, focal_x, focal_y, zoom, sort_order")
       .order("sort_order", { ascending: true }),
   ]);
 
@@ -31,7 +31,12 @@ export default async function DashboardModelImagesPage() {
       <div className="mt-8">
         <ModelImagesAdmin
           models={modelsRes.data}
-          initialImages={(imagesRes.data ?? []) as ModelImage[]}
+          initialImages={((imagesRes.data ?? []) as ModelImage[]).map((img) => ({
+            ...img,
+            focal_x: img.focal_x ?? 50,
+            focal_y: img.focal_y ?? 50,
+            zoom: img.zoom ?? 1,
+          }))}
         />
       </div>
     </main>

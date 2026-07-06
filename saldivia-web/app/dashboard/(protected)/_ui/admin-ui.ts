@@ -21,5 +21,6 @@ export { AdminSelect } from "./AdminSelect";
 export { AdminCheckbox } from "./AdminCheckbox";
 export { MediaDropzone } from "./MediaDropzone";
 export { AdminSitePreviewFrame } from "./AdminSitePreviewFrame";
+export { FramedImageField } from "./FramedImageField";
 export { SITE_IMAGE_PREVIEW } from "./admin-display-previews";
 export { AdminListPanel } from "./AdminListPanel";

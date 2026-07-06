@@ -26,11 +26,10 @@ import {
   AdminSelect,
   AdminWizardPanel,
   adminToast,
+  FramedImageField,
   MediaDropzone,
   type WizardStep,
 } from "../_ui/admin-ui";
-import { SITE_IMAGE_PREVIEW } from "../_ui/admin-display-previews";
-import { AdminSitePreviewFrame } from "../_ui/AdminSitePreviewFrame";
 
 const PROJECT_WIZARD_STEPS: WizardStep[] = [
   {
@@ -61,6 +60,9 @@ type FormState = {
   segment: string;
   year: string;
   image_url: string;
+  image_focal_x: number;
+  image_focal_y: number;
+  image_zoom: number;
   sort_order: number;
   active: boolean;
 };
@@ -75,6 +77,9 @@ function emptyForm(): FormState {
     segment: "",
     year: "",
     image_url: "",
+    image_focal_x: 50,
+    image_focal_y: 50,
+    image_zoom: 1,
     sort_order: 0,
     active: true,
   };
@@ -90,6 +95,9 @@ function rowToForm(row: ProvinceProjectRow): FormState {
     segment: row.segment ?? "",
     year: row.year ?? "",
     image_url: row.image_url ?? "",
+    image_focal_x: row.image_focal_x ?? 50,
+    image_focal_y: row.image_focal_y ?? 50,
+    image_zoom: row.image_zoom ?? 1,
     sort_order: row.sort_order ?? 0,
     active: row.active,
   };
@@ -298,7 +306,13 @@ export function ProvinceProjectsAdmin({ initial, provinceOptions }: Props) {
         adminToast.error(r.error);
         return;
       }
-      setForm((f) => ({ ...f, image_url: r.publicUrl }));
+      setForm((f) => ({
+        ...f,
+        image_url: r.publicUrl,
+        image_focal_x: 50,
+        image_focal_y: 50,
+        image_zoom: 1,
+      }));
       adminToast.info("Imagen subida. Pulse Guardar para publicar.");
     } finally {
       setUploading(false);
@@ -317,6 +331,9 @@ export function ProvinceProjectsAdmin({ initial, provinceOptions }: Props) {
       segment: form.segment,
       year: form.year,
       image_url: form.image_url,
+      image_focal_x: form.image_focal_x,
+      image_focal_y: form.image_focal_y,
+      image_zoom: form.image_zoom,
       sort_order: form.sort_order,
       active: form.active,
     });
@@ -513,11 +530,19 @@ export function ProvinceProjectsAdmin({ initial, provinceOptions }: Props) {
 
           <AdminWizardPanel stepId="media" currentStepId={currentStepId}>
             <AdminFormSection title="Imagen" description="Foto del colectivo o del proyecto en la empresa.">
-              <AdminSitePreviewFrame
-                maxWidth={SITE_IMAGE_PREVIEW.mapProject.maxWidth}
+              <FramedImageField
+                id="pp-img"
+                label="Imagen del proyecto"
+                previewPreset="mapProject"
+                previewHint="Vista previa como en la card del mapa. Arrastrá para encuadrar y ajustá el zoom."
+                imageUrl={form.image_url}
+                focalX={form.image_focal_x}
+                focalY={form.image_focal_y}
+                zoom={form.image_zoom}
+                uploading={uploading}
+                disabled={busy}
                 frameClassName="rounded-curve-sm border border-white/12 bg-[#051018]/90 shadow-[0_12px_32px_rgba(0,0,0,0.35)]"
-                hint="Vista previa como en la card del mapa por provincia."
-                footer={
+                frameFooter={
                   form.title.trim() ? (
                     <div className="p-4">
                       <p className="font-headline text-sm font-bold leading-tight text-white">
@@ -526,21 +551,11 @@ export function ProvinceProjectsAdmin({ initial, provinceOptions }: Props) {
                     </div>
                   ) : undefined
                 }
-              >
-                <MediaDropzone
-                  id="pp-img"
-                  label="Imagen del proyecto"
-                  value={form.image_url}
-                  uploading={uploading}
-                  disabled={busy}
-                  showUrlField={false}
-                  previewAspect={SITE_IMAGE_PREVIEW.mapProject.aspect}
-                  previewObjectFit={SITE_IMAGE_PREVIEW.mapProject.objectFit}
-                  previewBg={SITE_IMAGE_PREVIEW.mapProject.bg}
-                  onChange={(url) => setForm((f) => ({ ...f, image_url: url }))}
-                  onFileSelect={onImageFile}
-                />
-              </AdminSitePreviewFrame>
+                onImageUrlChange={(url) => setForm((f) => ({ ...f, image_url: url }))}
+                onFocalChange={(x, y) => setForm((f) => ({ ...f, image_focal_x: x, image_focal_y: y }))}
+                onZoomChange={(zoom) => setForm((f) => ({ ...f, image_zoom: zoom }))}
+                onFileSelect={onImageFile}
+              />
             </AdminFormSection>
             <AdminFormSection title="Detalles opcionales">
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">

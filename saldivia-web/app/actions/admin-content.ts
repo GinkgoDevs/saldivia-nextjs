@@ -6,6 +6,7 @@ import { revalidatePath } from "next/cache";
 
 import type { ModelSegment } from "@/types/model";
 import type { LocationType } from "@/types/location";
+import { clampImageFocal, clampImageZoom } from "@/lib/image-focal";
 
 const SEGMENTS: ModelSegment[] = [
   "urbano",
@@ -81,6 +82,9 @@ type SaveModelInput = {
   segment: string;
   description: string;
   cover_image_url: string;
+  cover_image_focal_x: number;
+  cover_image_focal_y: number;
+  cover_image_zoom: number;
   hero_background_image_url: string;
   hero_background_focal_x: number;
   hero_background_focal_y: number;
@@ -129,13 +133,11 @@ function normalizeFeatureBodies(bodies: string[] | undefined, limit = MAX_FEATUR
 }
 
 function clampHeroFocal(n: number) {
-  if (!Number.isFinite(n)) return 50;
-  return Math.min(100, Math.max(0, Math.round(n)));
+  return clampImageFocal(n);
 }
 
 function clampHeroZoom(n: number) {
-  if (!Number.isFinite(n)) return 1;
-  return Math.min(2.5, Math.max(1, Math.round(n * 100) / 100));
+  return clampImageZoom(n);
 }
 
 export async function saveModel(input: SaveModelInput) {
@@ -155,6 +157,9 @@ export async function saveModel(input: SaveModelInput) {
     segment: seg,
     description: input.description.trim() || null,
     cover_image_url: input.cover_image_url.trim() || null,
+    cover_image_focal_x: clampHeroFocal(input.cover_image_focal_x),
+    cover_image_focal_y: clampHeroFocal(input.cover_image_focal_y),
+    cover_image_zoom: clampHeroZoom(input.cover_image_zoom),
     hero_background_image_url: input.hero_background_image_url.trim() || null,
     hero_background_focal_x: clampHeroFocal(input.hero_background_focal_x),
     hero_background_focal_y: clampHeroFocal(input.hero_background_focal_y),
@@ -173,6 +178,18 @@ export async function saveModel(input: SaveModelInput) {
   const isMissingShowcaseColumn = (msg?: string) => !!msg?.includes("show_in_showcase");
   const isMissingHeroColumn = (msg?: string) => !!msg?.includes("hero_background_image_url");
   const isMissingHeroFocal = (msg?: string) => !!msg?.includes("hero_background_focal");
+
+  const isMissingCoverFocal = (msg?: string) => !!msg?.includes("cover_image_focal");
+
+  const stripCoverFocal = <T extends Record<string, unknown>>(r: T) => {
+    const {
+      cover_image_focal_x: _cx,
+      cover_image_focal_y: _cy,
+      cover_image_zoom: _cz,
+      ...rest
+    } = r;
+    return rest;
+  };
 
   const stripHeroFocal = <T extends Record<string, unknown>>(r: T) => {
     const {
@@ -218,6 +235,17 @@ export async function saveModel(input: SaveModelInput) {
       payload = stripHeroFocal(payload);
       warning =
         "Falta la migración 009 (encuadre del hero). Ejecutala en Supabase; el resto se guardó.";
+      result = isInsert
+        ? await supabase.from("models").insert(payload).select("id").single()
+        : await supabase.from("models").update(payload).eq("id", modelId);
+      error = result.error;
+    }
+
+    if (isMissingCoverFocal(error?.message)) {
+      payload = stripCoverFocal(payload);
+      warning =
+        warning ??
+        "Falta la migración 016 (encuadre de portada). Ejecutala en Supabase; el resto se guardó.";
       result = isInsert
         ? await supabase.from("models").insert(payload).select("id").single()
         : await supabase.from("models").update(payload).eq("id", modelId);
@@ -540,6 +568,9 @@ type SaveProvinceProjectInput = {
   segment: string;
   year: string;
   image_url: string;
+  image_focal_x: number;
+  image_focal_y: number;
+  image_zoom: number;
   sort_order: number;
   active: boolean;
 };
@@ -559,6 +590,9 @@ export async function saveProvinceProject(input: SaveProvinceProjectInput) {
     segment: input.segment.trim() || null,
     year: input.year.trim() || null,
     image_url: input.image_url.trim() || null,
+    image_focal_x: clampHeroFocal(input.image_focal_x),
+    image_focal_y: clampHeroFocal(input.image_focal_y),
+    image_zoom: clampHeroZoom(input.image_zoom),
     sort_order: Number.isFinite(input.sort_order) ? input.sort_order : 0,
     active: input.active,
   };
@@ -568,10 +602,18 @@ export async function saveProvinceProject(input: SaveProvinceProjectInput) {
   }
 
   if (input.id) {
-    const { error } = await supabase.from("province_projects").update(row).eq("id", input.id);
+    let { error } = await supabase.from("province_projects").update(row).eq("id", input.id);
+    if (error?.message?.includes("image_focal")) {
+      const { image_focal_x: _x, image_focal_y: _y, image_zoom: _z, ...legacy } = row;
+      ({ error } = await supabase.from("province_projects").update(legacy).eq("id", input.id));
+    }
     if (error) return { ok: false as const, error: error.message };
   } else {
-    const { error } = await supabase.from("province_projects").insert(row);
+    let { error } = await supabase.from("province_projects").insert(row);
+    if (error?.message?.includes("image_focal")) {
+      const { image_focal_x: _x, image_focal_y: _y, image_zoom: _z, ...legacy } = row;
+      ({ error } = await supabase.from("province_projects").insert(legacy));
+    }
     if (error) return { ok: false as const, error: error.message };
   }
 
@@ -780,6 +822,9 @@ type SaveHomeHeroSlideInput = {
   id: string | null;
   sort_order: number;
   image_url: string;
+  image_focal_x: number;
+  image_focal_y: number;
+  image_zoom: number;
   image_alt: string;
   eyebrow: string;
   title: string;
@@ -803,6 +848,9 @@ export async function saveHomeHeroSlide(input: SaveHomeHeroSlideInput) {
   const row = {
     sort_order: Number.isFinite(input.sort_order) ? input.sort_order : 0,
     image_url: clean(input.image_url),
+    image_focal_x: clampHeroFocal(input.image_focal_x),
+    image_focal_y: clampHeroFocal(input.image_focal_y),
+    image_zoom: clampHeroZoom(input.image_zoom),
     image_alt: clean(input.image_alt),
     eyebrow: clean(input.eyebrow),
     title: clean(input.title),
@@ -820,10 +868,18 @@ export async function saveHomeHeroSlide(input: SaveHomeHeroSlideInput) {
   }
 
   if (input.id) {
-    const { error } = await supabase.from("home_hero_slides").update(row).eq("id", input.id);
+    let { error } = await supabase.from("home_hero_slides").update(row).eq("id", input.id);
+    if (error?.message?.includes("image_focal")) {
+      const { image_focal_x: _x, image_focal_y: _y, image_zoom: _z, ...legacy } = row;
+      ({ error } = await supabase.from("home_hero_slides").update(legacy).eq("id", input.id));
+    }
     if (error) return { ok: false as const, error: error.message };
   } else {
-    const { error } = await supabase.from("home_hero_slides").insert(row);
+    let { error } = await supabase.from("home_hero_slides").insert(row);
+    if (error?.message?.includes("image_focal")) {
+      const { image_focal_x: _x, image_focal_y: _y, image_zoom: _z, ...legacy } = row;
+      ({ error } = await supabase.from("home_hero_slides").insert(legacy));
+    }
     if (error) return { ok: false as const, error: error.message };
   }
 
@@ -868,6 +924,9 @@ export async function reorderHomeHeroSlides(ordered_ids: string[]) {
 export async function addModelImage(input: {
   model_id: string;
   image_url: string;
+  focal_x: number;
+  focal_y: number;
+  zoom: number;
   sort_order: number;
 }) {
   const { supabase, user } = await requireUser();
@@ -877,11 +936,20 @@ export async function addModelImage(input: {
     return { ok: false as const, error: "validation" };
   }
 
-  const { error } = await supabase.from("model_images").insert({
+  const insertRow = {
     model_id: input.model_id,
     image_url: input.image_url.trim(),
+    focal_x: clampHeroFocal(input.focal_x),
+    focal_y: clampHeroFocal(input.focal_y),
+    zoom: clampHeroZoom(input.zoom),
     sort_order: Number.isFinite(input.sort_order) ? input.sort_order : 0,
-  });
+  };
+
+  let { error } = await supabase.from("model_images").insert(insertRow);
+  if (error?.message?.includes("focal_x")) {
+    const { focal_x: _x, focal_y: _y, zoom: _z, ...legacy } = insertRow;
+    ({ error } = await supabase.from("model_images").insert(legacy));
+  }
 
   if (error) return { ok: false as const, error: error.message };
   revalidateContent();
@@ -913,6 +981,9 @@ export async function updateModelImageSortOrder(id: string, sort_order: number) 
 export async function updateModelImage(input: {
   id: string;
   image_url: string;
+  focal_x: number;
+  focal_y: number;
+  zoom: number;
   sort_order: number;
 }) {
   const { supabase, user } = await requireUser();
@@ -924,13 +995,19 @@ export async function updateModelImage(input: {
     return { ok: false as const, error: "validation" };
   }
 
-  const { error } = await supabase
-    .from("model_images")
-    .update({
-      image_url,
-      sort_order: Number.isFinite(input.sort_order) ? input.sort_order : 0,
-    })
-    .eq("id", id);
+  const updateRow = {
+    image_url,
+    focal_x: clampHeroFocal(input.focal_x),
+    focal_y: clampHeroFocal(input.focal_y),
+    zoom: clampHeroZoom(input.zoom),
+    sort_order: Number.isFinite(input.sort_order) ? input.sort_order : 0,
+  };
+
+  let { error } = await supabase.from("model_images").update(updateRow).eq("id", id);
+  if (error?.message?.includes("focal_x")) {
+    const { focal_x: _x, focal_y: _y, zoom: _z, ...legacy } = updateRow;
+    ({ error } = await supabase.from("model_images").update(legacy).eq("id", id));
+  }
 
   if (error) return { ok: false as const, error: error.message };
   revalidateContent();

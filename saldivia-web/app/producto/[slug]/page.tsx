@@ -51,13 +51,29 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 function galleryFor(slug: string, detail: Awaited<ReturnType<typeof getModelBySlug>>) {
   if (!detail) return [...DEFAULT_GALLERY];
-  const fromDb = detail.images.map((i) => i.image_url).filter(Boolean);
+  const fromDb = detail.images
+    .filter((i) => i.image_url)
+    .map((i) => ({
+      src: i.image_url,
+      focalX: i.focal_x ?? 50,
+      focalY: i.focal_y ?? 50,
+      zoom: i.zoom ?? 1,
+    }));
   if (fromDb.length > 0) return fromDb;
   if (slug === "aries-305") {
     const disk = getAries305GalleryPaths();
     if (disk.length > 0) return disk;
   }
-  if (detail.model.cover_image_url) return [detail.model.cover_image_url];
+  if (detail.model.cover_image_url) {
+    return [
+      {
+        src: detail.model.cover_image_url,
+        focalX: detail.model.cover_image_focal_x ?? 50,
+        focalY: detail.model.cover_image_focal_y ?? 50,
+        zoom: detail.model.cover_image_zoom ?? 1,
+      },
+    ];
+  }
   return [...DEFAULT_GALLERY];
 }
 
@@ -72,8 +88,11 @@ export default async function ProductoPage({ params }: Props) {
   const { model, products, general_features, variants } = detail;
   const gallery = galleryFor(slug, detail);
   const altPrefix = model.name;
+  const firstGalleryItem = gallery[0];
+  const firstGalleryUrl =
+    typeof firstGalleryItem === "string" ? firstGalleryItem : firstGalleryItem?.src;
   const hero =
-    model.hero_background_image_url ?? model.cover_image_url ?? gallery[0] ?? DEFAULT_HERO;
+    model.hero_background_image_url ?? model.cover_image_url ?? firstGalleryUrl ?? DEFAULT_HERO;
   const hasCustomHero = Boolean(model.hero_background_image_url?.trim());
   const heroFocalX = model.hero_background_focal_x ?? 50;
   const heroFocalY = model.hero_background_focal_y ?? 50;

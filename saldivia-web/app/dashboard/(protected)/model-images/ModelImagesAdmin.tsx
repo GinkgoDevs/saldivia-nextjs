@@ -26,21 +26,23 @@ import {
   AdminModalFooter,
   AdminSelect,
   adminToast,
+  FramedImageField,
   MediaDropzone,
 } from "../_ui/admin-ui";
-import { SITE_IMAGE_PREVIEW } from "../_ui/admin-display-previews";
-import { AdminSitePreviewFrame } from "../_ui/AdminSitePreviewFrame";
 
 type Props = { models: Model[]; initialImages: ModelImage[] };
 
 type ImageFormState = {
   id: string | null;
   image_url: string;
+  focal_x: number;
+  focal_y: number;
+  zoom: number;
   sort_order: number;
 };
 
 function emptyForm(sortOrder: number): ImageFormState {
-  return { id: null, image_url: "", sort_order: sortOrder };
+  return { id: null, image_url: "", focal_x: 50, focal_y: 50, zoom: 1, sort_order: sortOrder };
 }
 
 function reorderList<T>(items: T[], fromIndex: number, toIndex: number): T[] {
@@ -100,6 +102,9 @@ export function ModelImagesAdmin({ models, initialImages }: Props) {
     setForm({
       id: img.id,
       image_url: img.image_url,
+      focal_x: img.focal_x ?? 50,
+      focal_y: img.focal_y ?? 50,
+      zoom: img.zoom ?? 1,
       sort_order: img.sort_order ?? 0,
     });
     setModalMode("edit");
@@ -120,7 +125,7 @@ export function ModelImagesAdmin({ models, initialImages }: Props) {
         adminToast.error(r.error === "unauthorized" ? "Sesión vencida." : (r.error ?? "Error al subir"));
         return;
       }
-      setForm((f) => ({ ...f, image_url: r.publicUrl }));
+      setForm((f) => ({ ...f, image_url: r.publicUrl, focal_x: 50, focal_y: 50, zoom: 1 }));
       adminToast.info(
         editing ? "Imagen subida. Pulse Guardar para aplicar los cambios." : "Imagen subida. Pulse «Agregar imagen» para guardar.",
       );
@@ -142,6 +147,9 @@ export function ModelImagesAdmin({ models, initialImages }: Props) {
         const r = await updateModelImage({
           id: form.id,
           image_url: form.image_url.trim(),
+          focal_x: form.focal_x,
+          focal_y: form.focal_y,
+          zoom: form.zoom,
           sort_order: form.sort_order,
         });
         if (!r.ok) {
@@ -151,7 +159,14 @@ export function ModelImagesAdmin({ models, initialImages }: Props) {
         setImages((prev) =>
           prev.map((img) =>
             img.id === form.id
-              ? { ...img, image_url: form.image_url.trim(), sort_order: form.sort_order }
+              ? {
+                  ...img,
+                  image_url: form.image_url.trim(),
+                  focal_x: form.focal_x,
+                  focal_y: form.focal_y,
+                  zoom: form.zoom,
+                  sort_order: form.sort_order,
+                }
               : img,
           ),
         );
@@ -160,6 +175,9 @@ export function ModelImagesAdmin({ models, initialImages }: Props) {
         const r = await addModelImage({
           model_id: selectedModelId,
           image_url: form.image_url.trim(),
+          focal_x: form.focal_x,
+          focal_y: form.focal_y,
+          zoom: form.zoom,
           sort_order: form.sort_order,
         });
         if (!r.ok) {
@@ -334,25 +352,26 @@ export function ModelImagesAdmin({ models, initialImages }: Props) {
             title={editing ? "Reemplazar o ajustar" : "Nueva imagen"}
             description="Subí un archivo o pegá una URL. El orden define la posición en el carrusel de la ficha."
           >
-            <AdminSitePreviewFrame
-              maxWidth={SITE_IMAGE_PREVIEW.productGallery.maxWidth}
+            <FramedImageField
+              id="gallery-upload"
+              label="Imagen"
+              previewPreset="productGallery"
+              previewHint="Vista previa como en el carrusel de la ficha. Arrastrá para encuadrar y ajustá el zoom."
+              imageUrl={form.image_url}
+              focalX={form.focal_x}
+              focalY={form.focal_y}
+              zoom={form.zoom}
+              uploading={uploading}
+              disabled={busy || !selectedModelId}
+              showUrlField
               frameClassName="rounded-curve-md border border-outline-variant/25 bg-white shadow-elev-1"
-              hint="Vista previa como en el carrusel de la ficha del producto."
-            >
-              <MediaDropzone
-                id="gallery-upload"
-                label="Imagen"
-                value={form.image_url}
-                uploading={uploading}
-                disabled={busy || !selectedModelId}
-                showUrlField
-                previewAspect={SITE_IMAGE_PREVIEW.productGallery.aspect}
-                previewObjectFit={SITE_IMAGE_PREVIEW.productGallery.objectFit}
-                previewBg={SITE_IMAGE_PREVIEW.productGallery.bg}
-                onChange={(url) => setForm((f) => ({ ...f, image_url: url }))}
-                onFileSelect={onUploadFile}
-              />
-            </AdminSitePreviewFrame>
+              uploadDisabled={!selectedModelId}
+              uploadDisabledMessage={!selectedModelId ? "Elegí un modelo primero." : undefined}
+              onImageUrlChange={(url) => setForm((f) => ({ ...f, image_url: url }))}
+              onFocalChange={(x, y) => setForm((f) => ({ ...f, focal_x: x, focal_y: y }))}
+              onZoomChange={(zoom) => setForm((f) => ({ ...f, zoom }))}
+              onFileSelect={onUploadFile}
+            />
             <AdminField id="gallery-sort-order" label="Orden en el carrusel" hint="0 = primera imagen.">
               <Input
                 id="gallery-sort-order"

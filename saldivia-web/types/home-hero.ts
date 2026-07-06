@@ -2,6 +2,9 @@ export type HomeHeroSlideRow = {
   id: string;
   sort_order: number;
   image_url: string | null;
+  image_focal_x: number;
+  image_focal_y: number;
+  image_zoom: number;
   image_alt: string | null;
   eyebrow: string | null;
   title: string | null;
@@ -22,6 +25,9 @@ export type ResolvedHeroSlide = {
   id: string;
   bg: string;
   bgAlt: string;
+  bgFocalX: number;
+  bgFocalY: number;
+  bgZoom: number;
   eyebrow: string;
   title: string;
   highlight: string;

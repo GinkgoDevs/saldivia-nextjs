@@ -6,9 +6,29 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { BRAND_DURATION, BRAND_EASE } from "./motion/brand-ease";
 import { Button } from "./ui/Button";
+import { imageFocalStyle } from "@/lib/image-focal";
+
+export type GalleryImageItem =
+  | string
+  | { src: string; focalX?: number; focalY?: number; zoom?: number };
+
+type ResolvedGalleryImage = { src: string; focalX: number; focalY: number; zoom: number };
+
+function resolveGalleryImages(images: readonly GalleryImageItem[]): ResolvedGalleryImage[] {
+  return images.map((item) =>
+    typeof item === "string"
+      ? { src: item, focalX: 50, focalY: 50, zoom: 1 }
+      : {
+          src: item.src,
+          focalX: item.focalX ?? 50,
+          focalY: item.focalY ?? 50,
+          zoom: item.zoom ?? 1,
+        },
+  );
+}
 
 type Props = {
-  images: readonly string[] | string[];
+  images: readonly GalleryImageItem[] | GalleryImageItem[];
   altPrefix?: string;
   /** Sin section/container propio: para layout de dos columnas en ficha de producto */
   embedded?: boolean;
@@ -57,7 +77,7 @@ function GalleryStage({
   stageBackground,
   showcase,
 }: {
-  list: string[];
+  list: ResolvedGalleryImage[];
   index: number;
   direction: number;
   altPrefix: string;
@@ -91,7 +111,7 @@ function GalleryStage({
     >
       <AnimatePresence initial={false} custom={direction} mode="wait">
         <motion.div
-          key={list[index]}
+          key={list[index].src}
           custom={direction}
           variants={reduce ? {} : variants}
           initial="enter"
@@ -101,10 +121,11 @@ function GalleryStage({
           className="absolute inset-0"
         >
           <Image
-            src={list[index]}
+            src={list[index].src}
             alt={`${altPrefix} — imagen ${index + 1} de ${n}`}
             fill
             className={imageClassName}
+            style={imageFocalStyle(list[index].focalX, list[index].focalY, list[index].zoom)}
             sizes={imageSizes}
             priority={index === 0}
             draggable={false}
@@ -179,7 +200,7 @@ function ThumbnailRail({
   altPrefix,
   showcase = false,
 }: {
-  list: string[];
+  list: ResolvedGalleryImage[];
   index: number;
   onSelect: (i: number) => void;
   altPrefix: string;
@@ -205,11 +226,11 @@ function ThumbnailRail({
       role="tablist"
       aria-label="Miniaturas de la galería"
     >
-      {list.map((src, i) => {
+      {list.map((item, i) => {
         const active = i === index;
         return (
           <button
-            key={`${src}-${i}`}
+            key={`${item.src}-${i}`}
             ref={(el) => {
               thumbRefs.current[i] = el;
             }}
@@ -229,7 +250,7 @@ function ThumbnailRail({
             }`}
           >
             <Image
-              src={src}
+              src={item.src}
               alt=""
               fill
               className="object-contain p-1"
@@ -255,7 +276,7 @@ function Lightbox({
   onNext,
   onGo,
 }: {
-  list: string[];
+  list: ResolvedGalleryImage[];
   index: number;
   direction: number;
   altPrefix: string;
@@ -316,7 +337,7 @@ function Lightbox({
         <div className="relative min-h-0 flex-1 overflow-hidden rounded-curve-md bg-white/5">
           <AnimatePresence initial={false} custom={direction} mode="wait">
             <motion.div
-              key={list[index]}
+              key={list[index].src}
               custom={direction}
               variants={reduce ? {} : fadeVariants}
               initial="enter"
@@ -326,10 +347,11 @@ function Lightbox({
               className="absolute inset-0"
             >
               <Image
-                src={list[index]}
+                src={list[index].src}
                 alt={`${altPrefix} — imagen ${index + 1} de ${n}`}
                 fill
                 className="object-contain p-4 sm:p-8"
+                style={imageFocalStyle(list[index].focalX, list[index].focalY, list[index].zoom)}
                 sizes="100vw"
                 priority
               />
@@ -362,16 +384,16 @@ function Lightbox({
 
         {n > 1 && (
           <div className="mt-4 flex justify-center gap-2 overflow-x-auto pb-1">
-            {list.map((src, i) => (
+            {list.map((item, i) => (
               <button
-                key={`lb-${src}-${i}`}
+                key={`lb-${item.src}-${i}`}
                 type="button"
                 onClick={() => onGo(i)}
                 className={`relative h-14 w-[4.5rem] shrink-0 cursor-pointer overflow-hidden rounded border-2 transition-all ${
                   i === index ? "border-secondary-container opacity-100" : "border-white/20 opacity-50 hover:opacity-80"
                 }`}
               >
-                <Image src={src} alt="" fill className="object-contain p-0.5" sizes="72px" />
+                <Image src={item.src} alt="" fill className="object-contain p-0.5" sizes="72px" />
               </button>
             ))}
           </div>
@@ -389,7 +411,7 @@ export default function ProductGalleryCarousel({
   showcase = false,
 }: Props) {
   const reduce = useReducedMotion();
-  const list = [...images];
+  const list = resolveGalleryImages(images);
   const n = list.length;
   const [[index, direction], setPage] = useState([0, 0]);
   const [paused, setPaused] = useState(false);
@@ -436,7 +458,7 @@ export default function ProductGalleryCarousel({
     if (n <= 1) return;
     const preload = (i: number) => {
       const img = new window.Image();
-      img.src = list[i];
+      img.src = list[i].src;
     };
     preload((index + 1) % n);
     preload((index - 1 + n) % n);

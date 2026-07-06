@@ -6,6 +6,7 @@ import { createPortal } from "react-dom";
 
 import type { ProvinceProjectCard } from "@/lib/supabase/province-projects";
 import { optimizedStorageImageUrl } from "@/lib/optimized-storage-image";
+import { imageFocalStyle } from "@/lib/image-focal";
 
 type LightboxState = {
   index: number;
@@ -118,10 +119,24 @@ function ProjectLightbox({
   );
 }
 
-function MapProjectImage({ src, alt }: { src: string; alt: string }) {
+function MapProjectImage({
+  src,
+  alt,
+  focalX = 50,
+  focalY = 50,
+  zoom = 1,
+}: {
+  src: string;
+  alt: string;
+  focalX?: number;
+  focalY?: number;
+  zoom?: number;
+}) {
   const [loaded, setLoaded] = useState(false);
   const [useNative, setUseNative] = useState(false);
   const imageSrc = optimizedStorageImageUrl(src) ?? src;
+
+  const focalStyle = imageFocalStyle(focalX, focalY, zoom);
 
   if (useNative) {
     return (
@@ -136,6 +151,7 @@ function MapProjectImage({ src, alt }: { src: string; alt: string }) {
           className={`h-full w-full object-cover transition-[opacity,transform] duration-500 group-hover:scale-[1.03] ${
             loaded ? "opacity-100" : "opacity-0"
           }`}
+          style={focalStyle}
           onLoad={() => setLoaded(true)}
         />
       </>
@@ -153,6 +169,7 @@ function MapProjectImage({ src, alt }: { src: string; alt: string }) {
         className={`object-cover transition-[opacity,transform] duration-500 group-hover:scale-[1.03] ${
           loaded ? "opacity-100" : "opacity-0"
         }`}
+        style={focalStyle}
         onLoad={() => setLoaded(true)}
         onError={() => setUseNative(true)}
       />
@@ -180,7 +197,13 @@ function ProjectCard({
       >
         {hasImage ? (
           <>
-            <MapProjectImage src={project.imageUrl!} alt={project.title} />
+            <MapProjectImage
+              src={project.imageUrl!}
+              alt={project.title}
+              focalX={project.imageFocalX}
+              focalY={project.imageFocalY}
+              zoom={project.imageZoom}
+            />
             <span className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-transparent" />
             <span className="pointer-events-none absolute bottom-3 right-3 flex h-9 w-9 items-center justify-center rounded-full border border-white/25 bg-black/45 text-white opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100">
               <span className="material-symbols-outlined text-lg">zoom_in</span>
