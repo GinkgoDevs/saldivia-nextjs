@@ -5,6 +5,7 @@ import { useCallback, useRef, useState } from "react";
 import Link from "next/link";
 
 import { buttonClass } from "@/app/components/ui/Button";
+import { imageFocalStyle } from "@/lib/image-focal";
 import { BRAND_DURATION, BRAND_EASE } from "@/app/components/motion/brand-ease";
 import type { ResolvedHomeShowcaseSlide } from "@/types/home-showcase";
 
@@ -130,11 +131,7 @@ export function TechnicalShowcaseClient({ slides }: { slides: ResolvedHomeShowca
                 src={slide.heroSrc}
                 alt={slide.name}
                 className="h-full w-full object-contain p-6 md:p-10 lg:p-12"
-                style={{
-                  objectPosition: `${slide.heroFocalX}% ${slide.heroFocalY}%`,
-                  transform: slide.heroZoom > 1 ? `scale(${slide.heroZoom})` : undefined,
-                  transformOrigin: `${slide.heroFocalX}% ${slide.heroFocalY}%`,
-                }}
+                style={imageFocalStyle(slide.heroFocalX, slide.heroFocalY, slide.heroZoom)}
               />
               {/* Blend bottom on mobile */}
               <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-industrial-charcoal to-transparent lg:hidden" />
