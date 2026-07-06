@@ -9,6 +9,8 @@ import { imageFocalStyle } from "@/lib/image-focal";
 type FlotaModel = Pick<Model, "slug" | "name" | "description" | "cover_image_url"> &
   Partial<Pick<Model, "cover_image_focal_x" | "cover_image_focal_y" | "cover_image_zoom">>;
 
+export type { FlotaModel };
+
 const cardItem = {
   hidden: { opacity: 0, y: 22 },
   show: {

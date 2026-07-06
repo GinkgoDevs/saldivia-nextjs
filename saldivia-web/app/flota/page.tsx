@@ -5,10 +5,7 @@ import Link from "next/link";
 import { buttonClass } from "../components/ui/Button";
 import { FlotaGrid } from "./FlotaGrid";
 import { FadeUp, HeroStagger } from "../components/motion";
-
-import type { Model } from "@/types/model";
-
-type FlotaModel = Pick<Model, "slug" | "name" | "description" | "cover_image_url">;
+import type { FlotaModel } from "./FlotaModelCard";
 
 export default async function FlotaPage() {
   const supabase = await createClient();
@@ -22,6 +19,9 @@ export default async function FlotaPage() {
         name: m.name,
         description: m.description,
         cover_image_url: m.cover_image_url,
+        cover_image_focal_x: m.cover_image_focal_x,
+        cover_image_focal_y: m.cover_image_focal_y,
+        cover_image_zoom: m.cover_image_zoom,
       });
     }
   }
