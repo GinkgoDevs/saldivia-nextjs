@@ -24,6 +24,11 @@ const nextConfig = {
       { protocol: "https", hostname: "saldiviabuses.com.ar", pathname: "/wp-content/uploads/**" },
     ],
   },
+  experimental: {
+    serverActions: {
+      bodySizeLimit: "16mb",
+    },
+  },
 };
 
 export default nextConfig;
