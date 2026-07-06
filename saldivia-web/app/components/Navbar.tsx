@@ -209,7 +209,7 @@ export default function Navbar() {
   }, []);
 
   return (
-    <header className="fixed top-0 z-50 w-full overflow-visible border-b border-outline-variant/25 bg-surface-container-lowest/95 shadow-elev-1 backdrop-blur-md">
+    <header className="fixed top-0 z-50 w-full overflow-visible bg-surface-container-lowest shadow-elev-1">
       <div className="relative z-[200] mx-auto flex w-full min-w-0 max-w-screen-2xl items-center gap-2 px-4 py-4 sm:gap-3 sm:px-6 md:gap-6 md:px-8">
         <Link
           href="/"
