@@ -1,6 +1,5 @@
 import { getAllLocationsForAdmin } from "@/lib/supabase/locations";
 import { createClient } from "@/lib/supabase/server";
-import { DashboardBackLink } from "../DashboardBackLink";
 import { LocationsAdmin } from "./LocationsAdmin";
 
 export default async function DashboardLocationsPage() {
@@ -9,7 +8,6 @@ export default async function DashboardLocationsPage() {
   if (error || !data) {
     return (
       <main className="mx-auto max-w-screen-2xl px-6 py-10 text-sm text-on-surface-variant md:px-8">
-        <DashboardBackLink />
         No se pudo cargar ubicaciones. {error?.message}
       </main>
     );
@@ -17,7 +15,6 @@ export default async function DashboardLocationsPage() {
 
   return (
     <main className="mx-auto max-w-screen-2xl px-6 py-10 md:px-8 md:py-12">
-      <DashboardBackLink />
       <h1 className="text-2xl font-black uppercase tracking-tighter text-primary">Proyectos destacados (mapa del inicio)</h1>
       <p className="mt-2 max-w-2xl text-sm text-on-surface-variant">
         Cada fila se agrupa por provincia en el mapa SVG de la home. Elegí la provincia del listado (slug del

@@ -693,8 +693,53 @@ export async function saveHomeShowcaseSlide(input: SaveHomeShowcaseSlideInput) {
     const { error } = await supabase.from("home_showcase_slides").update(row).eq("id", input.id);
     if (error) return { ok: false as const, error: error.message };
   } else {
-    const { error } = await supabase.from("home_showcase_slides").insert(row);
-    if (error) return { ok: false as const, error: error.message };
+    const { data: existing } = await supabase
+      .from("home_showcase_slides")
+      .select("id")
+      .eq("model_id", modelId)
+      .maybeSingle();
+    if (existing?.id) {
+      const { error } = await supabase.from("home_showcase_slides").update(row).eq("id", existing.id);
+      if (error) return { ok: false as const, error: error.message };
+    } else {
+      const { error } = await supabase.from("home_showcase_slides").insert(row);
+      if (error) return { ok: false as const, error: error.message };
+    }
+  }
+
+  const { error: modelError } = await supabase
+    .from("models")
+    .update({ show_in_showcase: true })
+    .eq("id", modelId);
+  if (modelError && !modelError.message?.includes("show_in_showcase")) {
+    return { ok: false as const, error: modelError.message };
+  }
+
+  revalidateContent();
+  revalidatePath("/dashboard/home-showcase");
+  return { ok: true as const };
+}
+
+export async function removeModelFromHomeShowcase(modelId: string) {
+  const { supabase, user } = await requireUser();
+  if (!user) {
+    return { ok: false as const, error: "unauthorized" };
+  }
+
+  const id = modelId.trim();
+  if (!id) {
+    return { ok: false as const, error: "validation" };
+  }
+
+  const { error: slideError } = await supabase.from("home_showcase_slides").delete().eq("model_id", id);
+  if (slideError) return { ok: false as const, error: slideError.message };
+
+  const { error: modelError } = await supabase
+    .from("models")
+    .update({ show_in_showcase: false })
+    .eq("id", id);
+  if (modelError && !modelError.message?.includes("show_in_showcase")) {
+    return { ok: false as const, error: modelError.message };
   }
 
   revalidateContent();
@@ -707,6 +752,17 @@ export async function deleteHomeShowcaseSlide(id: string) {
   if (!user) {
     return { ok: false as const, error: "unauthorized" };
   }
+
+  const { data: row } = await supabase
+    .from("home_showcase_slides")
+    .select("model_id")
+    .eq("id", id)
+    .maybeSingle();
+
+  if (row?.model_id) {
+    return removeModelFromHomeShowcase(row.model_id as string);
+  }
+
   const { error } = await supabase.from("home_showcase_slides").delete().eq("id", id);
   if (error) return { ok: false as const, error: error.message };
   revalidateContent();
