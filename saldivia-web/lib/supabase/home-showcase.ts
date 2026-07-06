@@ -12,7 +12,7 @@ const SEGMENT_EYEBROW: Record<ModelSegment, string> = {
 
 const FALLBACK_HERO = "/ARIES-305/345_1.png";
 
-/** Slides estáticas si la tabla está vacía, la consulta falla o no hay modelos activos enlazados. */
+/** Slides estáticas si la consulta falla o no hay modelos marcados para showcase. */
 export function getStaticFallbackHomeShowcaseSlides(): ResolvedHomeShowcaseSlide[] {
   return [
     {
@@ -60,7 +60,7 @@ type ProductRow = {
 };
 type ImageRow = { model_id: string; image_url: string; sort_order: number | null };
 
-type ModelEmbed = {
+type ShowcaseModelRow = {
   id: string;
   slug: string;
   name: string;
@@ -68,15 +68,8 @@ type ModelEmbed = {
   description: string | null;
   cover_image_url: string | null;
   pdf_url: string | null;
-  active: boolean;
+  sort_order: number | null;
 };
-
-type SlideQueryRow = HomeShowcaseSlideRow & { model: ModelEmbed | ModelEmbed[] | null };
-
-function embedModel(m: ModelEmbed | ModelEmbed[] | null | undefined): ModelEmbed | null {
-  if (!m) return null;
-  return Array.isArray(m) ? m[0] ?? null : m;
-}
 
 function groupByModelId<T extends { model_id: string }>(rows: T[] | null): Map<string, T[]> {
   const map = new Map<string, T[]>();
@@ -112,135 +105,7 @@ function normalizeMetrics(raw: unknown): ShowcaseMetric[] {
   return out;
 }
 
-export async function getHomeShowcaseSlides(
-  supabase: SupabaseClient,
-): Promise<ResolvedHomeShowcaseSlide[]> {
-  const { data, error } = await supabase
-    .from("home_showcase_slides")
-    .select(
-      `
-      id,
-      model_id,
-      sort_order,
-      hero_image_url,
-      eyebrow,
-      lead,
-      metrics,
-      model:models (
-        id,
-        slug,
-        name,
-        segment,
-        description,
-        cover_image_url,
-        pdf_url,
-        active
-      )
-    `,
-    )
-    .order("sort_order", { ascending: true });
-
-  if (error) {
-    console.error("[getHomeShowcaseSlides]", error.message);
-    return [];
-  }
-
-  const rows = (data ?? []) as SlideQueryRow[];
-  if (rows.length === 0) return [];
-
-  const modelIds = [
-    ...new Set(
-      rows
-        .map((r) => embedModel(r.model)?.id)
-        .filter((id): id is string => typeof id === "string" && id.length > 0),
-    ),
-  ];
-
-  const [productsRes, imagesRes] = await Promise.all([
-    modelIds.length
-      ? supabase
-          .from("products")
-          .select("model_id, spec_key, spec_value, sort_order")
-          .in("model_id", modelIds)
-      : Promise.resolve({ data: [] as ProductRow[], error: null }),
-    modelIds.length
-      ? supabase
-          .from("model_images")
-          .select("model_id, image_url, sort_order")
-          .in("model_id", modelIds)
-      : Promise.resolve({ data: [] as ImageRow[], error: null }),
-  ]);
-
-  if (productsRes.error) {
-    console.error("[getHomeShowcaseSlides] products", productsRes.error.message);
-  }
-  if (imagesRes.error) {
-    console.error("[getHomeShowcaseSlides] model_images", imagesRes.error.message);
-  }
-
-  const productsByModel = groupByModelId((productsRes.data ?? []) as ProductRow[]);
-  const imagesByModel = groupByModelId((imagesRes.data ?? []) as ImageRow[]);
-
-  const resolved: ResolvedHomeShowcaseSlide[] = [];
-
-  for (const row of rows) {
-    const m = embedModel(row.model);
-    if (!m || !m.active) continue;
-
-    const modelProducts = productsByModel.get(m.id) ?? [];
-    const specs = sortSpecs(modelProducts).slice(0, 2).map((p) => ({
-      key: p.spec_key,
-      value: p.spec_value,
-    }));
-
-    const modelImages = imagesByModel.get(m.id) ?? [];
-    const imgs = sortImages(modelImages);
-    const heroSrc =
-      row.hero_image_url?.trim() ||
-      m.cover_image_url?.trim() ||
-      imgs[0]?.image_url?.trim() ||
-      FALLBACK_HERO;
-
-    const seg = m.segment in SEGMENT_EYEBROW ? m.segment : "interprovincial";
-    const eyebrow = row.eyebrow?.trim() || SEGMENT_EYEBROW[seg];
-    const lead = row.lead?.trim() || m.description?.trim() || "";
-    const metrics = normalizeMetrics(row.metrics);
-
-    resolved.push({
-      id: row.id,
-      slug: m.slug,
-      name: m.name,
-      heroSrc,
-      eyebrow,
-      lead,
-      specRows: specs,
-      metrics,
-      pdfUrl: m.pdf_url?.trim() || null,
-    });
-  }
-
-  return resolved;
-}
-
-type ShowcaseModelRow = {
-  id: string;
-  slug: string;
-  name: string;
-  segment: ModelSegment;
-  description: string | null;
-  cover_image_url: string | null;
-  pdf_url: string | null;
-  sort_order: number | null;
-};
-
-/**
- * Slides del showcase del home construidas desde los modelos marcados con
- * `show_in_showcase = true` en el dashboard. Si la columna no existe todavía,
- * la consulta falla o no hay modelos marcados, devuelve [] (el home usa fallback).
- */
-export async function getShowcaseSlidesFromModels(
-  supabase: SupabaseClient,
-): Promise<ResolvedHomeShowcaseSlide[]> {
+async function fetchShowcaseModels(supabase: SupabaseClient): Promise<ShowcaseModelRow[]> {
   const { data, error } = await supabase
     .from("models")
     .select("id, slug, name, segment, description, cover_image_url, pdf_url, sort_order")
@@ -251,15 +116,47 @@ export async function getShowcaseSlidesFromModels(
 
   if (error) {
     if (!error.message?.includes("show_in_showcase")) {
-      console.error("[getShowcaseSlidesFromModels]", error.message);
+      console.error("[fetchShowcaseModels]", error.message);
     }
     return [];
   }
 
-  const models = (data ?? []) as ShowcaseModelRow[];
+  return (data ?? []) as ShowcaseModelRow[];
+}
+
+async function fetchSlidesByModelId(
+  supabase: SupabaseClient,
+  modelIds: string[],
+): Promise<Map<string, HomeShowcaseSlideRow>> {
+  if (modelIds.length === 0) return new Map();
+
+  const { data, error } = await supabase
+    .from("home_showcase_slides")
+    .select("id, model_id, sort_order, hero_image_url, eyebrow, lead, metrics")
+    .in("model_id", modelIds);
+
+  if (error) {
+    console.error("[fetchSlidesByModelId]", error.message);
+    return new Map();
+  }
+
+  const map = new Map<string, HomeShowcaseSlideRow>();
+  for (const row of (data ?? []) as HomeShowcaseSlideRow[]) {
+    if (!map.has(row.model_id)) {
+      map.set(row.model_id, row);
+    }
+  }
+  return map;
+}
+
+async function resolveShowcaseSlides(
+  supabase: SupabaseClient,
+  models: ShowcaseModelRow[],
+): Promise<ResolvedHomeShowcaseSlide[]> {
   if (models.length === 0) return [];
 
   const modelIds = models.map((m) => m.id);
+  const slidesByModel = await fetchSlidesByModelId(supabase, modelIds);
 
   const [productsRes, imagesRes] = await Promise.all([
     supabase
@@ -273,81 +170,140 @@ export async function getShowcaseSlidesFromModels(
   ]);
 
   if (productsRes.error) {
-    console.error("[getShowcaseSlidesFromModels] products", productsRes.error.message);
+    console.error("[resolveShowcaseSlides] products", productsRes.error.message);
   }
   if (imagesRes.error) {
-    console.error("[getShowcaseSlidesFromModels] model_images", imagesRes.error.message);
+    console.error("[resolveShowcaseSlides] model_images", imagesRes.error.message);
   }
 
   const productsByModel = groupByModelId((productsRes.data ?? []) as ProductRow[]);
   const imagesByModel = groupByModelId((imagesRes.data ?? []) as ImageRow[]);
 
-  return models.map((m) => {
+  const withSort = models.map((m) => {
+    const slide = slidesByModel.get(m.id);
     const specs = sortSpecs(productsByModel.get(m.id) ?? [])
       .slice(0, 2)
       .map((p) => ({ key: p.spec_key, value: p.spec_value }));
 
     const imgs = sortImages(imagesByModel.get(m.id) ?? []);
     const heroSrc =
-      m.cover_image_url?.trim() || imgs[0]?.image_url?.trim() || FALLBACK_HERO;
+      slide?.hero_image_url?.trim() ||
+      m.cover_image_url?.trim() ||
+      imgs[0]?.image_url?.trim() ||
+      FALLBACK_HERO;
 
     const seg = m.segment in SEGMENT_EYEBROW ? m.segment : "interprovincial";
+    const eyebrow = slide?.eyebrow?.trim() || SEGMENT_EYEBROW[seg];
+    const lead = slide?.lead?.trim() || m.description?.trim() || "";
+    const metrics = normalizeMetrics(slide?.metrics);
 
     return {
-      id: `model-${m.id}`,
-      slug: m.slug,
-      name: m.name,
-      heroSrc,
-      eyebrow: SEGMENT_EYEBROW[seg],
-      lead: m.description?.trim() || "",
-      specRows: specs,
-      metrics: [],
-      pdfUrl: m.pdf_url?.trim() || null,
+      sortOrder: slide?.sort_order ?? m.sort_order ?? 0,
+      slide: {
+        id: slide?.id ?? `model-${m.id}`,
+        slug: m.slug,
+        name: m.name,
+        heroSrc,
+        eyebrow,
+        lead,
+        specRows: specs,
+        metrics,
+        pdfUrl: m.pdf_url?.trim() || null,
+      } satisfies ResolvedHomeShowcaseSlide,
     };
   });
+
+  withSort.sort(
+    (a, b) => a.sortOrder - b.sortOrder || a.slide.name.localeCompare(b.slide.name, "es"),
+  );
+  return withSort.map((x) => x.slide);
 }
 
-export type AdminShowcaseSlide = HomeShowcaseSlideRow & {
-  model: { id: string; name: string; slug: string; active: boolean } | null | undefined;
+/**
+ * Slides del showcase del home: modelos activos con `show_in_showcase = true`,
+ * enriquecidos con overrides de `home_showcase_slides` (imagen, textos, métricas).
+ */
+export async function getShowcaseSlidesFromModels(
+  supabase: SupabaseClient,
+): Promise<ResolvedHomeShowcaseSlide[]> {
+  const models = await fetchShowcaseModels(supabase);
+  return resolveShowcaseSlides(supabase, models);
+}
+
+export type AdminShowcaseSlide = {
+  id: string | null;
+  model_id: string;
+  sort_order: number;
+  hero_image_url: string | null;
+  eyebrow: string | null;
+  lead: string | null;
+  metrics: ShowcaseMetric[] | null;
+  model: {
+    id: string;
+    name: string;
+    slug: string;
+    active: boolean;
+    cover_image_url: string | null;
+    sort_order: number | null;
+  };
 };
 
 export async function getHomeShowcaseSlidesForAdmin(
   supabase: SupabaseClient,
 ): Promise<{ data: AdminShowcaseSlide[] | null; error: Error | null }> {
-  const { data, error } = await supabase
-    .from("home_showcase_slides")
-    .select(
-      `
-      id,
-      model_id,
-      sort_order,
-      hero_image_url,
-      eyebrow,
-      lead,
-      metrics,
-      model:models ( id, name, slug, active )
-    `,
-    )
-    .order("sort_order", { ascending: true });
+  const { data: models, error } = await supabase
+    .from("models")
+    .select("id, slug, name, active, cover_image_url, sort_order, show_in_showcase")
+    .eq("show_in_showcase", true)
+    .order("sort_order", { ascending: true, nullsFirst: false })
+    .order("name");
 
   if (error) {
+    if (error.message?.includes("show_in_showcase")) {
+      return { data: [], error: null };
+    }
     return { data: null, error: new Error(error.message) };
   }
 
-  const rows = (data ?? []) as (HomeShowcaseSlideRow & {
-    model: { id: string; name: string; slug: string; active: boolean } | null | undefined | Array<{
-      id: string;
-      name: string;
-      slug: string;
-      active: boolean;
-    }>;
-  })[];
+  const modelRows = models ?? [];
+  if (modelRows.length === 0) {
+    return { data: [], error: null };
+  }
 
-  const normalized: AdminShowcaseSlide[] = rows.map((r) => {
-    const emb = r.model;
-    const modelRow = Array.isArray(emb) ? emb[0] ?? null : emb ?? null;
-    return { ...r, model: modelRow };
+  const modelIds = modelRows.map((m) => m.id as string);
+  const slidesByModel = await fetchSlidesByModelId(supabase, modelIds);
+
+  const entries: AdminShowcaseSlide[] = modelRows.map((m) => {
+    const slide = slidesByModel.get(m.id as string);
+    return {
+      id: slide?.id ?? null,
+      model_id: m.id as string,
+      sort_order: slide?.sort_order ?? (m.sort_order as number | null) ?? 0,
+      hero_image_url: slide?.hero_image_url ?? null,
+      eyebrow: slide?.eyebrow ?? null,
+      lead: slide?.lead ?? null,
+      metrics: slide?.metrics ?? null,
+      model: {
+        id: m.id as string,
+        name: m.name as string,
+        slug: m.slug as string,
+        active: m.active as boolean,
+        cover_image_url: (m.cover_image_url as string | null) ?? null,
+        sort_order: (m.sort_order as number | null) ?? null,
+      },
+    };
   });
 
-  return { data: normalized, error: null };
+  entries.sort(
+    (a, b) => a.sort_order - b.sort_order || a.model.name.localeCompare(b.model.name, "es"),
+  );
+
+  return { data: entries, error: null };
+}
+
+/** @deprecated Usar getShowcaseSlidesFromModels (misma fuente unificada). */
+export async function getHomeShowcaseSlides(
+  supabase: SupabaseClient,
+): Promise<ResolvedHomeShowcaseSlide[]> {
+  return getShowcaseSlidesFromModels(supabase);
 }

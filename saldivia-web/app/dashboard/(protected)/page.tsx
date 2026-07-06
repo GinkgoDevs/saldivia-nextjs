@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { buttonClass } from "@/app/components/ui/Button";
 
 export default function DashboardPage() {
   return (
@@ -70,14 +69,6 @@ export default function DashboardPage() {
           </p>
         </Link>
       </div>
-      <p className="mt-10 text-sm text-on-surface-variant">
-        <Link
-          className={buttonClass({ variant: "link-cta", size: "sm", className: "px-0 py-0" })}
-          href="/"
-        >
-          Volver al sitio
-        </Link>
-      </p>
     </main>
   );
 }

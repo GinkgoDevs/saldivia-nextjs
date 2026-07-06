@@ -2,8 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Montserrat, Orbitron, JetBrains_Mono, Outfit, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { OrganizationJsonLd } from "./components/OrganizationJsonLd";
-import Navbar from "./components/Navbar";
-import Footer from "./components/Footer";
+import { SiteChrome } from "./components/SiteChrome";
 import { Providers } from "./providers";
 import { getSiteUrl } from "@/lib/site-url";
 
@@ -89,9 +88,7 @@ export default async function RootLayout({
       >
         <OrganizationJsonLd />
         <Providers>
-          <Navbar />
-          {children}
-          <Footer />
+          <SiteChrome>{children}</SiteChrome>
         </Providers>
       </body>
     </html>

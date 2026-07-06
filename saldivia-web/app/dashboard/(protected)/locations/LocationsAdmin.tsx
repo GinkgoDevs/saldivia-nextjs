@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { MapPin, Plus } from "lucide-react";
+import { MapPin } from "lucide-react";
 import { deleteLocation, saveLocation } from "@/app/actions/admin-content";
 import type { Location, LocationType } from "@/types/location";
 import {
@@ -10,18 +10,19 @@ import {
   ARGENTINA_MAP_PROVINCE_IDS,
   formatArgentinaProvince,
 } from "@/lib/argentina-map-provinces";
-import { Button } from "@/app/components/ui/Button";
 import { Input } from "@/app/components/ui/Input";
 import { Textarea } from "@/app/components/ui/Textarea";
 import {
   AdminCheckbox,
+  AdminCrudBadge,
+  AdminCrudCard,
+  AdminCrudLayout,
   AdminField,
   AdminFormActions,
   AdminFormSection,
-  AdminListPanel,
+  AdminModal,
   AdminSelect,
-  AdminStatusBanner,
-  AdminTwoColumn,
+  adminToast,
 } from "../_ui/admin-ui";
 
 const TYPES: { value: LocationType; label: string }[] = [
@@ -50,8 +51,6 @@ type LocForm = {
   active: boolean;
 };
 
-type AdminMessage = { text: string; variant: "info" | "success" | "error" } | null;
-
 const empty: LocForm = {
   id: null,
   name: "",
@@ -72,8 +71,8 @@ export function LocationsAdmin({ initial }: Props) {
   const router = useRouter();
   const [list, setList] = useState<Location[]>(initial);
   const [form, setForm] = useState<LocForm>(empty);
-  const [message, setMessage] = useState<AdminMessage>(null);
   const [busy, setBusy] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
     setList(initial);
@@ -100,18 +99,46 @@ export function LocationsAdmin({ initial }: Props) {
       lng: row.lng,
       active: row.active,
     });
-    setMessage(null);
   }
 
   function newRow() {
     setForm({ ...empty });
-    setMessage(null);
+  }
+
+  function openEdit(row: Location) {
+    load(row);
+    setModalOpen(true);
+  }
+
+  function openNew() {
+    newRow();
+    setModalOpen(true);
+  }
+
+  function closeModal() {
+    setModalOpen(false);
+  }
+
+  async function onDeleteLocation(row: Location) {
+    if (!window.confirm(`¿Eliminar "${row.name}" del mapa?`)) return;
+    setBusy(true);
+    const r = await deleteLocation(row.id);
+    setBusy(false);
+    if (!r.ok) {
+      adminToast.error(r.error);
+      return;
+    }
+    setList((p) => p.filter((l) => l.id !== row.id));
+    if (form.id === row.id) {
+      setForm(empty);
+      setModalOpen(false);
+    }
+    adminToast.success(`"${row.name}" eliminado.`);
   }
 
   async function onSave(e: React.FormEvent) {
     e.preventDefault();
     setBusy(true);
-    setMessage(null);
     try {
       const r = await saveLocation({
         id: form.id,
@@ -127,10 +154,11 @@ export function LocationsAdmin({ initial }: Props) {
         active: form.active,
       });
       if (!r.ok) {
-        setMessage({ text: r.error, variant: "error" });
+        adminToast.error(r.error);
         return;
       }
-      setMessage({ text: "Ubicación guardada.", variant: "success" });
+      adminToast.success("Ubicación guardada.");
+      setModalOpen(false);
       if (!form.id) setForm(empty);
       router.refresh();
     } finally {
@@ -140,79 +168,67 @@ export function LocationsAdmin({ initial }: Props) {
 
   async function onDelete() {
     if (!form.id) return;
-    if (!window.confirm("¿Eliminar este punto del mapa?")) return;
-    setBusy(true);
-    const r = await deleteLocation(form.id);
-    setBusy(false);
-    if (!r.ok) {
-      setMessage({ text: r.error, variant: "error" });
-      return;
-    }
-    setList((p) => p.filter((l) => l.id !== form.id));
-    setForm(empty);
-    setMessage({ text: "Ubicación eliminada.", variant: "success" });
+    const row = list.find((l) => l.id === form.id);
+    if (row) await onDeleteLocation(row);
   }
 
   return (
-    <AdminTwoColumn
-      list={
-        <AdminListPanel
-          title="Ubicaciones"
-          description="Talleres, distribuidores y concesionarios que aparecen en el mapa del sitio."
-          action={
-            <Button type="button" variant="outline" size="sm" className="gap-1" onClick={newRow}>
-              <Plus className="size-4" aria-hidden />
-              Nueva
-            </Button>
-          }
-        >
-          <ul className="divide-y divide-outline-variant/25">
-            {sortedList.length === 0 ? (
-              <li className="p-6 text-center text-sm text-on-surface-variant">
-                No hay ubicaciones cargadas.
-              </li>
-            ) : (
-              sortedList.map((l) => (
-                <li key={l.id}>
-                  <button
-                    type="button"
-                    onClick={() => load(l)}
-                    className={`flex w-full cursor-pointer items-start gap-3 px-3 py-3 text-left transition-colors hover:bg-surface-container-high ${
-                      form.id === l.id ? "bg-secondary-container/15 ring-1 ring-inset ring-primary/25" : ""
-                    }`}
-                  >
-                    <span className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-sm bg-primary/10 text-primary">
-                      <MapPin className="size-4" aria-hidden />
-                    </span>
-                    <span className="min-w-0 flex-1">
-                      <span className="block truncate font-bold text-primary">{l.name}</span>
-                      <span className="block truncate text-xs text-on-surface-variant">
-                        {formatArgentinaProvince(l.province)} · {TYPE_LABEL[l.type]}
-                        {l.city ? ` · ${l.city}` : ""}
-                      </span>
-                      <span className="mt-0.5 block text-[10px] text-on-surface-variant/80">
-                        {l.active ? "Visible" : "Oculto"}
-                        {l.lat !== 0 || l.lng !== 0 ? " · con coordenadas" : ""}
-                      </span>
-                    </span>
-                  </button>
-                </li>
-              ))
-            )}
-          </ul>
-        </AdminListPanel>
-      }
-      form={
-        <section className="rounded-sm border border-outline-variant/30 bg-surface-container-lowest p-5">
-          <h2 className="text-sm font-bold uppercase tracking-widest text-primary">
-            {editing ? "Editar ubicación" : "Nueva ubicación"}
-          </h2>
-          {message ? (
-            <div className="mt-3">
-              <AdminStatusBanner variant={message.variant}>{message.text}</AdminStatusBanner>
-            </div>
-          ) : null}
-          <form className="mt-4 space-y-5" onSubmit={onSave}>
+    <>
+      <AdminCrudLayout
+        summary={
+          <>
+            {sortedList.length} ubicación{sortedList.length === 1 ? "" : "es"} · talleres, distribuidores y
+            concesionarios en el mapa
+          </>
+        }
+        newLabel="Nueva ubicación"
+        onNew={openNew}
+        newDisabled={busy}
+      >
+        {sortedList.length === 0 ? (
+          <li className="rounded-sm border border-dashed border-outline-variant/40 p-8 text-center text-sm text-on-surface-variant">
+            No hay ubicaciones cargadas.
+          </li>
+        ) : (
+          sortedList.map((l) => (
+            <AdminCrudCard
+              key={l.id}
+              media={
+                <div className="hidden h-28 w-28 shrink-0 items-center justify-center bg-primary/10 text-primary sm:flex">
+                  <MapPin className="size-8" aria-hidden />
+                </div>
+              }
+              title={l.name}
+              subtitle={
+                <>
+                  {formatArgentinaProvince(l.province)} · {TYPE_LABEL[l.type]}
+                  {l.city ? ` · ${l.city}` : ""}
+                </>
+              }
+              badges={
+                <>
+                  <AdminCrudBadge tone={l.active ? "secondary" : "warning"}>
+                    {l.active ? "Visible" : "Oculto"}
+                  </AdminCrudBadge>
+                  {l.lat !== 0 || l.lng !== 0 ? (
+                    <AdminCrudBadge>Con coordenadas</AdminCrudBadge>
+                  ) : null}
+                </>
+              }
+              disabled={busy}
+              onEdit={() => openEdit(l)}
+              onDelete={() => void onDeleteLocation(l)}
+            />
+          ))
+        )}
+      </AdminCrudLayout>
+
+      <AdminModal
+        open={modalOpen}
+        onClose={closeModal}
+        title={editing ? `Editar: ${form.name || "ubicación"}` : "Nueva ubicación"}
+      >
+        <form className="space-y-5" onSubmit={onSave}>
             <AdminField id="lname" label="Nombre" required>
               <Input
                 id="lname"
@@ -340,13 +356,12 @@ export function LocationsAdmin({ initial }: Props) {
 
             <AdminFormActions
               saving={busy}
-              onClear={newRow}
-              clearLabel="Limpiar"
+              onClear={closeModal}
+              clearLabel="Cancelar"
               onDelete={editing ? () => void onDelete() : undefined}
             />
           </form>
-        </section>
-      }
-    />
+      </AdminModal>
+    </>
   );
 }
