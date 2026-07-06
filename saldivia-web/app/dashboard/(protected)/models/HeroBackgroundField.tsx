@@ -4,6 +4,7 @@ import { useCallback, useRef, useState } from "react";
 import { ImageIcon, Trash2, ZoomIn } from "lucide-react";
 import { Button } from "@/app/components/ui/Button";
 import { Input } from "@/app/components/ui/Input";
+import { cn } from "@/app/components/ui/cn";
 
 function clamp(n: number, min: number, max: number) {
   return Math.min(max, Math.max(min, n));
@@ -22,6 +23,7 @@ type Props = {
   onFocalChange: (x: number, y: number) => void;
   onZoomChange: (zoom: number) => void;
   onFileSelect: (file: File) => void;
+  compact?: boolean;
 };
 
 export function HeroBackgroundField({
@@ -37,6 +39,7 @@ export function HeroBackgroundField({
   onFocalChange,
   onZoomChange,
   onFileSelect,
+  compact = false,
 }: Props) {
   const previewRef = useRef<HTMLDivElement>(null);
   const dragRef = useRef<{ x: number; y: number; fx: number; fy: number } | null>(null);
@@ -75,29 +78,39 @@ export function HeroBackgroundField({
   }, []);
 
   return (
-    <div className="space-y-3 rounded-sm border border-outline-variant/25 bg-surface-container-low/40 p-4">
-      <div>
-        <p className="text-xs font-bold text-secondary">Fondo del hero en la ficha del producto</p>
-        <p className="mt-1 text-[11px] text-on-surface-variant">
-          Imagen exclusiva de{" "}
-          <span className="font-semibold text-on-surface">
-            {modelName.trim() || "este modelo"}
-          </span>{" "}
-          en <code className="text-[10px]">/producto/[slug]</code>. Cada colectivo guarda la suya al pulsar{" "}
-          <strong>Guardar</strong>.
-        </p>
-        {!modelId && (
-          <p className="mt-1 text-[11px] font-medium text-amber-800 dark:text-amber-200">
-            Seleccioná un modelo del listado o guardá uno nuevo antes de subir la imagen.
+    <div
+      className={cn(
+        "rounded-sm border border-outline-variant/25 bg-surface-container-low/40",
+        compact ? "space-y-2 p-3" : "space-y-3 p-4",
+      )}
+    >
+      {!compact ? (
+        <div>
+          <p className="text-xs font-bold text-secondary">Fondo del hero en la ficha del producto</p>
+          <p className="mt-1 text-[11px] text-on-surface-variant">
+            Imagen exclusiva de{" "}
+            <span className="font-semibold text-on-surface">{modelName.trim() || "este modelo"}</span> en{" "}
+            <code className="text-[10px]">/producto/[slug]</code>.
           </p>
-        )}
-      </div>
+          {!modelId ? (
+            <p className="mt-1 text-[11px] font-medium text-amber-800 dark:text-amber-200">
+              Guardá el modelo antes de subir la imagen.
+            </p>
+          ) : null}
+        </div>
+      ) : !modelId ? (
+        <p className="text-[10px] font-medium text-amber-800 dark:text-amber-200">
+          Guardá el modelo antes de subir el hero.
+        </p>
+      ) : null}
 
       <div
         ref={previewRef}
-        className={`relative aspect-[21/9] w-full overflow-hidden rounded-sm border border-outline-variant/30 bg-primary ${
-          imageUrl && !disabled ? (dragging ? "cursor-grabbing" : "cursor-grab") : ""
-        }`}
+        className={cn(
+          "relative w-full overflow-hidden rounded-sm border border-outline-variant/30 bg-primary",
+          compact ? "h-24" : "aspect-[21/9]",
+          imageUrl && !disabled ? (dragging ? "cursor-grabbing" : "cursor-grab") : "",
+        )}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}
@@ -147,8 +160,8 @@ export function HeroBackgroundField({
         )}
       </div>
 
-      {imageUrl && (
-        <div className="grid gap-3 sm:grid-cols-[1fr_auto] sm:items-end">
+      {imageUrl ? (
+        <div className={cn("grid gap-2 sm:grid-cols-[1fr_auto] sm:items-end", compact && "gap-1.5")}>
           <div className="space-y-1">
             <label className="flex items-center gap-1.5 text-[11px] font-bold text-secondary" htmlFor="hero_zoom">
               <ZoomIn className="size-3.5" aria-hidden />
@@ -182,20 +195,22 @@ export function HeroBackgroundField({
             Quitar
           </Button>
         </div>
-      )}
+      ) : null}
 
-      <div className="space-y-1">
-        <label className="text-[11px] font-bold text-secondary" htmlFor="hero_background_image_url">
-          URL (opcional)
-        </label>
-        <Input
-          id="hero_background_image_url"
-          value={imageUrl}
-          disabled={disabled}
-          placeholder="https://…"
-          onChange={(e) => onImageUrlChange(e.target.value)}
-        />
-      </div>
+      {!compact ? (
+        <div className="space-y-1">
+          <label className="text-[11px] font-bold text-secondary" htmlFor="hero_background_image_url">
+            URL (opcional)
+          </label>
+          <Input
+            id="hero_background_image_url"
+            value={imageUrl}
+            disabled={disabled}
+            placeholder="https://…"
+            onChange={(e) => onImageUrlChange(e.target.value)}
+          />
+        </div>
+      ) : null}
 
       <div
         role="button"
@@ -215,9 +230,11 @@ export function HeroBackgroundField({
           const file = e.dataTransfer.files?.[0];
           if (file) onFileSelect(file);
         }}
-        className={`rounded-sm border-2 border-dashed border-outline-variant/45 bg-surface-container-low/40 p-3 text-center transition-colors hover:border-secondary/50 ${
-          disabled || uploading || !modelId ? "opacity-60" : "cursor-pointer"
-        }`}
+        className={cn(
+          "rounded-sm border-2 border-dashed border-outline-variant/45 bg-surface-container-low/40 text-center transition-colors hover:border-secondary/50",
+          compact ? "p-2" : "p-3",
+          disabled || uploading || !modelId ? "opacity-60" : "cursor-pointer",
+        )}
       >
         <label className="inline-flex cursor-pointer items-center gap-2 text-xs font-medium text-on-surface">
           <input

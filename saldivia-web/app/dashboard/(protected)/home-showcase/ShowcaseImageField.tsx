@@ -84,7 +84,7 @@ export function ShowcaseImageField({
     <AdminField id="showcase-hero" label={label} hint={hint}>
       <div
         ref={previewRef}
-        className={`relative aspect-[4/3] w-full overflow-hidden rounded-sm border border-outline-variant/30 bg-industrial-charcoal ${
+        className={`relative h-28 w-full overflow-hidden rounded-sm border border-outline-variant/30 bg-industrial-charcoal ${
           canFrame ? (dragging ? "cursor-grabbing" : "cursor-grab") : ""
         }`}
         onPointerDown={onPointerDown}

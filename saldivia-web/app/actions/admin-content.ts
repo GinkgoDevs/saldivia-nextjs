@@ -910,6 +910,34 @@ export async function updateModelImageSortOrder(id: string, sort_order: number) 
   return { ok: true as const };
 }
 
+export async function updateModelImage(input: {
+  id: string;
+  image_url: string;
+  sort_order: number;
+}) {
+  const { supabase, user } = await requireUser();
+  if (!user) return { ok: false as const, error: "unauthorized" };
+
+  const id = input.id.trim();
+  const image_url = input.image_url.trim();
+  if (!id || !image_url) {
+    return { ok: false as const, error: "validation" };
+  }
+
+  const { error } = await supabase
+    .from("model_images")
+    .update({
+      image_url,
+      sort_order: Number.isFinite(input.sort_order) ? input.sort_order : 0,
+    })
+    .eq("id", id);
+
+  if (error) return { ok: false as const, error: error.message };
+  revalidateContent();
+  revalidatePath("/dashboard/model-images");
+  return { ok: true as const };
+}
+
 export async function reorderModelImages(model_id: string, ordered_image_ids: string[]) {
   const { supabase, user } = await requireUser();
   if (!user) return { ok: false as const, error: "unauthorized" };

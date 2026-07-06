@@ -6,7 +6,7 @@ import {
   addModelImage,
   deleteModelImage,
   reorderModelImages,
-  updateModelImageSortOrder,
+  updateModelImage,
 } from "@/app/actions/admin-content";
 import { uploadMediaFromBrowser } from "@/lib/upload-media-client";
 import { Input } from "@/app/components/ui/Input";
@@ -18,6 +18,7 @@ import {
   AdminCrudLayout,
   AdminCrudThumbnail,
   AdminField,
+  AdminFormSection,
   AdminFullscreenForm,
   AdminModal,
   AdminModalFooter,
@@ -27,6 +28,16 @@ import {
 } from "../_ui/admin-ui";
 
 type Props = { models: Model[]; initialImages: ModelImage[] };
+
+type ImageFormState = {
+  id: string | null;
+  image_url: string;
+  sort_order: number;
+};
+
+function emptyForm(sortOrder: number): ImageFormState {
+  return { id: null, image_url: "", sort_order: sortOrder };
+}
 
 function reorderList<T>(items: T[], fromIndex: number, toIndex: number): T[] {
   if (fromIndex === toIndex) return items;
@@ -42,11 +53,11 @@ export function ModelImagesAdmin({ models, initialImages }: Props) {
   const [selectedModelId, setSelectedModelId] = useState<string>(models[0]?.id ?? "");
   const [draggingId, setDraggingId] = useState<string | null>(null);
   const [dropTargetIndex, setDropTargetIndex] = useState<number | null>(null);
-  const [addUrl, setAddUrl] = useState("");
-  const [addSortOrder, setAddSortOrder] = useState(0);
+  const [form, setForm] = useState<ImageFormState>(() => emptyForm(0));
   const [busy, setBusy] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
+  const [modalMode, setModalMode] = useState<"add" | "edit">("add");
 
   useEffect(() => {
     setImages(initialImages);
@@ -73,14 +84,27 @@ export function ModelImagesAdmin({ models, initialImages }: Props) {
     [models, selectedModelId],
   );
 
+  const editing = modalMode === "edit" && Boolean(form.id);
+
   function openAdd() {
-    setAddUrl("");
-    setAddSortOrder(modelImages.length);
+    setForm(emptyForm(modelImages.length));
+    setModalMode("add");
+    setModalOpen(true);
+  }
+
+  function openEdit(img: ModelImage) {
+    setForm({
+      id: img.id,
+      image_url: img.image_url,
+      sort_order: img.sort_order ?? 0,
+    });
+    setModalMode("edit");
     setModalOpen(true);
   }
 
   function closeModal() {
     setModalOpen(false);
+    setForm(emptyForm(modelImages.length));
   }
 
   async function onUploadFile(file: File) {
@@ -92,32 +116,59 @@ export function ModelImagesAdmin({ models, initialImages }: Props) {
         adminToast.error(r.error === "unauthorized" ? "Sesión vencida." : (r.error ?? "Error al subir"));
         return;
       }
-      setAddUrl(r.publicUrl);
-      adminToast.info("Archivo subido. Pulse «Agregar imagen» para guardarlo en la galería.");
+      setForm((f) => ({ ...f, image_url: r.publicUrl }));
+      adminToast.info(
+        editing ? "Imagen subida. Pulse Guardar para aplicar los cambios." : "Imagen subida. Pulse «Agregar imagen» para guardar.",
+      );
     } finally {
       setUploading(false);
     }
   }
 
-  async function onAdd(e: React.FormEvent) {
+  async function onSave(e: React.FormEvent) {
     e.preventDefault();
-    if (!selectedModelId || !addUrl.trim()) return;
-    setBusy(true);
-    const r = await addModelImage({
-      model_id: selectedModelId,
-      image_url: addUrl.trim(),
-      sort_order: addSortOrder,
-    });
-    setBusy(false);
-    if (!r.ok) {
-      adminToast.error(r.error);
+    if (!selectedModelId || !form.image_url.trim()) {
+      adminToast.error("Subí o pegá una URL de imagen.");
       return;
     }
-    setAddUrl("");
-    setAddSortOrder(modelImages.length + 1);
-    adminToast.success("Imagen agregada a la galería.");
-    setModalOpen(false);
-    router.refresh();
+
+    setBusy(true);
+    try {
+      if (editing && form.id) {
+        const r = await updateModelImage({
+          id: form.id,
+          image_url: form.image_url.trim(),
+          sort_order: form.sort_order,
+        });
+        if (!r.ok) {
+          adminToast.error(r.error);
+          return;
+        }
+        setImages((prev) =>
+          prev.map((img) =>
+            img.id === form.id
+              ? { ...img, image_url: form.image_url.trim(), sort_order: form.sort_order }
+              : img,
+          ),
+        );
+        adminToast.success("Imagen actualizada.");
+      } else {
+        const r = await addModelImage({
+          model_id: selectedModelId,
+          image_url: form.image_url.trim(),
+          sort_order: form.sort_order,
+        });
+        if (!r.ok) {
+          adminToast.error(r.error);
+          return;
+        }
+        adminToast.success("Imagen agregada a la galería.");
+      }
+      closeModal();
+      router.refresh();
+    } finally {
+      setBusy(false);
+    }
   }
 
   async function onDelete(img: ModelImage) {
@@ -130,19 +181,15 @@ export function ModelImagesAdmin({ models, initialImages }: Props) {
       return;
     }
     setImages((prev) => prev.filter((i) => i.id !== img.id));
+    if (form.id === img.id) closeModal();
     adminToast.success("Imagen eliminada.");
+    router.refresh();
   }
 
-  async function onUpdateSortOrder(id: string, sort_order: number) {
-    setBusy(true);
-    const r = await updateModelImageSortOrder(id, sort_order);
-    setBusy(false);
-    if (!r.ok) {
-      adminToast.error(r.error);
-      return;
-    }
-    setImages((prev) => prev.map((img) => (img.id === id ? { ...img, sort_order } : img)));
-    adminToast.success("Orden actualizado.");
+  async function onDeleteFromModal() {
+    if (!form.id) return;
+    const img = images.find((i) => i.id === form.id);
+    if (img) await onDelete(img);
   }
 
   async function onReorderDrop(fromIndex: number, toIndex: number) {
@@ -223,25 +270,9 @@ export function ModelImagesAdmin({ models, initialImages }: Props) {
                   }}
                 />
               }
-              media={<AdminCrudThumbnail src={img.image_url} />}
+              media={<AdminCrudThumbnail src={img.image_url} alt={`Imagen ${index + 1}`} />}
               title={`Imagen ${index + 1}`}
-              subtitle={
-                <label className="inline-flex items-center gap-2">
-                  <span>Orden</span>
-                  <input
-                    key={`${img.id}-${img.sort_order ?? 0}`}
-                    type="number"
-                    className="h-8 w-16 rounded border border-outline-variant/40 bg-surface px-2 text-xs"
-                    defaultValue={img.sort_order ?? 0}
-                    onBlur={(e) => {
-                      const val = Number(e.target.value);
-                      if (val !== (img.sort_order ?? 0)) {
-                        void onUpdateSortOrder(img.id, val);
-                      }
-                    }}
-                  />
-                </label>
-              }
+              subtitle={`Orden ${img.sort_order ?? index}`}
               badges={<AdminCrudBadge>#{img.sort_order ?? index}</AdminCrudBadge>}
               disabled={busy}
               isDragging={draggingId === img.id}
@@ -261,7 +292,7 @@ export function ModelImagesAdmin({ models, initialImages }: Props) {
                 if (!Number.isFinite(from)) return;
                 void onReorderDrop(from, index);
               }}
-              hideEdit
+              onEdit={() => openEdit(img)}
               onDelete={() => void onDelete(img)}
             />
           ))
@@ -271,38 +302,48 @@ export function ModelImagesAdmin({ models, initialImages }: Props) {
       <AdminModal
         open={modalOpen}
         onClose={closeModal}
-        title={`Agregar imagen — ${selectedModel?.name ?? "modelo"}`}
+        title={
+          editing
+            ? `Editar imagen — ${selectedModel?.name ?? "modelo"}`
+            : `Agregar imagen — ${selectedModel?.name ?? "modelo"}`
+        }
         fullscreen
         footer={
           <AdminModalFooter
-            formId="gallery-add-form"
+            formId="gallery-image-form"
             saving={busy}
             uploading={uploading}
-            saveLabel="Agregar imagen"
+            saveLabel={editing ? "Guardar cambios" : "Agregar imagen"}
             onCancel={closeModal}
+            onDelete={editing ? () => void onDeleteFromModal() : undefined}
           />
         }
       >
-        <AdminFullscreenForm id="gallery-add-form" onSubmit={onAdd}>
-          <MediaDropzone
-            id="gallery-upload"
-            label="Imagen"
-            hint="Se agregará a la galería del modelo seleccionado."
-            value={addUrl}
-            uploading={uploading}
-            disabled={busy || !selectedModelId}
-            previewAspect="aspect-video"
-            onChange={setAddUrl}
-            onFileSelect={onUploadFile}
-          />
-          <AdminField id="add-sort-order" label="Orden en el carrusel" hint="0 = primera imagen.">
-            <Input
-              id="add-sort-order"
-              type="number"
-              value={String(addSortOrder)}
-              onChange={(e) => setAddSortOrder(Number(e.target.value))}
+        <AdminFullscreenForm id="gallery-image-form" onSubmit={onSave}>
+          <AdminFormSection
+            title={editing ? "Reemplazar o ajustar" : "Nueva imagen"}
+            description="Subí un archivo o pegá una URL. El orden define la posición en el carrusel de la ficha."
+          >
+            <MediaDropzone
+              id="gallery-upload"
+              label="Imagen"
+              value={form.image_url}
+              uploading={uploading}
+              disabled={busy || !selectedModelId}
+              compact
+              showUrlField
+              onChange={(url) => setForm((f) => ({ ...f, image_url: url }))}
+              onFileSelect={onUploadFile}
             />
-          </AdminField>
+            <AdminField id="gallery-sort-order" label="Orden en el carrusel" hint="0 = primera imagen.">
+              <Input
+                id="gallery-sort-order"
+                type="number"
+                value={String(form.sort_order)}
+                onChange={(e) => setForm((f) => ({ ...f, sort_order: Number(e.target.value) || 0 }))}
+              />
+            </AdminField>
+          </AdminFormSection>
         </AdminFullscreenForm>
       </AdminModal>
     </>

@@ -25,9 +25,10 @@ import {
   AdminCrudThumbnail,
   AdminField,
   AdminFormSection,
+  AdminFullscreenForm,
   AdminModal,
+  AdminModalFooter,
   AdminSelect,
-  AdminStepIndicator,
   AdminWizardPanel,
   adminToast,
   MediaDropzone,
@@ -494,49 +495,41 @@ export function ModelsAdmin({ initial }: Props) {
         title={editing ? `Editar: ${form.name || "modelo"}` : "Nuevo modelo"}
         fullscreen
         footer={
-          <div className="flex flex-wrap items-center gap-3">
-            {wizardStep > 0 ? (
-              <Button type="button" variant="outline" disabled={busy} onClick={goPrevStep}>
-                Anterior
-              </Button>
-            ) : null}
-            {wizardStep < MODEL_WIZARD_STEPS.length - 1 ? (
-              <Button type="button" disabled={busy} onClick={goNextStep}>
-                Siguiente
-              </Button>
-            ) : (
-              <Button type="submit" form="model-wizard-form" disabled={busy || uploading}>
-                {uploading ? "Subiendo archivo…" : busy ? "Guardando…" : "Guardar modelo"}
-              </Button>
-            )}
-            <Button type="button" variant="ghost" disabled={busy} onClick={closeModal}>
-              Cancelar
-            </Button>
-            {editing && wizardStep === MODEL_WIZARD_STEPS.length - 1 ? (
-              <Button
-                type="button"
-                variant="outline"
-                className="ml-auto text-on-surface-variant"
-                disabled={busy}
-                onClick={() => void onDelete()}
-              >
-                Eliminar
-              </Button>
-            ) : null}
-          </div>
+          <AdminModalFooter
+            formId="model-wizard-form"
+            saving={busy}
+            uploading={uploading}
+            saveLabel="Guardar modelo"
+            hideSave={wizardStep < MODEL_WIZARD_STEPS.length - 1}
+            onCancel={closeModal}
+            onDelete={
+              editing && wizardStep === MODEL_WIZARD_STEPS.length - 1 ? () => void onDelete() : undefined
+            }
+            leading={
+              <>
+                {wizardStep > 0 ? (
+                  <Button type="button" variant="outline" disabled={busy} onClick={goPrevStep}>
+                    Anterior
+                  </Button>
+                ) : null}
+                {wizardStep < MODEL_WIZARD_STEPS.length - 1 ? (
+                  <Button type="button" disabled={busy} onClick={goNextStep}>
+                    Siguiente
+                  </Button>
+                ) : null}
+              </>
+            }
+          />
         }
       >
-        <AdminStepIndicator
+        <AdminFullscreenForm
+          id="model-wizard-form"
           steps={MODEL_WIZARD_STEPS}
-          current={wizardStep}
+          currentStep={wizardStep}
           onStepClick={(index) => {
             if (index < wizardStep) setWizardStep(index);
             else if (index > wizardStep && validateWizardStep(wizardStep)) setWizardStep(index);
           }}
-        />
-        <form
-          id="model-wizard-form"
-          className="flex min-h-0 flex-1 flex-col"
           onSubmit={(e) => {
             if (wizardStep < MODEL_WIZARD_STEPS.length - 1) {
               e.preventDefault();
@@ -546,14 +539,9 @@ export function ModelsAdmin({ initial }: Props) {
             void onSave(e);
           }}
         >
-          <div className="flex-1 overflow-y-auto px-4 py-6 sm:px-6 sm:py-8">
-            <div className="mx-auto max-w-3xl">
               <AdminWizardPanel stepId="basics" currentStepId={currentStepId}>
-                <AdminFormSection
-                  title="Identidad del modelo"
-                  description="El slug forma la URL pública: /producto/[slug]. Usá minúsculas y guiones."
-                >
-                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <AdminFormSection title="Identidad del modelo">
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                     <AdminField id="name" label="Nombre comercial" required>
                       <Input
                         id="name"
@@ -563,7 +551,12 @@ export function ModelsAdmin({ initial }: Props) {
                         required
                       />
                     </AdminField>
-                    <AdminField id="slug" label="Slug (URL)" required hint="Ej: aries-405">
+                    <AdminField
+                      id="slug"
+                      label="Slug (URL)"
+                      required
+                      hint="Minúsculas y guiones · ej: aries-405"
+                    >
                       <Input
                         id="slug"
                         value={form.slug}
@@ -586,10 +579,10 @@ export function ModelsAdmin({ initial }: Props) {
                       ))}
                     </AdminSelect>
                   </AdminField>
-                  <AdminField id="description" label="Descripción corta" hint="Aparece en la ficha y en el showcase si no personalizás el texto allí.">
+                  <AdminField id="description" label="Descripción corta">
                     <Textarea
                       id="description"
-                      rows={4}
+                      rows={2}
                       value={form.description ?? ""}
                       onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
                       placeholder="Breve texto de presentación del colectivo…"
@@ -599,17 +592,14 @@ export function ModelsAdmin({ initial }: Props) {
               </AdminWizardPanel>
 
               <AdminWizardPanel stepId="tech" currentStepId={currentStepId}>
-                <AdminFormSection
-                  title="Configuraciones (opcional)"
-                  description="Solo si el modelo tiene versiones distintas (4×2, 4×4, etc.). Si no aplica, pasá al siguiente paso."
-                >
+                <AdminFormSection title="Configuraciones (opcional)">
                   <ModelVariantsEditor variants={variantRows} onChange={setVariantRows} busy={busy} />
                 </AdminFormSection>
-                <AdminFormSection
-                  title={hasActiveVariants ? "Especificaciones compartidas" : "Especificaciones técnicas"}
-                  description="Filas de la tabla en la ficha del producto. La primera columna es el parámetro; la segunda, el valor."
-                >
-                  <div className="mb-3 flex justify-end">
+                <div className="grid gap-3 lg:grid-cols-2">
+                  <AdminFormSection
+                    title={hasActiveVariants ? "Especificaciones compartidas" : "Especificaciones técnicas"}
+                  >
+                    <div className="mb-2 flex justify-end">
                     <Button
                       type="button"
                       variant="outline"
@@ -669,9 +659,8 @@ export function ModelsAdmin({ initial }: Props) {
                 </AdminFormSection>
                 <AdminFormSection
                   title={hasActiveVariants ? "Características compartidas" : "Características generales"}
-                  description="Lista con viñetas bajo la ficha. Una línea por ítem."
                 >
-                  <div className="mb-3 flex justify-end">
+                  <div className="mb-2 flex justify-end">
                     <Button
                       type="button"
                       variant="outline"
@@ -689,8 +678,8 @@ export function ModelsAdmin({ initial }: Props) {
                       <div key={i} className="flex gap-2">
                         <Textarea
                           aria-label={`Característica ${i + 1}`}
-                          rows={2}
-                          className="min-h-[2.75rem] flex-1"
+                          rows={1}
+                          className="min-h-10 flex-1"
                           placeholder="Texto del ítem"
                           value={body}
                           onChange={(e) =>
@@ -717,46 +706,45 @@ export function ModelsAdmin({ initial }: Props) {
                     ))}
                   </div>
                 </AdminFormSection>
+                </div>
               </AdminWizardPanel>
 
               <AdminWizardPanel stepId="media" currentStepId={currentStepId}>
-                <AdminFormSection
-                  title="Portada del catálogo"
-                  description="Imagen de la tarjeta en /flota. Recomendado: foto exterior del colectivo."
-                >
-                  <MediaDropzone
-                    id="cover_image"
-                    label="Portada"
-                    value={form.cover_image_url ?? ""}
-                    uploading={uploading}
-                    disabled={busy}
-                    previewAspect="aspect-[4/3]"
-                    onChange={(url) => setForm((f) => ({ ...f, cover_image_url: url || null }))}
-                    onFileSelect={(file) => void onFile("cover", file)}
-                  />
-                </AdminFormSection>
-                <AdminFormSection
-                  title="Hero de la ficha de producto"
-                  description="Foto de fondo en /producto/[slug]. Guardá el modelo una vez antes de subirla si es nuevo."
-                >
-                  <HeroBackgroundField
-                    modelName={form.name}
-                    modelId={form.id}
-                    imageUrl={form.hero_background_image_url ?? ""}
-                    focalX={form.hero_background_focal_x ?? 50}
-                    focalY={form.hero_background_focal_y ?? 50}
-                    zoom={form.hero_background_zoom ?? 1}
-                    disabled={busy}
-                    uploading={uploading}
-                    onImageUrlChange={(url) => setForm((f) => ({ ...f, hero_background_image_url: url || null }))}
-                    onFocalChange={(x, y) =>
-                      setForm((f) => ({ ...f, hero_background_focal_x: x, hero_background_focal_y: y }))
-                    }
-                    onZoomChange={(zoom) => setForm((f) => ({ ...f, hero_background_zoom: zoom }))}
-                    onFileSelect={(file) => void onFile("hero", file)}
-                  />
-                </AdminFormSection>
-                <AdminFormSection title="Ficha PDF (opcional)" description="Documento técnico descargable desde la ficha.">
+                <div className="grid gap-3 lg:grid-cols-2">
+                  <AdminFormSection title="Portada del catálogo">
+                    <MediaDropzone
+                      id="cover_image"
+                      label="Portada"
+                      value={form.cover_image_url ?? ""}
+                      uploading={uploading}
+                      disabled={busy}
+                      compact
+                      showUrlField={false}
+                      onChange={(url) => setForm((f) => ({ ...f, cover_image_url: url || null }))}
+                      onFileSelect={(file) => void onFile("cover", file)}
+                    />
+                  </AdminFormSection>
+                  <AdminFormSection title="Hero de la ficha">
+                    <HeroBackgroundField
+                      modelName={form.name}
+                      modelId={form.id}
+                      imageUrl={form.hero_background_image_url ?? ""}
+                      focalX={form.hero_background_focal_x ?? 50}
+                      focalY={form.hero_background_focal_y ?? 50}
+                      zoom={form.hero_background_zoom ?? 1}
+                      disabled={busy}
+                      uploading={uploading}
+                      compact
+                      onImageUrlChange={(url) => setForm((f) => ({ ...f, hero_background_image_url: url || null }))}
+                      onFocalChange={(x, y) =>
+                        setForm((f) => ({ ...f, hero_background_focal_x: x, hero_background_focal_y: y }))
+                      }
+                      onZoomChange={(zoom) => setForm((f) => ({ ...f, hero_background_zoom: zoom }))}
+                      onFileSelect={(file) => void onFile("hero", file)}
+                    />
+                  </AdminFormSection>
+                </div>
+                <AdminFormSection title="Ficha PDF (opcional)">
                   <MediaDropzone
                     id="pdf_url"
                     kind="pdf"
@@ -765,7 +753,9 @@ export function ModelsAdmin({ initial }: Props) {
                     value={form.pdf_url ?? ""}
                     uploading={uploading}
                     disabled={busy}
-                    previewAspect="aspect-auto min-h-[5rem]"
+                    compact
+                    showUrlField={false}
+                    previewAspect="aspect-auto min-h-[3rem]"
                     onChange={(url) => setForm((f) => ({ ...f, pdf_url: url || null }))}
                     onFileSelect={(file) => void onFile("pdf", file)}
                     emptyLabel="Arrastrá el PDF o hacé clic para seleccionar"
@@ -774,11 +764,8 @@ export function ModelsAdmin({ initial }: Props) {
               </AdminWizardPanel>
 
               <AdminWizardPanel stepId="publish" currentStepId={currentStepId}>
-                <AdminFormSection
-                  title="Visibilidad y orden"
-                  description="Los modelos inactivos no se muestran en el sitio. El orden define la posición en /flota y menús."
-                >
-                  <div className="grid gap-4 sm:grid-cols-2">
+                <AdminFormSection title="Visibilidad y orden">
+                  <div className="grid gap-3 sm:grid-cols-2">
                     <AdminField id="sort_order" label="Orden" hint="0 = primero en el listado.">
                       <Input
                         id="sort_order"
@@ -806,9 +793,7 @@ export function ModelsAdmin({ initial }: Props) {
                   />
                 </AdminFormSection>
               </AdminWizardPanel>
-            </div>
-          </div>
-        </form>
+        </AdminFullscreenForm>
       </AdminModal>
     </>
   );

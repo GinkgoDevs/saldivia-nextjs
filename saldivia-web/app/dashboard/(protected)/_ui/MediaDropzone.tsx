@@ -21,6 +21,7 @@ type Props = {
   showUrlField?: boolean;
   emptyLabel?: string;
   kind?: "image" | "pdf";
+  compact?: boolean;
 };
 
 export function MediaDropzone({
@@ -37,6 +38,7 @@ export function MediaDropzone({
   showUrlField = true,
   emptyLabel = "Arrastrá un archivo o hacé clic para seleccionar",
   kind = "image",
+  compact = false,
 }: Props) {
   const autoId = useId();
   const id = idProp ?? autoId;
@@ -115,7 +117,12 @@ export function MediaDropzone({
         />
 
         {value && isImage ? (
-          <div className={cn("relative w-full bg-primary", previewAspect)}>
+          <div
+            className={cn(
+              "relative w-full bg-primary",
+              compact ? "h-24" : previewAspect,
+            )}
+          >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img alt="" src={value} className="h-full w-full object-cover" draggable={false} />
             <div className="absolute inset-0 flex items-center justify-center bg-black/0 opacity-0 transition-opacity group-hover:bg-black/40 group-hover:opacity-100 group-focus-visible:bg-black/40 group-focus-visible:opacity-100">
@@ -134,7 +141,13 @@ export function MediaDropzone({
             </div>
           </div>
         ) : (
-          <div className={cn("flex flex-col items-center justify-center gap-2 px-4 py-8 text-center", previewAspect)}>
+          <div
+            className={cn(
+              "flex flex-col items-center justify-center gap-1.5 px-4 text-center",
+              compact ? "py-4" : "gap-2 py-8",
+              !compact && previewAspect,
+            )}
+          >
             {uploading ? (
               <Loader2 className="size-8 animate-spin text-secondary" aria-hidden />
             ) : isImage ? (

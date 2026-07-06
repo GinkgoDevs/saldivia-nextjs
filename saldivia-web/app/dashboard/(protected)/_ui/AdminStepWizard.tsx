@@ -15,22 +15,27 @@ type IndicatorProps = {
 };
 
 export function AdminStepIndicator({ steps, current, onStepClick }: IndicatorProps) {
+  const activeHint = steps[current]?.hint;
+
   return (
-    <nav aria-label="Pasos del formulario" className="border-b border-outline-variant/20 bg-surface-container-low/50 px-4 py-4 sm:px-6">
-      <ol className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-2">
+    <nav
+      aria-label="Pasos del formulario"
+      className="shrink-0 border-b border-outline-variant/20 bg-surface-container-low/50 px-4 py-2 sm:px-5"
+    >
+      <ol className="flex items-center justify-between gap-1 sm:gap-2">
         {steps.map((step, index) => {
           const done = index < current;
           const active = index === current;
           const clickable = onStepClick && (done || active);
 
           return (
-            <li key={step.id} className="flex min-w-0 flex-1 items-start gap-2.5 sm:flex-col sm:items-center sm:text-center">
+            <li key={step.id} className="flex min-w-0 flex-1 items-center gap-2 sm:flex-col sm:gap-1">
               <button
                 type="button"
                 disabled={!clickable}
                 onClick={() => clickable && onStepClick(index)}
                 className={cn(
-                  "flex size-9 shrink-0 items-center justify-center rounded-full text-sm font-bold transition-colors",
+                  "flex size-7 shrink-0 items-center justify-center rounded-full text-xs font-bold transition-colors sm:size-8 sm:text-sm",
                   active && "bg-primary text-on-primary",
                   done && "bg-secondary/20 text-secondary",
                   !active && !done && "bg-surface-container-high text-on-surface-variant",
@@ -39,24 +44,23 @@ export function AdminStepIndicator({ steps, current, onStepClick }: IndicatorPro
                 )}
                 aria-current={active ? "step" : undefined}
               >
-                {done ? <Check className="size-4" aria-hidden /> : index + 1}
+                {done ? <Check className="size-3.5 sm:size-4" aria-hidden /> : index + 1}
               </button>
-              <div className="min-w-0 sm:mt-2">
-                <p
-                  className={cn(
-                    "text-sm font-semibold leading-tight",
-                    active ? "text-primary" : done ? "text-on-surface" : "text-on-surface-variant",
-                  )}
-                >
-                  {step.title}
-                </p>
-                <p className="mt-0.5 hidden text-xs text-on-surface-variant sm:block">{step.hint}</p>
-              </div>
+              <p
+                className={cn(
+                  "min-w-0 truncate text-[11px] font-semibold leading-tight sm:text-center sm:text-xs",
+                  active ? "text-primary" : done ? "text-on-surface" : "text-on-surface-variant",
+                )}
+              >
+                {step.title}
+              </p>
             </li>
           );
         })}
       </ol>
-      <p className="mt-3 text-sm text-on-surface-variant sm:hidden">{steps[current]?.hint}</p>
+      {activeHint ? (
+        <p className="mt-1.5 line-clamp-2 text-[11px] leading-snug text-on-surface-variant">{activeHint}</p>
+      ) : null}
     </nav>
   );
 }
@@ -69,5 +73,5 @@ type PanelProps = {
 
 export function AdminWizardPanel({ stepId, currentStepId, children }: PanelProps) {
   if (stepId !== currentStepId) return null;
-  return <div className="space-y-5">{children}</div>;
+  return <div className="space-y-3">{children}</div>;
 }
