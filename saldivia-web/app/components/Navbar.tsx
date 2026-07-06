@@ -19,13 +19,11 @@ const NAV_LINKS = [
 const SALES_TEL_DISPLAY = "+54 (0341) 492-1234";
 const SALES_TEL_HREF = "tel:+543414921234";
 
-function linkTone(scrolled: boolean, isActive: boolean) {
+function linkTone(isActive: boolean) {
   if (isActive) {
     return "border-b-2 border-accent-blue pb-1 text-accent-blue";
   }
-  return scrolled
-    ? "text-on-surface-variant hover:text-on-surface"
-    : "text-white/80 hover:text-white";
+  return "text-on-surface-variant hover:text-on-surface";
 }
 
 function isNavLinkActive(pathname: string, href: string) {
@@ -195,10 +193,7 @@ function MobileNavDrawer({
 
 export default function Navbar() {
   const pathname = usePathname();
-  const [hasScrolled, setHasScrolled] = useState(false);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
-
-  const solidNav = hasScrolled || mobileNavOpen || pathname.startsWith("/dashboard");
 
   useEffect(() => {
     setMobileNavOpen(false);
@@ -213,27 +208,8 @@ export default function Navbar() {
     return () => mq.removeEventListener("change", closeIfDesktop);
   }, []);
 
-  useEffect(() => {
-    const updateScrollState = () => {
-      setHasScrolled(window.scrollY > 0);
-    };
-
-    updateScrollState();
-    window.addEventListener("scroll", updateScrollState, { passive: true });
-
-    return () => {
-      window.removeEventListener("scroll", updateScrollState);
-    };
-  }, []);
-
   return (
-    <header
-      className={`fixed top-0 z-50 w-full overflow-visible transition-[background-color,box-shadow] duration-300 ${
-        solidNav
-          ? "bg-surface-container-lowest shadow-elev-1"
-          : "bg-transparent"
-      }`}
-    >
+    <header className="fixed top-0 z-50 w-full overflow-visible border-b border-outline-variant/25 bg-surface-container-lowest/95 shadow-elev-1 backdrop-blur-md">
       <div className="relative z-[200] mx-auto flex w-full min-w-0 max-w-screen-2xl items-center gap-2 px-4 py-4 sm:gap-3 sm:px-6 md:gap-6 md:px-8">
         <Link
           href="/"
@@ -253,7 +229,6 @@ export default function Navbar() {
           <Link
             href="/"
             className={`cursor-pointer font-medium transition-all duration-200 ui-focus-ring ${linkTone(
-              solidNav,
               pathname === "/"
             )}`}
           >
@@ -268,7 +243,6 @@ export default function Navbar() {
                 key={link.href + link.label}
                 href={link.href}
                 className={`cursor-pointer whitespace-nowrap font-medium transition-all duration-200 ui-focus-ring ${linkTone(
-                  solidNav,
                   isActive
                 )}`}
               >
@@ -280,7 +254,7 @@ export default function Navbar() {
 
         <div className="ml-auto flex shrink-0 items-center gap-1.5 sm:gap-2 md:gap-3">
           <div className={mobileNavOpen ? "max-md:hidden" : "contents"}>
-            <ThemeToggle scrolled={solidNav} />
+            <ThemeToggle scrolled />
           </div>
           <Button
             type="button"
@@ -292,9 +266,7 @@ export default function Navbar() {
             onClick={() => setMobileNavOpen((o) => !o)}
           >
             <span
-              className={`material-symbols-outlined text-2xl transition-opacity duration-200 ${
-                solidNav ? "text-on-surface" : "text-white"
-              }`}
+              className="material-symbols-outlined text-2xl text-on-surface transition-opacity duration-200"
               aria-hidden
             >
               menu
