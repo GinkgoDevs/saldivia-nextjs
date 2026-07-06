@@ -1,6 +1,7 @@
 export { AdminModal } from "./AdminModal";
 export { AdminFullscreenForm } from "./AdminFullscreenForm";
 export { AdminModalFooter } from "./AdminModalFooter";
+export { AdminEmptyState } from "./AdminEmptyState";
 export { AdminStepIndicator, AdminWizardPanel, type WizardStep } from "./AdminStepWizard";
 export {
   AdminCrudLayout,

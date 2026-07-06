@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import { Layers } from "lucide-react";
 
 import {
   deleteHomeHeroSlide,
@@ -20,6 +21,7 @@ import {
   AdminCrudDragHandle,
   AdminCrudLayout,
   AdminCrudThumbnail,
+  AdminEmptyState,
   AdminField,
   AdminFormSection,
   AdminFullscreenForm,
@@ -278,9 +280,11 @@ export function HomeHeroAdmin({ initialSlides }: Props) {
         newDisabled={busy}
       >
         {ordered.length === 0 ? (
-          <li className="rounded-sm border border-dashed border-outline-variant/40 p-8 text-center text-sm text-on-surface-variant">
-            No hay slides. Creá la primera con el botón superior.
-          </li>
+          <AdminEmptyState
+            icon={Layers}
+            title="Sin slides del hero"
+            description="El carrusel principal del inicio está vacío. Creá la primera slide con imagen, títulos y botones."
+          />
         ) : (
           ordered.map((s, index) => (
             <AdminCrudCard

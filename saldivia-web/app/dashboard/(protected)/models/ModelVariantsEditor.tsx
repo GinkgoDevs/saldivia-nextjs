@@ -1,9 +1,10 @@
 "use client";
 
-import { Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2, Layers } from "lucide-react";
 import { Button } from "@/app/components/ui/Button";
 import { Input } from "@/app/components/ui/Input";
 import { Textarea } from "@/app/components/ui/Textarea";
+import { AdminEmptyState } from "../_ui/AdminEmptyState";
 
 export type SpecRow = { spec_key: string; spec_value: string };
 
@@ -171,12 +172,28 @@ export function ModelVariantsEditor({ variants, onChange, busy }: Props) {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       {variants.length === 0 ? (
-        <p className="rounded-sm border border-dashed border-outline-variant/40 bg-surface-container-low/30 px-4 py-3 text-[11px] text-on-surface-variant">
-          Sin configuraciones todavía. Usá el botón de abajo para agregar la primera (4x2, 4x4, largo 12 m,
-          etc.).
-        </p>
+        <AdminEmptyState
+          as="div"
+          compact
+          icon={Layers}
+          title="Sin configuraciones"
+          description="Si el modelo tiene una sola versión, podés pasar al siguiente paso. Si tiene variantes (4×2, 4×4, etc.), agregá la primera acá."
+          action={
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              disabled={busy}
+              className="gap-1.5"
+              onClick={() => onChange([variantRowEmpty(true)])}
+            >
+              <Plus className="size-4" aria-hidden />
+              Agregar configuración
+            </Button>
+          }
+        />
       ) : null}
       {variants.map((variant, index) => (
         <div
@@ -265,6 +282,7 @@ export function ModelVariantsEditor({ variants, onChange, busy }: Props) {
         </div>
       ))}
 
+      {variants.length > 0 ? (
       <Button
         type="button"
         variant="outline"
@@ -278,6 +296,7 @@ export function ModelVariantsEditor({ variants, onChange, busy }: Props) {
         <Plus className="size-4" aria-hidden />
         Agregar configuración
       </Button>
+      ) : null}
     </div>
   );
 }

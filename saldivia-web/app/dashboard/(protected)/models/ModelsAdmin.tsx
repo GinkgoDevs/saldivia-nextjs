@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2, Package } from "lucide-react";
 import { deleteModel, reorderModels, saveModel } from "@/app/actions/admin-content";
 import { uploadMediaFromBrowser } from "@/lib/upload-media-client";
 import type { Model, ModelAdmin, ModelSegment, ModelVariantAdmin } from "@/types/model";
@@ -23,6 +23,7 @@ import {
   AdminCrudDragHandle,
   AdminCrudLayout,
   AdminCrudThumbnail,
+  AdminEmptyState,
   AdminField,
   AdminFormSection,
   AdminFullscreenForm,
@@ -424,7 +425,14 @@ export function ModelsAdmin({ initial }: Props) {
         onNew={openNew}
         newDisabled={busy}
       >
-        {sortedList.map((m, index) => (
+        {sortedList.length === 0 ? (
+          <AdminEmptyState
+            icon={Package}
+            title="Sin modelos todavía"
+            description="Creá el primer colectivo con datos básicos, ficha técnica e imágenes. El asistente te guía paso a paso."
+          />
+        ) : (
+        sortedList.map((m, index) => (
           <AdminCrudCard
             key={m.id}
             dragHandle={
@@ -486,7 +494,8 @@ export function ModelsAdmin({ initial }: Props) {
             onEdit={() => openEdit(m)}
             onDelete={() => void onDeleteModel(m)}
           />
-        ))}
+        ))
+        )}
       </AdminCrudLayout>
 
       <AdminModal
