@@ -20,6 +20,9 @@ export function getStaticFallbackHomeShowcaseSlides(): ResolvedHomeShowcaseSlide
       slug: "aries-365",
       name: "Aries 365",
       heroSrc: FALLBACK_HERO,
+      heroFocalX: 50,
+      heroFocalY: 50,
+      heroZoom: 1,
       eyebrow: "LARGA DISTANCIA",
       lead: "Plataforma interprovincial con estándares de confort y seguridad Saldivia.",
       specRows: [
@@ -37,6 +40,9 @@ export function getStaticFallbackHomeShowcaseSlides(): ResolvedHomeShowcaseSlide
       slug: "aries-405",
       name: "Aries 405",
       heroSrc: FALLBACK_HERO,
+      heroFocalX: 50,
+      heroFocalY: 50,
+      heroZoom: 1,
       eyebrow: "LARGA DISTANCIA",
       lead: "Referente para operaciones de larga distancia con cabina y bodega de alto volumen.",
       specRows: [
@@ -132,10 +138,27 @@ async function fetchSlidesByModelId(
 
   const { data, error } = await supabase
     .from("home_showcase_slides")
-    .select("id, model_id, sort_order, hero_image_url, eyebrow, lead, metrics")
+    .select(
+      "id, model_id, sort_order, hero_image_url, hero_image_focal_x, hero_image_focal_y, hero_image_zoom, eyebrow, lead, metrics",
+    )
     .in("model_id", modelIds);
 
   if (error) {
+    if (error.message?.includes("hero_image_focal")) {
+      const fallback = await supabase
+        .from("home_showcase_slides")
+        .select("id, model_id, sort_order, hero_image_url, eyebrow, lead, metrics")
+        .in("model_id", modelIds);
+      if (fallback.error) {
+        console.error("[fetchSlidesByModelId]", fallback.error.message);
+        return new Map();
+      }
+      const map = new Map<string, HomeShowcaseSlideRow>();
+      for (const row of (fallback.data ?? []) as HomeShowcaseSlideRow[]) {
+        if (!map.has(row.model_id)) map.set(row.model_id, row);
+      }
+      return map;
+    }
     console.error("[fetchSlidesByModelId]", error.message);
     return new Map();
   }
@@ -186,8 +209,9 @@ async function resolveShowcaseSlides(
       .map((p) => ({ key: p.spec_key, value: p.spec_value }));
 
     const imgs = sortImages(imagesByModel.get(m.id) ?? []);
+    const customHero = slide?.hero_image_url?.trim() || "";
     const heroSrc =
-      slide?.hero_image_url?.trim() ||
+      customHero ||
       m.cover_image_url?.trim() ||
       imgs[0]?.image_url?.trim() ||
       FALLBACK_HERO;
@@ -196,6 +220,9 @@ async function resolveShowcaseSlides(
     const eyebrow = slide?.eyebrow?.trim() || SEGMENT_EYEBROW[seg];
     const lead = slide?.lead?.trim() || m.description?.trim() || "";
     const metrics = normalizeMetrics(slide?.metrics);
+    const heroFocalX = customHero ? (slide?.hero_image_focal_x ?? 50) : 50;
+    const heroFocalY = customHero ? (slide?.hero_image_focal_y ?? 50) : 50;
+    const heroZoom = customHero ? Number(slide?.hero_image_zoom ?? 1) : 1;
 
     return {
       sortOrder: slide?.sort_order ?? m.sort_order ?? 0,
@@ -204,6 +231,9 @@ async function resolveShowcaseSlides(
         slug: m.slug,
         name: m.name,
         heroSrc,
+        heroFocalX,
+        heroFocalY,
+        heroZoom,
         eyebrow,
         lead,
         specRows: specs,
@@ -235,6 +265,9 @@ export type AdminShowcaseSlide = {
   model_id: string;
   sort_order: number;
   hero_image_url: string | null;
+  hero_image_focal_x: number;
+  hero_image_focal_y: number;
+  hero_image_zoom: number;
   eyebrow: string | null;
   lead: string | null;
   metrics: ShowcaseMetric[] | null;
@@ -280,6 +313,9 @@ export async function getHomeShowcaseSlidesForAdmin(
       model_id: m.id as string,
       sort_order: slide?.sort_order ?? (m.sort_order as number | null) ?? 0,
       hero_image_url: slide?.hero_image_url ?? null,
+      hero_image_focal_x: slide?.hero_image_focal_x ?? 50,
+      hero_image_focal_y: slide?.hero_image_focal_y ?? 50,
+      hero_image_zoom: Number(slide?.hero_image_zoom ?? 1),
       eyebrow: slide?.eyebrow ?? null,
       lead: slide?.lead ?? null,
       metrics: slide?.metrics ?? null,

@@ -7,6 +7,10 @@ type LayoutProps = {
   newLabel?: string;
   onNew?: () => void;
   newDisabled?: boolean;
+  /** Controles extra en la fila del encabezado (ej. switch de reordenar). */
+  toolbar?: ReactNode;
+  /** Filtros o ayuda contextual debajo del encabezado. */
+  filter?: ReactNode;
   children: ReactNode;
 };
 
@@ -15,22 +19,71 @@ export function AdminCrudLayout({
   newLabel,
   onNew,
   newDisabled,
+  toolbar,
+  filter,
   children,
 }: LayoutProps) {
   return (
     <>
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
         <div className="text-sm text-on-surface-variant">{summary}</div>
-        {onNew && newLabel ? (
-          <Button type="button" className="gap-2" onClick={onNew} disabled={newDisabled}>
-            <Plus className="size-4" aria-hidden />
-            {newLabel}
-          </Button>
-        ) : null}
+        <div className="flex flex-wrap items-center gap-3">
+          {toolbar}
+          {onNew && newLabel ? (
+            <Button type="button" className="gap-2" onClick={onNew} disabled={newDisabled}>
+              <Plus className="size-4" aria-hidden />
+              {newLabel}
+            </Button>
+          ) : null}
+        </div>
       </div>
+
+      {filter ? <div className="mb-4">{filter}</div> : null}
 
       <ul className="space-y-3">{children}</ul>
     </>
+  );
+}
+
+export function AdminReorderToggle({
+  enabled,
+  onChange,
+  disabled,
+  label = "Reordenar",
+}: {
+  enabled: boolean;
+  onChange: (enabled: boolean) => void;
+  disabled?: boolean;
+  label?: string;
+}) {
+  const id = "admin-reorder-toggle";
+  return (
+    <div className="flex min-h-11 items-center gap-2.5 rounded-sm border border-outline-variant/25 bg-surface-container-low/30 px-3 py-2">
+      <label htmlFor={id} className="cursor-pointer text-sm font-medium text-on-surface">
+        {label}
+      </label>
+      <button
+        id={id}
+        type="button"
+        role="switch"
+        aria-checked={enabled}
+        disabled={disabled}
+        onClick={() => onChange(!enabled)}
+        className={cn(
+          "relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full transition-colors duration-200 outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
+          enabled ? "bg-primary" : "bg-outline-variant/50",
+          disabled && "cursor-not-allowed opacity-50",
+        )}
+      >
+        <span
+          aria-hidden
+          className={cn(
+            "pointer-events-none absolute top-0.5 left-0.5 size-5 rounded-full bg-white shadow-sm transition-transform duration-200",
+            enabled && "translate-x-5",
+          )}
+        />
+      </button>
+    </div>
   );
 }
 

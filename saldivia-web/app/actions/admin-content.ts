@@ -656,6 +656,9 @@ type SaveHomeShowcaseSlideInput = {
   model_id: string;
   sort_order: number;
   hero_image_url: string;
+  hero_image_focal_x: number;
+  hero_image_focal_y: number;
+  hero_image_zoom: number;
   eyebrow: string;
   lead: string;
   stat1_value: string;
@@ -679,6 +682,9 @@ export async function saveHomeShowcaseSlide(input: SaveHomeShowcaseSlideInput) {
     model_id: modelId,
     sort_order: Number.isFinite(input.sort_order) ? input.sort_order : 0,
     hero_image_url: input.hero_image_url.trim() || null,
+    hero_image_focal_x: Math.min(100, Math.max(0, Math.round(input.hero_image_focal_x))),
+    hero_image_focal_y: Math.min(100, Math.max(0, Math.round(input.hero_image_focal_y))),
+    hero_image_zoom: Math.min(2.5, Math.max(1, Number(input.hero_image_zoom) || 1)),
     eyebrow: input.eyebrow.trim() || null,
     lead: input.lead.trim() || null,
     metrics: showcaseMetricsFromForm({
