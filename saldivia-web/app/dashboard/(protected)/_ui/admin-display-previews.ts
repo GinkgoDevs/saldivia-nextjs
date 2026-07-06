@@ -38,3 +38,5 @@ export const SITE_IMAGE_PREVIEW = {
     maxWidth: "max-w-sm",
   },
 } as const;
+
+export type SiteImagePreviewKey = keyof typeof SITE_IMAGE_PREVIEW;

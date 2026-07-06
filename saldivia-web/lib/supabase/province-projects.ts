@@ -12,7 +12,24 @@ export type ProvinceProjectCard = {
   segment: string;
   year: string;
   imageUrl?: string;
+  imageFocalX?: number;
+  imageFocalY?: number;
+  imageZoom?: number;
 };
+
+const PROJECT_COLUMNS =
+  "id, province_slug, title, description, location_label, segment, year, image_url, image_focal_x, image_focal_y, image_zoom, sort_order, active, created_at";
+const PROJECT_COLUMNS_LEGACY =
+  "id, province_slug, title, description, location_label, segment, year, image_url, sort_order, active, created_at";
+
+function withProjectFocalDefaults(rows: ProvinceProjectRow[]): ProvinceProjectRow[] {
+  return rows.map((r) => ({
+    ...r,
+    image_focal_x: r.image_focal_x ?? 50,
+    image_focal_y: r.image_focal_y ?? 50,
+    image_zoom: r.image_zoom ?? 1,
+  }));
+}
 
 const LOCATION_TYPE_LABEL: Record<LocationType, string> = {
   taller: "Taller",
@@ -51,6 +68,9 @@ export function groupByProvince(
       segment: r.segment?.trim() || "—",
       year: r.year?.trim() || "—",
       imageUrl: r.image_url?.trim() || undefined,
+      imageFocalX: r.image_focal_x ?? 50,
+      imageFocalY: r.image_focal_y ?? 50,
+      imageZoom: r.image_zoom ?? 1,
     });
   }
   return out;
@@ -87,37 +107,54 @@ export type GetProvinceProjectsResult =
 export async function getActiveProvinceProjects(
   supabase: SupabaseClient,
 ): Promise<GetProvinceProjectsResult> {
-  const { data, error } = await supabase
+  let { data, error } = await supabase
     .from("province_projects")
-    .select(
-      "id, province_slug, title, description, location_label, segment, year, image_url, sort_order, active, created_at",
-    )
+    .select(PROJECT_COLUMNS)
     .eq("active", true)
     .order("sort_order", { ascending: true, nullsFirst: false })
     .order("title");
+
+  if (error?.message?.includes("image_focal")) {
+    const fallback = await supabase
+      .from("province_projects")
+      .select(PROJECT_COLUMNS_LEGACY)
+      .eq("active", true)
+      .order("sort_order", { ascending: true, nullsFirst: false })
+      .order("title");
+    data = fallback.data as typeof data;
+    error = fallback.error;
+  }
 
   if (error) {
     return { data: null, error: new Error(error.message) };
   }
 
-  return { data: (data ?? []) as ProvinceProjectRow[], error: null };
+  return { data: withProjectFocalDefaults((data ?? []) as ProvinceProjectRow[]), error: null };
 }
 
 /** Staff: todas las filas (activas e inactivas) para el panel. */
 export async function getAllProvinceProjectsForAdmin(
   supabase: SupabaseClient,
 ): Promise<GetProvinceProjectsResult> {
-  const { data, error } = await supabase
+  let { data, error } = await supabase
     .from("province_projects")
-    .select(
-      "id, province_slug, title, description, location_label, segment, year, image_url, sort_order, active, created_at",
-    )
+    .select(PROJECT_COLUMNS)
     .order("province_slug")
     .order("sort_order", { ascending: true, nullsFirst: false });
+
+  if (error?.message?.includes("image_focal")) {
+    const fallback = await supabase
+      .from("province_projects")
+      .select(PROJECT_COLUMNS_LEGACY)
+      .order("province_slug")
+      .order("sort_order", { ascending: true, nullsFirst: false });
+    data = fallback.data as typeof data;
+    error = fallback.error;
+  }
 
   if (error) {
     return { data: null, error: new Error(error.message) };
   }
 
-  return { data: (data ?? []) as ProvinceProjectRow[], error: null };
+  return { data: withProjectFocalDefaults((data ?? []) as ProvinceProjectRow[]), error: null };
 }

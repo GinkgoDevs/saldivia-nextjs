@@ -43,14 +43,14 @@ export async function getModelBySlug(
   const { data: modelRow, error: modelError } = await supabase
     .from("models")
     .select(
-      "id, slug, name, segment, description, cover_image_url, hero_background_image_url, hero_background_focal_x, hero_background_focal_y, hero_background_zoom, pdf_url, active, created_at, sort_order",
+      "id, slug, name, segment, description, cover_image_url, cover_image_focal_x, cover_image_focal_y, cover_image_zoom, hero_background_image_url, hero_background_focal_x, hero_background_focal_y, hero_background_zoom, pdf_url, active, created_at, sort_order",
     )
     .eq("slug", normalized)
     .eq("active", true)
     .maybeSingle();
 
   if (modelError) {
-    if (modelError.message.includes("hero_background_focal")) {
+    if (modelError.message.includes("cover_image_focal") || modelError.message.includes("hero_background_focal")) {
       const fallback = await supabase
         .from("models")
         .select(
@@ -66,6 +66,9 @@ export async function getModelBySlug(
       if (!fallback.data) return null;
       const model = {
         ...fallback.data,
+        cover_image_focal_x: 50,
+        cover_image_focal_y: 50,
+        cover_image_zoom: 1,
         hero_background_focal_x: 50,
         hero_background_focal_y: 50,
         hero_background_zoom: 1,
@@ -79,6 +82,9 @@ export async function getModelBySlug(
 
   const model = {
     ...modelRow,
+    cover_image_focal_x: (modelRow as Model).cover_image_focal_x ?? 50,
+    cover_image_focal_y: (modelRow as Model).cover_image_focal_y ?? 50,
+    cover_image_zoom: (modelRow as Model).cover_image_zoom ?? 1,
     hero_background_focal_x: (modelRow as Model).hero_background_focal_x ?? 50,
     hero_background_focal_y: (modelRow as Model).hero_background_focal_y ?? 50,
     hero_background_zoom: (modelRow as Model).hero_background_zoom ?? 1,
@@ -103,7 +109,7 @@ async function fetchModelDetail(
         .limit(200),
       supabase
         .from("model_images")
-        .select("id, model_id, image_url, sort_order")
+        .select("id, model_id, image_url, focal_x, focal_y, zoom, sort_order")
         .eq("model_id", modelId)
         .order("sort_order", { ascending: true, nullsFirst: false }),
       supabase
@@ -162,10 +168,35 @@ async function fetchModelDetail(
     general_features: allFeatures.filter((f) => f.variant_id === variant.id),
   }));
 
+  if (iErr?.message?.includes("focal_x")) {
+    const { data: fallbackImages } = await supabase
+      .from("model_images")
+      .select("id, model_id, image_url, sort_order")
+      .eq("model_id", modelId)
+      .order("sort_order", { ascending: true, nullsFirst: false });
+    return {
+      model,
+      products: sharedProducts,
+      images: ((fallbackImages ?? []) as ModelImage[]).map((img) => ({
+        ...img,
+        focal_x: 50,
+        focal_y: 50,
+        zoom: 1,
+      })),
+      general_features: sharedFeatures,
+      variants: variantDetails,
+    };
+  }
+
   return {
     model,
     products: sharedProducts,
-    images: (images ?? []) as ModelImage[],
+    images: ((images ?? []) as ModelImage[]).map((img) => ({
+      ...img,
+      focal_x: img.focal_x ?? 50,
+      focal_y: img.focal_y ?? 50,
+      zoom: img.zoom ?? 1,
+    })),
     general_features: sharedFeatures,
     variants: variantDetails,
   };

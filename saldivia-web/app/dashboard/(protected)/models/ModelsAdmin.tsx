@@ -32,11 +32,10 @@ import {
   AdminSelect,
   AdminWizardPanel,
   adminToast,
+  FramedImageField,
   MediaDropzone,
   type WizardStep,
 } from "../_ui/admin-ui";
-import { SITE_IMAGE_PREVIEW } from "../_ui/admin-display-previews";
-import { AdminSitePreviewFrame } from "../_ui/AdminSitePreviewFrame";
 
 const MODEL_WIZARD_STEPS: WizardStep[] = [
   {
@@ -75,6 +74,9 @@ const empty: Omit<Model, "id" | "created_at"> & { id: string | null } = {
   segment: "urbano",
   description: null,
   cover_image_url: null,
+  cover_image_focal_x: 50,
+  cover_image_focal_y: 50,
+  cover_image_zoom: 1,
   hero_background_image_url: null,
   hero_background_focal_x: 50,
   hero_background_focal_y: 50,
@@ -181,6 +183,9 @@ export function ModelsAdmin({ initial }: Props) {
       segment: m.segment,
       description: m.description,
       cover_image_url: m.cover_image_url,
+      cover_image_focal_x: m.cover_image_focal_x ?? 50,
+      cover_image_focal_y: m.cover_image_focal_y ?? 50,
+      cover_image_zoom: m.cover_image_zoom ?? 1,
       hero_background_image_url: m.hero_background_image_url,
       hero_background_focal_x: m.hero_background_focal_x ?? 50,
       hero_background_focal_y: m.hero_background_focal_y ?? 50,
@@ -285,6 +290,9 @@ export function ModelsAdmin({ initial }: Props) {
         segment: form.segment,
         description: form.description ?? "",
         cover_image_url: form.cover_image_url ?? "",
+        cover_image_focal_x: form.cover_image_focal_x ?? 50,
+        cover_image_focal_y: form.cover_image_focal_y ?? 50,
+        cover_image_zoom: form.cover_image_zoom ?? 1,
         hero_background_image_url: form.hero_background_image_url ?? "",
         hero_background_focal_x: form.hero_background_focal_x ?? 50,
         hero_background_focal_y: form.hero_background_focal_y ?? 50,
@@ -315,6 +323,9 @@ export function ModelsAdmin({ initial }: Props) {
           segment: form.segment,
           description: form.description,
           cover_image_url: form.cover_image_url,
+          cover_image_focal_x: form.cover_image_focal_x ?? 50,
+          cover_image_focal_y: form.cover_image_focal_y ?? 50,
+          cover_image_zoom: form.cover_image_zoom ?? 1,
           ...savedHero,
           pdf_url: form.pdf_url,
           active: form.active,
@@ -394,7 +405,13 @@ export function ModelsAdmin({ initial }: Props) {
         return;
       }
       if (which === "cover") {
-        setForm((f) => ({ ...f, cover_image_url: r.publicUrl }));
+        setForm((f) => ({
+          ...f,
+          cover_image_url: r.publicUrl,
+          cover_image_focal_x: 50,
+          cover_image_focal_y: 50,
+          cover_image_zoom: 1,
+        }));
       } else if (which === "hero") {
         setForm((f) => ({
           ...f,
@@ -722,37 +739,34 @@ export function ModelsAdmin({ initial }: Props) {
 
               <AdminWizardPanel stepId="media" currentStepId={currentStepId}>
                 <AdminFormSection title="Portada del catálogo">
-                  <AdminSitePreviewFrame
-                    maxWidth={SITE_IMAGE_PREVIEW.catalogCover.maxWidth}
+                  <FramedImageField
+                    id="cover_image"
+                    label="Portada"
+                    previewPreset="catalogCover"
+                    previewHint="Vista previa como en la card del catálogo. Arrastrá para encuadrar y ajustá el zoom."
+                    imageUrl={form.cover_image_url ?? ""}
+                    focalX={form.cover_image_focal_x ?? 50}
+                    focalY={form.cover_image_focal_y ?? 50}
+                    zoom={form.cover_image_zoom ?? 1}
+                    uploading={uploading}
+                    disabled={busy}
                     frameClassName="border border-outline-variant/15 bg-white shadow-[0px_12px_32px_rgba(13,44,79,0.1)]"
-                    hint="Vista previa como en la card del catálogo (antes del hover)."
-                    footer={
+                    frameFooter={
                       <div className="border-t border-primary/20 bg-primary px-4 py-2.5">
                         <p className="truncate font-headline text-xs font-black uppercase tracking-[0.12em] text-white">
                           {form.name.trim() || "Nombre del modelo"}
                         </p>
                       </div>
                     }
-                  >
-                    <MediaDropzone
-                      id="cover_image"
-                      label="Portada"
-                      value={form.cover_image_url ?? ""}
-                      uploading={uploading}
-                      disabled={busy}
-                      showUrlField={false}
-                      previewAspect={SITE_IMAGE_PREVIEW.catalogCover.aspect}
-                      previewObjectFit={SITE_IMAGE_PREVIEW.catalogCover.objectFit}
-                      previewBg={SITE_IMAGE_PREVIEW.catalogCover.bg}
-                      onChange={(url) => setForm((f) => ({ ...f, cover_image_url: url || null }))}
-                      onFileSelect={(file) => void onFile("cover", file)}
-                    />
-                  </AdminSitePreviewFrame>
+                    onImageUrlChange={(url) => setForm((f) => ({ ...f, cover_image_url: url || null }))}
+                    onFocalChange={(x, y) =>
+                      setForm((f) => ({ ...f, cover_image_focal_x: x, cover_image_focal_y: y }))
+                    }
+                    onZoomChange={(zoom) => setForm((f) => ({ ...f, cover_image_zoom: zoom }))}
+                    onFileSelect={(file) => void onFile("cover", file)}
+                  />
                 </AdminFormSection>
                 <AdminFormSection title="Hero de la ficha">
-                    <p className="mb-2 text-[11px] leading-relaxed text-on-surface-variant">
-                      Vista previa como en la ficha del producto. Arrastrá para encuadrar y ajustá el zoom.
-                    </p>
                     <HeroBackgroundField
                       modelName={form.name}
                       modelId={form.id}

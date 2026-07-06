@@ -15,11 +15,20 @@ function groupRowsByModelId<T extends { model_id: string | null }>(rows: T[]): M
 }
 
 const MODEL_COLUMNS =
-  "id, slug, name, segment, description, cover_image_url, hero_background_image_url, hero_background_focal_x, hero_background_focal_y, hero_background_zoom, pdf_url, active, show_in_showcase, created_at, sort_order";
+  "id, slug, name, segment, description, cover_image_url, cover_image_focal_x, cover_image_focal_y, cover_image_zoom, hero_background_image_url, hero_background_focal_x, hero_background_focal_y, hero_background_zoom, pdf_url, active, show_in_showcase, created_at, sort_order";
 const MODEL_COLUMNS_LEGACY =
   "id, slug, name, segment, description, cover_image_url, hero_background_image_url, pdf_url, active, created_at, sort_order";
 const MODEL_COLUMNS_NO_HERO =
   "id, slug, name, segment, description, cover_image_url, pdf_url, active, show_in_showcase, created_at, sort_order";
+
+function withCoverDefaults<T extends Record<string, unknown>>(rows: T[]): T[] {
+  return rows.map((r) => ({
+    ...r,
+    cover_image_focal_x: (r as { cover_image_focal_x?: number }).cover_image_focal_x ?? 50,
+    cover_image_focal_y: (r as { cover_image_focal_y?: number }).cover_image_focal_y ?? 50,
+    cover_image_zoom: (r as { cover_image_zoom?: number }).cover_image_zoom ?? 1,
+  }));
+}
 
 function withHeroDefaults<T extends Record<string, unknown>>(rows: T[]): T[] {
   return rows.map((r) => ({
@@ -37,7 +46,7 @@ function withShowcaseDefault<T extends Record<string, unknown>>(rows: T[]): T[] 
 }
 
 function normalizeModelRows<T extends Record<string, unknown>>(rows: T[]): T[] {
-  return withHeroDefaults(withShowcaseDefault(rows));
+  return withHeroDefaults(withCoverDefaults(withShowcaseDefault(rows)));
 }
 
 export type ModelFilters = {
@@ -66,6 +75,9 @@ export async function getModels(
   };
 
   let { data, error } = await runQuery(MODEL_COLUMNS);
+  if (error?.message?.includes("cover_image_focal")) {
+    ({ data, error } = await runQuery(MODEL_COLUMNS_LEGACY));
+  }
   if (error?.message?.includes("hero_background_focal")) {
     ({ data, error } = await runQuery(MODEL_COLUMNS_LEGACY));
   }
@@ -98,6 +110,9 @@ export async function getModelBySlug(
     supabase.from("models").select(columns).eq("slug", slug).eq("active", true).maybeSingle();
 
   let { data, error } = await runQuery(MODEL_COLUMNS);
+  if (error?.message?.includes("cover_image_focal")) {
+    ({ data, error } = await runQuery(MODEL_COLUMNS_LEGACY));
+  }
   if (error?.message?.includes("hero_background_focal")) {
     ({ data, error } = await runQuery(MODEL_COLUMNS_LEGACY));
   }
@@ -126,6 +141,9 @@ export async function getAllModelsForAdmin(
       .order("name");
 
   let { data: models, error: modelsError } = await runModelsQuery(MODEL_COLUMNS);
+  if (modelsError?.message?.includes("cover_image_focal")) {
+    ({ data: models, error: modelsError } = await runModelsQuery(MODEL_COLUMNS_LEGACY));
+  }
   if (modelsError?.message?.includes("hero_background_focal")) {
     ({ data: models, error: modelsError } = await runModelsQuery(MODEL_COLUMNS_LEGACY));
   }

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useState, useEffect, useRef, useCallback } from "react";
 
 import { getStaticHeroSlides } from "@/lib/supabase/home-hero";
+import { imageFocalStyle } from "@/lib/image-focal";
 import type { ResolvedHeroSlide } from "@/types/home-hero";
 
 const INTERVAL_MS = 11_000;
@@ -79,6 +80,7 @@ export default function HomeHero3({
               fill
               priority={i === 0}
               className="object-cover object-center brightness-[0.82]"
+              style={imageFocalStyle(slide.bgFocalX, slide.bgFocalY, slide.bgZoom)}
               sizes="100vw"
             />
           </div>

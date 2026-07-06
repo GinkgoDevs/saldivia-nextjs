@@ -29,11 +29,10 @@ import {
   AdminModalFooter,
   AdminWizardPanel,
   adminToast,
+  FramedImageField,
   MediaDropzone,
   type WizardStep,
 } from "../_ui/admin-ui";
-import { SITE_IMAGE_PREVIEW } from "../_ui/admin-display-previews";
-import { AdminSitePreviewFrame } from "../_ui/AdminSitePreviewFrame";
 
 const HERO_WIZARD_STEPS: WizardStep[] = [
   {
@@ -57,6 +56,9 @@ type FormState = {
   id: string | null;
   sort_order: number;
   image_url: string;
+  image_focal_x: number;
+  image_focal_y: number;
+  image_zoom: number;
   image_alt: string;
   eyebrow: string;
   title: string;
@@ -74,6 +76,9 @@ function emptyForm(sortOrder: number): FormState {
     id: null,
     sort_order: sortOrder,
     image_url: "",
+    image_focal_x: 50,
+    image_focal_y: 50,
+    image_zoom: 1,
     image_alt: "",
     eyebrow: "",
     title: "",
@@ -92,6 +97,9 @@ function slideToForm(s: HomeHeroSlideRow): FormState {
     id: s.id,
     sort_order: s.sort_order,
     image_url: s.image_url ?? "",
+    image_focal_x: s.image_focal_x ?? 50,
+    image_focal_y: s.image_focal_y ?? 50,
+    image_zoom: s.image_zoom ?? 1,
     image_alt: s.image_alt ?? "",
     eyebrow: s.eyebrow ?? "",
     title: s.title ?? "",
@@ -189,6 +197,9 @@ export function HomeHeroAdmin({ initialSlides }: Props) {
         id: form.id,
         sort_order: form.sort_order,
         image_url: form.image_url,
+        image_focal_x: form.image_focal_x,
+        image_focal_y: form.image_focal_y,
+        image_zoom: form.image_zoom,
         image_alt: form.image_alt,
         eyebrow: form.eyebrow,
         title: form.title,
@@ -261,7 +272,13 @@ export function HomeHeroAdmin({ initialSlides }: Props) {
         adminToast.error(r.error);
         return;
       }
-      setForm((f) => ({ ...f, image_url: r.publicUrl }));
+      setForm((f) => ({
+        ...f,
+        image_url: r.publicUrl,
+        image_focal_x: 50,
+        image_focal_y: 50,
+        image_zoom: 1,
+      }));
       adminToast.info("Imagen subida. Pulse Guardar para publicar.");
     } finally {
       setUploading(false);
@@ -395,24 +412,22 @@ export function HomeHeroAdmin({ initialSlides }: Props) {
         >
           <AdminWizardPanel stepId="image" currentStepId={currentStepId}>
             <AdminFormSection title="Imagen de fondo" description="Foto amplia del bus o planta. Se verá detrás del texto.">
-              <AdminSitePreviewFrame
-                maxWidth={SITE_IMAGE_PREVIEW.homeHero.maxWidth}
-                hint="Vista previa como fondo del hero del inicio (pantalla completa, object-cover)."
-              >
-                <MediaDropzone
-                  id="hero-slide-image"
-                  label="Imagen de fondo"
-                  value={form.image_url}
-                  previewAspect={SITE_IMAGE_PREVIEW.homeHero.aspect}
-                  previewObjectFit={SITE_IMAGE_PREVIEW.homeHero.objectFit}
-                  previewBg={SITE_IMAGE_PREVIEW.homeHero.bg}
-                  showUrlField={false}
-                  uploading={uploading}
-                  disabled={busy}
-                  onChange={(url) => setForm((f) => ({ ...f, image_url: url }))}
-                  onFileSelect={onImageFile}
-                />
-              </AdminSitePreviewFrame>
+              <FramedImageField
+                id="hero-slide-image"
+                label="Imagen de fondo"
+                previewPreset="homeHero"
+                previewHint="Vista previa como fondo del hero del inicio. Arrastrá para encuadrar y ajustá el zoom."
+                imageUrl={form.image_url}
+                focalX={form.image_focal_x}
+                focalY={form.image_focal_y}
+                zoom={form.image_zoom}
+                uploading={uploading}
+                disabled={busy}
+                onImageUrlChange={(url) => setForm((f) => ({ ...f, image_url: url }))}
+                onFocalChange={(x, y) => setForm((f) => ({ ...f, image_focal_x: x, image_focal_y: y }))}
+                onZoomChange={(zoom) => setForm((f) => ({ ...f, image_zoom: zoom }))}
+                onFileSelect={onImageFile}
+              />
               <AdminField id="hero-alt" label="Texto alternativo (accesibilidad)" hint="Describe la imagen para lectores de pantalla.">
                 <Input
                   id="hero-alt"

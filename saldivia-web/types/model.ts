@@ -31,6 +31,9 @@ export type ModelImage = {
   id: string;
   model_id: string;
   image_url: string;
+  focal_x: number;
+  focal_y: number;
+  zoom: number;
   sort_order: number | null;
 };
 
@@ -42,6 +45,9 @@ export type Model = {
   description: string | null;
   /** Portada en tarjetas /flota y mega menú visual cuando aplique */
   cover_image_url: string | null;
+  cover_image_focal_x: number;
+  cover_image_focal_y: number;
+  cover_image_zoom: number;
   /** Fondo del hero en la ficha /producto/[slug]; si falta, se usa cover_image_url */
   hero_background_image_url: string | null;
   /** Encuadre del hero (0–100). */

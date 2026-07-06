@@ -4,8 +4,10 @@ import { motion, useReducedMotion } from "framer-motion";
 import type { Model } from "@/types/model";
 import { CATALOG_IMG } from "../data/flota-catalog";
 import { BRAND_DURATION, BRAND_EASE } from "../components/motion/brand-ease";
+import { imageFocalStyle } from "@/lib/image-focal";
 
-type FlotaModel = Pick<Model, "slug" | "name" | "description" | "cover_image_url">;
+type FlotaModel = Pick<Model, "slug" | "name" | "description" | "cover_image_url"> &
+  Partial<Pick<Model, "cover_image_focal_x" | "cover_image_focal_y" | "cover_image_zoom">>;
 
 const cardItem = {
   hidden: { opacity: 0, y: 22 },
@@ -27,6 +29,11 @@ function ModelCardInner({
 }) {
   const href = `/producto/${model.slug}`;
   const src = model.cover_image_url ?? CATALOG_IMG;
+  const coverStyle = imageFocalStyle(
+    model.cover_image_focal_x ?? 50,
+    model.cover_image_focal_y ?? 50,
+    model.cover_image_zoom ?? 1,
+  );
   const aspectClass =
     variant === "grid"
       ? "aspect-[4/5] sm:aspect-[4/3] lg:aspect-[5/4]"
@@ -43,7 +50,7 @@ function ModelCardInner({
     <a href={href} className={wrapClass}>
       <div className={`relative ${aspectClass} w-full shrink-0 overflow-hidden bg-surface-container-lowest`}>
         <div className="absolute inset-0 flex items-center justify-center transition-opacity duration-500 group-hover:opacity-0">
-          <img alt="" className="h-full w-full object-contain object-center" src={src} />
+          <img alt="" className="h-full w-full object-contain object-center" src={src} style={coverStyle} />
         </div>
       </div>
 
@@ -62,6 +69,7 @@ function ModelCardInner({
           alt=""
           className="absolute inset-0 h-full w-full scale-[1.06] object-cover object-center"
           src={src}
+          style={coverStyle}
         />
         <div className="absolute inset-0 bg-primary/85" />
 
