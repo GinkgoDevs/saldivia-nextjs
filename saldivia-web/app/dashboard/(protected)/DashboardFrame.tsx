@@ -118,8 +118,8 @@ export function DashboardFrame({
   const sidebarFooter = (mobile = false) => (
     <div
       className={cn(
-        "space-y-0.5",
-        mobile ? "mt-4 border-t border-outline-variant/25 pt-4" : "mt-auto border-t border-outline-variant/20 pt-4",
+        "shrink-0 space-y-0.5 border-t border-outline-variant/20 pt-3",
+        mobile && "mt-4 border-outline-variant/25 pt-4",
       )}
     >
       <div className="flex items-center justify-between px-3 pb-2">
@@ -174,29 +174,34 @@ export function DashboardFrame({
           </div>
         </div>
         {mobileOpen ? (
-          <nav className="max-h-[70vh] space-y-4 overflow-y-auto border-t border-outline-variant/25 px-3 py-4">
-            {NAV_GROUPS.map((group) => (
-              <div key={group.title}>
-                <p className="mb-1 px-3 text-[10px] font-bold uppercase tracking-widest text-on-surface-variant/70">
-                  {group.title}
-                </p>
-                <div className="space-y-0.5">{group.items.map((item) => navLink(item, true))}</div>
-              </div>
-            ))}
+          <nav className="flex max-h-[min(70dvh,calc(100dvh-4.5rem))] flex-col border-t border-outline-variant/25 px-3 py-4">
+            <div className="min-h-0 flex-1 space-y-4 overflow-y-auto overscroll-contain">
+              {NAV_GROUPS.map((group) => (
+                <div key={group.title}>
+                  <p className="mb-1 px-3 text-[10px] font-bold uppercase tracking-widest text-on-surface-variant/70">
+                    {group.title}
+                  </p>
+                  <div className="space-y-0.5">{group.items.map((item) => navLink(item, true))}</div>
+                </div>
+              ))}
+            </div>
             {sidebarFooter(true)}
           </nav>
         ) : null}
       </header>
 
-      <div className="mx-auto flex max-w-screen-2xl">
-        {/* Desktop sidebar */}
-        <aside className="hidden w-56 shrink-0 border-r border-outline-variant/30 bg-surface-container-lowest lg:block">
-          <div className="sticky top-0 flex h-screen flex-col px-3 py-6">
-            <div className="mb-6 px-2">
+      <div className="mx-auto flex w-full max-w-screen-2xl">
+        {/* Desktop sidebar — altura completa; nav scrollea si hace falta */}
+        <aside className="sticky top-0 hidden h-[calc(100dvh/0.9)] max-h-[calc(100dvh/0.9)] w-56 shrink-0 flex-col border-r border-outline-variant/30 bg-surface-container-lowest lg:flex">
+          <div className="flex min-h-0 flex-1 flex-col px-3 py-4">
+            <div className="mb-4 shrink-0 px-2">
               <DashboardBrand />
               <p className="mt-2 truncate text-xs text-on-surface-variant">{email ?? "Panel admin"}</p>
             </div>
-            <nav className="flex-1 space-y-5 overflow-y-auto">
+            <nav
+              className="min-h-0 flex-1 space-y-4 overflow-y-auto overscroll-contain py-1"
+              aria-label="Navegación del panel"
+            >
               {NAV_GROUPS.map((group) => (
                 <div key={group.title}>
                   <p className="mb-1.5 px-2 text-[10px] font-bold uppercase tracking-widest text-on-surface-variant/70">
