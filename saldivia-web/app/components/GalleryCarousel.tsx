@@ -170,14 +170,14 @@ export default function GalleryCarousel() {
       {/* Carril a ancho casi completo del viewport */}
       <div className="relative w-full">
         <div className="mx-auto w-full max-w-[min(100%,1920px)] px-3 sm:px-5 md:px-8 lg:px-10 xl:px-12">
-          <div className="relative overflow-hidden rounded-md md:rounded-lg" ref={viewportRef}>
+          <div className="relative overflow-hidden rounded-lg" ref={viewportRef}>
             <motion.div className="flex" style={{ x, gap: `${GAP}px` }} aria-live="polite">
               {extended.map((img, i) => {
                 const realIdx = (((i - CLONE) % N) + N) % N;
                 return (
                   <div
                     key={`${img.src}-${i}`}
-                    className="aspect-[16/10] shrink-0 overflow-hidden rounded-md md:aspect-[16/9] md:rounded-lg"
+                    className="aspect-[16/10] shrink-0 overflow-hidden rounded-lg md:aspect-[16/9]"
                     style={{ width: slideWidth }}
                   >
                     <button
@@ -282,7 +282,7 @@ export default function GalleryCarousel() {
             <img
               src={IMAGES[lightboxIdx].src}
               alt={IMAGES[lightboxIdx].alt}
-              className="mx-auto max-h-[82vh] w-auto max-w-full rounded-md object-contain shadow-2xl"
+              className="mx-auto max-h-[82vh] w-auto max-w-full rounded-lg object-contain shadow-2xl"
               draggable={false}
             />
             <figcaption className="mt-3 text-center text-sm text-white/80">

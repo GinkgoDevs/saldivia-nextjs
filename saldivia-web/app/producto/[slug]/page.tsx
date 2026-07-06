@@ -234,7 +234,7 @@ export default async function ProductoPage({ params }: Props) {
                   className={buttonClass({
                     variant: "primary",
                     size: "lg",
-                    className: "self-start rounded-curve-md px-8",
+                    className: "self-start rounded-curve-sm px-8",
                   })}
                 >
                   Contacto comercial

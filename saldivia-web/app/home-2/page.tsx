@@ -55,7 +55,7 @@ export default function Home2Page() {
                 <a
                   key={card.href}
                   href={card.href}
-                  className="hub-card group relative flex min-h-[320px] cursor-pointer flex-col justify-end overflow-hidden rounded-sm border border-outline-variant/25 bg-surface-container-lowest p-8 shadow-[0px_12px_32px_rgba(13,44,79,0.08)] transition-shadow duration-300 hover:border-accent-blue/35 hover:shadow-[0px_20px_48px_rgba(13,44,79,0.14)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue focus-visible:ring-offset-2 md:min-h-[380px] md:p-10"
+                  className="hub-card group relative flex min-h-[320px] cursor-pointer flex-col justify-end overflow-hidden rounded-lg border border-outline-variant/25 bg-surface-container-lowest p-8 shadow-[0px_12px_32px_rgba(13,44,79,0.08)] transition-shadow duration-300 hover:border-accent-blue/35 hover:shadow-[0px_20px_48px_rgba(13,44,79,0.14)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue focus-visible:ring-offset-2 md:min-h-[380px] md:p-10"
                 >
                   <div className="absolute inset-0 hub-bg transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]">
                     <img alt={card.imgAlt} className="h-full w-full object-cover" src={card.img} />
@@ -81,7 +81,7 @@ export default function Home2Page() {
         {/* After-Sales Box */}
         <section className="bg-[#081b31] py-12 industrial-grid">
           <div className="container mx-auto px-4 md:px-6">
-            <div className="max-w-5xl mx-auto bg-primary-brand border border-white/5 rounded-xl overflow-hidden shadow-2xl flex flex-col lg:flex-row items-center">
+            <div className="max-w-5xl mx-auto bg-primary-brand border border-white/5 rounded-lg overflow-hidden shadow-2xl flex flex-col lg:flex-row items-center">
               <div className="p-10 lg:w-[45%]">
                 <div className="flex items-center gap-4 mb-3">
                   <span className="material-symbols-outlined text-accent-blue text-3xl">manufacturing</span>
@@ -113,7 +113,7 @@ export default function Home2Page() {
                 <img
                   key={item.src}
                   alt={item.alt}
-                  className="min-w-[min(72vw,300px)] md:min-w-[280px] lg:min-w-[260px] aspect-[16/7] object-cover rounded-sm desaturated-img hover:grayscale-0 transition-all duration-700 snap-center shrink-0"
+                  className="min-w-[min(72vw,300px)] md:min-w-[280px] lg:min-w-[260px] aspect-[16/7] object-cover rounded-lg desaturated-img hover:grayscale-0 transition-all duration-700 snap-center shrink-0"
                   src={item.src}
                 />
               ))}

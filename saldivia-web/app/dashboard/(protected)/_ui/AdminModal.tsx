@@ -94,7 +94,7 @@ export function AdminModal({
         aria-modal="true"
         aria-labelledby="admin-modal-title"
         className={cn(
-          "relative z-10 my-auto flex w-full flex-col overflow-hidden rounded-sm border border-outline-variant/30 bg-surface-container-lowest shadow-2xl",
+          "relative z-10 my-auto flex w-full flex-col overflow-hidden rounded-lg border border-outline-variant/30 bg-surface-container-lowest shadow-2xl",
           maxWidthClass,
           className,
         )}

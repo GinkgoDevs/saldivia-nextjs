@@ -23,7 +23,7 @@ export function ProductSpecTable({ rows }: { rows: Row[] }) {
   const reduce = useReducedMotion();
   if (reduce) {
     return (
-      <div className="overflow-x-auto rounded-sm border border-outline-variant/30 bg-surface-container-lowest shadow-elev-1 -mx-1 px-1 sm:mx-0 sm:px-0">
+      <div className="overflow-x-auto rounded-lg border border-outline-variant/30 bg-surface-container-lowest shadow-elev-1 -mx-1 px-1 sm:mx-0 sm:px-0">
         <table className="w-full min-w-[280px] text-left text-sm">
           <tbody>
             {rows.map((row) => (
@@ -42,7 +42,7 @@ export function ProductSpecTable({ rows }: { rows: Row[] }) {
     );
   }
   return (
-    <div className="overflow-x-auto rounded-sm border border-outline-variant/30 bg-surface-container-lowest shadow-elev-1 -mx-1 px-1 sm:mx-0 sm:px-0">
+    <div className="overflow-x-auto rounded-lg border border-outline-variant/30 bg-surface-container-lowest shadow-elev-1 -mx-1 px-1 sm:mx-0 sm:px-0">
       <table className="w-full min-w-[280px] text-left text-sm">
         <motion.tbody initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.15 }} variants={bodyV}>
           {rows.map((row) => (

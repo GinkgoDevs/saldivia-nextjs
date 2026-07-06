@@ -82,7 +82,7 @@ export default function HomeHero() {
                   variant: "primary",
                   size: "lg",
                   className:
-                    "rounded-curve-md px-8 shadow-elev-2 md:px-10",
+                    "rounded-curve-sm px-8 shadow-elev-2 md:px-10",
                 })}
               >
                 Explorar modelos
@@ -95,7 +95,7 @@ export default function HomeHero() {
                 className={buttonClass({
                   variant: "on-dark-outline",
                   size: "lg",
-                  className: "rounded-curve-md px-8 md:px-10",
+                  className: "rounded-curve-sm px-8 md:px-10",
                 })}
               >
                 Tour industrial

@@ -136,7 +136,7 @@ export function FramedImageField({
     <div
       ref={previewRef}
       className={cn(
-        "relative w-full overflow-hidden rounded-sm border border-outline-variant/30",
+        "relative w-full overflow-hidden rounded-lg border border-outline-variant/30",
         preview.bg,
         preview.aspect,
         canFrame ? (dragging ? "cursor-grabbing" : "cursor-grab") : "",

@@ -57,7 +57,7 @@ function ToastCard({ toast, onDismiss }: { toast: ToastItem; onDismiss: (id: str
       role="status"
       aria-live="polite"
       className={cn(
-        "pointer-events-auto flex w-full max-w-sm items-start gap-2.5 rounded-sm border px-3 py-3 text-sm leading-snug transition-all duration-200",
+        "pointer-events-auto flex w-full max-w-sm items-start gap-2.5 rounded-lg border px-3 py-3 text-sm leading-snug transition-all duration-200",
         STYLES[toast.variant],
       )}
     >

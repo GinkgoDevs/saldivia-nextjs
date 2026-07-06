@@ -77,7 +77,7 @@ export default function NosotrosPage() {
                   </div>
                 </div>
                 <div className="relative w-full lg:w-1/2">
-                  <div className="rotate-2 rounded-xl bg-surface-container-high p-2 shadow-2xl transition-transform duration-500 hover:rotate-0 sm:p-4">
+                  <div className="rotate-2 rounded-lg bg-surface-container-high p-2 shadow-2xl transition-transform duration-500 hover:rotate-0 sm:p-4">
                     <img
                       className="h-auto min-h-[220px] w-full max-h-[420px] rounded-lg object-cover sm:h-[500px] sm:max-h-none"
                       alt="Soldadura de estructura metálica en planta industrial Saldivia Carrocería"

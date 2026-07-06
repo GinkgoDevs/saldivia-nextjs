@@ -282,15 +282,15 @@ export default function ArgentinaProjectsMapClient({
             </div>
 
             <div className="flex flex-wrap gap-3 lg:max-w-md lg:justify-end">
-              <div className="rounded-curve-md border border-cyan-400/35 bg-[#081a30]/85 px-4 py-3 text-center font-headline sm:min-w-[7.5rem]">
+              <div className="rounded-curve-lg border border-cyan-400/35 bg-[#081a30]/85 px-4 py-3 text-center font-headline sm:min-w-[7.5rem]">
                 <p className="text-2xl font-black tabular-nums text-white">{aggregate.provincesWith}</p>
                 <p className="ui-caption-caps mt-1 text-slate-400">Provincias</p>
               </div>
-              <div className="rounded-curve-md border border-cyan-400/35 bg-[#081a30]/85 px-4 py-3 text-center font-headline sm:min-w-[7.5rem]">
+              <div className="rounded-curve-lg border border-cyan-400/35 bg-[#081a30]/85 px-4 py-3 text-center font-headline sm:min-w-[7.5rem]">
                 <p className="text-2xl font-black tabular-nums text-white">{aggregate.projectsTotal}</p>
                 <p className="ui-caption-caps mt-1 text-slate-400">Proyectos</p>
               </div>
-              <div className="rounded-curve-md border border-cyan-400/35 bg-[#081a30]/85 px-4 py-3 text-center font-headline sm:min-w-[7.5rem]">
+              <div className="rounded-curve-lg border border-cyan-400/35 bg-[#081a30]/85 px-4 py-3 text-center font-headline sm:min-w-[7.5rem]">
                 <p className="text-2xl font-black tabular-nums text-white">
                   +{new Date().getFullYear() - 1995}
                 </p>
@@ -299,7 +299,7 @@ export default function ArgentinaProjectsMapClient({
             </div>
           </div>
 
-          <div className="rounded-curve-md border border-cyan-400/25 bg-[#030b14] shadow-[0px_42px_100px_rgba(0,0,0,0.55)] lg:grid lg:grid-cols-[minmax(340px,44%)_minmax(0,1fr)] lg:items-start lg:overflow-hidden">
+          <div className="rounded-curve-lg border border-cyan-400/25 bg-[#030b14] shadow-[0px_42px_100px_rgba(0,0,0,0.55)] lg:grid lg:grid-cols-[minmax(340px,44%)_minmax(0,1fr)] lg:items-start lg:overflow-hidden">
             <div ref={mapSurfaceRef} className="relative h-fit w-full min-w-0">
               <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_54%_20%,rgba(32,149,212,0.08),transparent_58%)]" />
 

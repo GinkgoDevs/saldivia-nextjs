@@ -334,7 +334,7 @@ function Lightbox({
         className="relative mx-auto flex min-h-0 w-full max-w-6xl flex-1 flex-col px-4 pb-6 sm:px-6"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="relative min-h-0 flex-1 overflow-hidden rounded-curve-md bg-white/5">
+        <div className="relative min-h-0 flex-1 overflow-hidden rounded-curve-lg bg-white/5">
           <AnimatePresence initial={false} custom={direction} mode="wait">
             <motion.div
               key={list[index].src}
@@ -389,7 +389,7 @@ function Lightbox({
                 key={`lb-${item.src}-${i}`}
                 type="button"
                 onClick={() => onGo(i)}
-                className={`relative h-14 w-[4.5rem] shrink-0 cursor-pointer overflow-hidden rounded border-2 transition-all ${
+                className={`relative h-14 w-[4.5rem] shrink-0 cursor-pointer overflow-hidden rounded-curve-sm border-2 transition-all ${
                   i === index ? "border-secondary-container opacity-100" : "border-white/20 opacity-50 hover:opacity-80"
                 }`}
               >
@@ -487,8 +487,8 @@ export default function ProductGalleryCarousel({
   const stageClass = showcase
     ? "h-[min(70vh,820px)] min-h-[420px] w-full max-w-none overflow-hidden sm:h-[min(74vh,880px)] md:h-[min(78vh,920px)]"
     : embedded
-      ? "aspect-[4/3] w-full overflow-hidden rounded-curve-md border border-outline-variant/25 bg-surface-container-lowest shadow-elev-1 sm:aspect-[3/4] lg:aspect-[4/5]"
-      : "aspect-[4/3] w-full overflow-hidden rounded-sm sm:aspect-video md:aspect-[21/9] md:rounded-md";
+      ? "aspect-[4/3] w-full overflow-hidden rounded-curve-lg border border-outline-variant/25 bg-surface-container-lowest shadow-elev-1 sm:aspect-[3/4] lg:aspect-[4/5]"
+      : "aspect-[4/3] w-full overflow-hidden rounded-lg border border-outline-variant/25 bg-surface-container-lowest shadow-elev-1 sm:aspect-video md:aspect-[21/9]";
 
   const fillMode = embedded || showcase ? "contain" : "cover";
   const imageClassName =

@@ -121,7 +121,7 @@ export function AdminCrudCard({
   return (
     <li
       className={cn(
-        "flex overflow-hidden rounded-sm border bg-surface-container-lowest transition-shadow",
+        "flex overflow-hidden rounded-lg border bg-surface-container-lowest transition-shadow",
         isDropTarget ? "border-primary ring-2 ring-primary/25" : "border-outline-variant/30",
         isDragging && "opacity-50",
       )}

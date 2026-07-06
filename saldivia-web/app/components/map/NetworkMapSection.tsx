@@ -11,7 +11,7 @@ import { LocationCard } from "./LocationCard";
 const MapView = dynamic(() => import("./MapView"), {
   ssr: false,
   loading: () => (
-    <div className="w-full h-full flex items-center justify-center bg-[#0d1520] rounded-xl">
+    <div className="w-full h-full flex items-center justify-center bg-[#0d1520] rounded-lg">
       <div className="text-center">
         <div className="w-8 h-8 border-2 border-[#2095D4]/30 border-t-[#2095D4] rounded-full animate-spin mx-auto" />
         <p className="text-slate-500 text-sm mt-3">Cargando mapa…</p>
@@ -88,7 +88,7 @@ export default function NetworkMapSection() {
         {/* Map + List */}
         <div className="flex flex-col lg:flex-row gap-4 lg:h-[520px]">
           {/* Map */}
-          <div className="lg:flex-[3] h-[380px] lg:h-full rounded-xl overflow-hidden border border-white/10">
+          <div className="lg:flex-[3] h-[380px] lg:h-full rounded-lg overflow-hidden border border-white/10">
             {error ? (
               <div className="w-full h-full flex flex-col items-center justify-center bg-[#0d1520] text-slate-500 text-sm gap-2">
                 <span className="material-symbols-outlined text-3xl">map_off</span>

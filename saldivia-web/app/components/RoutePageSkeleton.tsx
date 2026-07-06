@@ -72,7 +72,7 @@ export default function RoutePageSkeleton({
             {Array.from({ length: 6 }).map((_, i) => (
               <div
                 key={i}
-                className="overflow-hidden rounded-sm border border-outline-variant/35 bg-surface-container-lowest shadow-[0px_12px_32px_rgba(13,44,79,0.06)]"
+                className="overflow-hidden rounded-lg border border-outline-variant/35 bg-surface-container-lowest shadow-[0px_12px_32px_rgba(13,44,79,0.06)]"
               >
                 <ShimmerBlock className="aspect-[16/9] w-full rounded-none" />
                 <div className="space-y-3 p-5">

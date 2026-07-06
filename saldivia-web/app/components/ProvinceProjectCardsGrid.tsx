@@ -93,7 +93,7 @@ function ProjectLightbox({
       <div className="pointer-events-none flex h-full w-full items-center justify-center p-4 sm:p-8">
         <div className="pointer-events-auto relative flex max-h-[min(88vh,920px)] w-full max-w-5xl flex-col">
           <div
-            className="relative min-h-[200px] flex-1 cursor-pointer overflow-hidden rounded-xl border border-white/15 bg-[#051018] shadow-2xl"
+            className="relative min-h-[200px] flex-1 cursor-pointer overflow-hidden rounded-curve-lg border border-white/15 bg-[#051018] shadow-2xl"
             onClick={onClose}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -190,7 +190,7 @@ function ProjectCard({
 
   return (
     <article
-      className={`group flex flex-col overflow-hidden rounded-curve-sm border border-white/12 bg-[#051018]/90 shadow-[0_12px_32px_rgba(0,0,0,0.35)] transition-colors hover:border-cyan-400/35 ${
+      className={`group flex flex-col overflow-hidden rounded-curve-lg border border-white/12 bg-[#051018]/90 shadow-[0_12px_32px_rgba(0,0,0,0.35)] transition-colors hover:border-cyan-400/35 ${
         fillHeight ? "h-full min-h-0" : ""
       }`}
     >
@@ -326,7 +326,7 @@ export function ProvinceProjectCardsGrid({
 
   if (projects.length === 0) {
     return (
-      <div className="rounded-curve-md border border-dashed border-white/22 bg-[#071422]/80 p-5 text-base leading-relaxed text-slate-500">
+      <div className="rounded-curve-lg border border-dashed border-white/22 bg-[#071422]/80 p-5 text-base leading-relaxed text-slate-500">
         No hay proyectos en esta provincia. Ejecute{" "}
         <code className="text-xs text-slate-400">npm run sync:mapa</code> para subir la carpeta MAPA a
         Supabase Storage.
