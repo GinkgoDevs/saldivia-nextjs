@@ -31,11 +31,12 @@ export default async function FlotaPage() {
       <main>
         <section className="relative flex min-h-[min(100svh,520px)] items-center overflow-hidden pt-20 pb-12 sm:min-h-[420px] sm:pt-16 sm:pb-0 md:min-h-[480px]">
           <Image
-            src="/hero-buses.png"
-            alt=""
+            src="/hero-flota-2.jpeg"
+            alt="Flota de buses Saldivia en planta"
             fill
-            className="object-cover object-center"
+            className="object-cover object-[50%_72%] sm:object-[50%_68%] md:object-[50%_65%]"
             priority
+            sizes="100vw"
           />
           <div className="pointer-events-none absolute inset-0 bg-black/60" />
           <div className="pointer-events-none absolute inset-0 industrial-grid-light opacity-[0.08]" />
