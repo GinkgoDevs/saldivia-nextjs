@@ -25,8 +25,8 @@ export function AdminFullscreenForm({
       {steps && steps.length > 0 ? (
         <AdminStepIndicator steps={steps} current={currentStep} onStepClick={onStepClick} />
       ) : null}
-      <form id={id} className="flex min-h-0 flex-1 flex-col overflow-hidden" onSubmit={onSubmit}>
-        <div className="flex min-h-0 flex-1 flex-col justify-center overflow-hidden px-4 py-3 sm:px-5">
+      <form id={id} className="flex min-h-0 flex-1 flex-col" onSubmit={onSubmit}>
+        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-3 pb-6 sm:px-5">
           <div className="mx-auto w-full max-w-3xl space-y-3">{children}</div>
         </div>
       </form>

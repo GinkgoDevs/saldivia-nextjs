@@ -18,6 +18,7 @@ import {
   AdminCrudBadge,
   AdminCrudCard,
   AdminCrudLayout,
+  AdminEmptyState,
   AdminField,
   AdminFormSection,
   AdminFullscreenForm,
@@ -227,9 +228,11 @@ export function LocationsAdmin({ initial }: Props) {
         newDisabled={busy}
       >
         {sortedList.length === 0 ? (
-          <li className="rounded-sm border border-dashed border-outline-variant/40 p-8 text-center text-sm text-on-surface-variant">
-            No hay ubicaciones cargadas.
-          </li>
+          <AdminEmptyState
+            icon={MapPin}
+            title="Sin ubicaciones"
+            description="Cargá talleres, distribuidores o concesionarios para mostrarlos en el mapa de atención del sitio."
+          />
         ) : (
           sortedList.map((l) => (
             <AdminCrudCard

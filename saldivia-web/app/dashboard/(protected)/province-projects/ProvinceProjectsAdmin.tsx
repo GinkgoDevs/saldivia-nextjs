@@ -8,6 +8,7 @@ import type { ProvinceProjectRow } from "@/types/province-project";
 import { Input } from "@/app/components/ui/Input";
 import { Textarea } from "@/app/components/ui/Textarea";
 import { Button } from "@/app/components/ui/Button";
+import { Map as MapIcon } from "lucide-react";
 import {
   AdminCheckbox,
   AdminCrudBadge,
@@ -15,6 +16,7 @@ import {
   AdminCrudDragHandle,
   AdminCrudLayout,
   AdminCrudThumbnail,
+  AdminEmptyState,
   AdminField,
   AdminFormSection,
   AdminFullscreenForm,
@@ -405,9 +407,15 @@ export function ProvinceProjectsAdmin({ initial, provinceOptions }: Props) {
         newDisabled={busy || reorderMode}
       >
         {displayList.length === 0 ? (
-          <li className="rounded-sm border border-dashed border-outline-variant/40 p-8 text-center text-sm text-on-surface-variant">
-            {reorderMode ? "Sin proyectos en esta provincia." : "No hay proyectos cargados."}
-          </li>
+          <AdminEmptyState
+            icon={MapIcon}
+            title={reorderMode ? "Sin proyectos en esta provincia" : "Sin proyectos en el mapa"}
+            description={
+              reorderMode
+                ? "Elegí otra provincia o desactivá el modo reordenar para ver todos los proyectos."
+                : "Cargá empresas y casos por provincia para el mapa interactivo del sitio."
+            }
+          />
         ) : (
           displayList.map((row, index) => renderProjectCard(row, index))
         )}

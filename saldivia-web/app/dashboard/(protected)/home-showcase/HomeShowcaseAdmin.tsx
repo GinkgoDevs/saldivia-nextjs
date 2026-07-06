@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { Globe } from "lucide-react";
 
 import {
   removeModelFromHomeShowcase,
@@ -18,6 +19,7 @@ import {
   AdminCrudCard,
   AdminCrudLayout,
   AdminCrudThumbnail,
+  AdminEmptyState,
   AdminField,
   AdminFormSection,
   AdminFullscreenForm,
@@ -232,13 +234,19 @@ export function HomeShowcaseAdmin({ initialSlides }: Props) {
         }
       >
         {ordered.length === 0 ? (
-          <li className="rounded-sm border border-dashed border-outline-variant/40 p-8 text-center text-sm text-on-surface-variant">
-            No hay modelos en el showcase. En{" "}
-            <Link href="/dashboard/models" className="font-medium text-primary underline-offset-2 hover:underline">
-              Modelos
-            </Link>
-            , activá «Mostrar en el Showcase técnico del home» en cada colectivo que quieras destacar.
-          </li>
+          <AdminEmptyState
+            icon={Globe}
+            title="Showcase vacío"
+            description={
+              <>
+                Marcá modelos en{" "}
+                <Link href="/dashboard/models" className="font-medium text-primary underline-offset-2 hover:underline">
+                  Catálogo → Modelos
+                </Link>{" "}
+                con «Mostrar en el Showcase del inicio». Desde acá personalizás imagen y textos.
+              </>
+            }
+          />
         ) : (
           ordered.map((s) => {
             const thumb = previewImageUrl(s);

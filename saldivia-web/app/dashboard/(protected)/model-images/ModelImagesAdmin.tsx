@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import { ImageIcon } from "lucide-react";
 import {
   addModelImage,
   deleteModelImage,
@@ -17,6 +18,7 @@ import {
   AdminCrudDragHandle,
   AdminCrudLayout,
   AdminCrudThumbnail,
+  AdminEmptyState,
   AdminField,
   AdminFormSection,
   AdminFullscreenForm,
@@ -248,9 +250,15 @@ export function ModelImagesAdmin({ models, initialImages }: Props) {
         newDisabled={busy || !selectedModelId}
       >
         {modelImages.length === 0 ? (
-          <li className="rounded-sm border border-dashed border-outline-variant/40 p-8 text-center text-sm text-on-surface-variant">
-            Sin imágenes para este modelo. Agregá una con el botón superior.
-          </li>
+          <AdminEmptyState
+            icon={ImageIcon}
+            title="Galería vacía"
+            description={
+              selectedModel
+                ? `Todavía no hay fotos para ${selectedModel.name}. Agregá imágenes para el carrusel de la ficha del producto.`
+                : "Elegí un modelo y subí las fotos de su galería."
+            }
+          />
         ) : (
           modelImages.map((img, index) => (
             <AdminCrudCard
