@@ -74,6 +74,7 @@ export default async function ProductoPage({ params }: Props) {
   const altPrefix = model.name;
   const hero =
     model.hero_background_image_url ?? model.cover_image_url ?? gallery[0] ?? DEFAULT_HERO;
+  const hasCustomHero = Boolean(model.hero_background_image_url?.trim());
   const defaultDesc =
     "Uniendo caminos. El estándar de eficiencia para traslados de media y larga distancia, con la precisión Saldivia en cada unidad.";
 
@@ -88,41 +89,74 @@ export default async function ProductoPage({ params }: Props) {
       <main>
         <section className="relative flex min-h-[min(100svh,880px)] flex-col justify-end overflow-hidden bg-primary pb-14 pt-28 sm:min-h-[min(92svh,760px)] sm:justify-center sm:pb-16 sm:pt-24 md:pb-20 md:pt-28 lg:min-h-[min(88svh,820px)]">
           <div className="absolute inset-0 z-0 overflow-hidden">
-            <div className="pointer-events-none absolute left-1/2 top-1/2 h-[112%] w-[118%] max-w-none -translate-x-1/2 -translate-y-1/2 md:h-[110%] md:w-[115%]">
+            <div
+              className={
+                hasCustomHero
+                  ? "pointer-events-none absolute inset-0"
+                  : "pointer-events-none absolute left-1/2 top-1/2 h-[112%] w-[118%] max-w-none -translate-x-1/2 -translate-y-1/2 md:h-[110%] md:w-[115%]"
+              }
+            >
               <img
                 alt=""
-                className="animate-product-hero-image h-full w-full object-cover object-[62%_42%] opacity-[0.70] md:opacity-[0.76]"
+                className={
+                  hasCustomHero
+                    ? "animate-product-hero-image h-full w-full object-cover object-center"
+                    : "animate-product-hero-image h-full w-full object-cover object-[62%_42%] opacity-[0.70] md:opacity-[0.76]"
+                }
                 src={hero}
               />
             </div>
-            <div
-              className="absolute inset-0 md:hidden"
-              aria-hidden
-              style={{
-                background:
-                  "linear-gradient(to top, #001732 0%, rgba(0,23,50,0.78) 38%, rgba(0,23,50,0.35) 100%)",
-              }}
-            />
-            <div
-              className="absolute inset-0 hidden md:block"
-              aria-hidden
-              style={{
-                background:
-                  "linear-gradient(105deg, #001732 0%, rgba(0,23,50,0.93) 38%, rgba(0,23,50,0.52) 62%, rgba(0,23,50,0.12) 85%, transparent 100%)",
-              }}
-            />
-            <div
-              className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_95%_75%_at_15%_85%,rgba(32,149,212,0.28)_0%,transparent_52%)] mix-blend-screen opacity-90 md:opacity-100"
-              aria-hidden
-            />
-            <div
-              className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(0,8,18,0.55)_100%)] opacity-80 md:opacity-[0.65]"
-              aria-hidden
-            />
-            <div
-              className="pointer-events-none absolute inset-0 opacity-[0.07] industrial-grid mix-blend-overlay"
-              aria-hidden
-            />
+            {hasCustomHero ? (
+              <>
+                <div
+                  className="absolute inset-0 md:hidden"
+                  aria-hidden
+                  style={{
+                    background:
+                      "linear-gradient(to top, rgba(0,23,50,0.92) 0%, rgba(0,23,50,0.55) 42%, rgba(0,23,50,0.18) 100%)",
+                  }}
+                />
+                <div
+                  className="absolute inset-0 hidden md:block"
+                  aria-hidden
+                  style={{
+                    background:
+                      "linear-gradient(105deg, rgba(0,23,50,0.9) 0%, rgba(0,23,50,0.78) 28%, rgba(0,23,50,0.35) 52%, rgba(0,23,50,0.08) 68%, transparent 82%)",
+                  }}
+                />
+              </>
+            ) : (
+              <>
+                <div
+                  className="absolute inset-0 md:hidden"
+                  aria-hidden
+                  style={{
+                    background:
+                      "linear-gradient(to top, #001732 0%, rgba(0,23,50,0.78) 38%, rgba(0,23,50,0.35) 100%)",
+                  }}
+                />
+                <div
+                  className="absolute inset-0 hidden md:block"
+                  aria-hidden
+                  style={{
+                    background:
+                      "linear-gradient(105deg, #001732 0%, rgba(0,23,50,0.93) 38%, rgba(0,23,50,0.52) 62%, rgba(0,23,50,0.12) 85%, transparent 100%)",
+                  }}
+                />
+                <div
+                  className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_95%_75%_at_15%_85%,rgba(32,149,212,0.28)_0%,transparent_52%)] mix-blend-screen opacity-90 md:opacity-100"
+                  aria-hidden
+                />
+                <div
+                  className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(0,8,18,0.55)_100%)] opacity-80 md:opacity-[0.65]"
+                  aria-hidden
+                />
+                <div
+                  className="pointer-events-none absolute inset-0 opacity-[0.07] industrial-grid mix-blend-overlay"
+                  aria-hidden
+                />
+              </>
+            )}
           </div>
           <div className="relative z-10 flex flex-col justify-center px-4 sm:px-6 md:px-8 lg:px-10">
             <div className="container mx-auto max-w-7xl">
