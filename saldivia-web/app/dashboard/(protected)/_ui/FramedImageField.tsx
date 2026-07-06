@@ -225,19 +225,24 @@ export function FramedImageField({
               htmlFor={`${id}-zoom`}
             >
               <ZoomIn className="size-3.5" aria-hidden />
-              Zoom
+              {preview.zoomMin < 1 ? "Escala" : "Zoom"}
             </label>
             <input
               id={`${id}-zoom`}
               type="range"
-              min={1}
-              max={2.5}
+              min={preview.zoomMin}
+              max={preview.zoomMax}
               step={0.05}
               value={zoom}
               disabled={disabled}
               className="w-full cursor-pointer accent-primary"
               onChange={(e) => onZoomChange(Number(e.target.value))}
             />
+            {preview.zoomMin < 1 ? (
+              <p className="text-[10px] text-on-surface-variant">
+                Menos de 100% aleja la foto dentro del recuadro (útil con fondo blanco).
+              </p>
+            ) : null}
           </div>
           <Button
             type="button"

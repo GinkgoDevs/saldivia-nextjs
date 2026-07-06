@@ -6,7 +6,7 @@ import { revalidatePath } from "next/cache";
 
 import type { ModelSegment } from "@/types/model";
 import type { LocationType } from "@/types/location";
-import { clampImageFocal, clampImageZoom } from "@/lib/image-focal";
+import { clampImageFocal, clampImageZoom, IMAGE_ZOOM_RANGE } from "@/lib/image-focal";
 
 const SEGMENTS: ModelSegment[] = [
   "urbano",
@@ -137,7 +137,11 @@ function clampHeroFocal(n: number) {
 }
 
 function clampHeroZoom(n: number) {
-  return clampImageZoom(n);
+  return clampImageZoom(n, IMAGE_ZOOM_RANGE.cover.min, IMAGE_ZOOM_RANGE.cover.max);
+}
+
+function clampContainZoom(n: number) {
+  return clampImageZoom(n, IMAGE_ZOOM_RANGE.contain.min, IMAGE_ZOOM_RANGE.contain.max);
 }
 
 export async function saveModel(input: SaveModelInput) {
@@ -159,7 +163,7 @@ export async function saveModel(input: SaveModelInput) {
     cover_image_url: input.cover_image_url.trim() || null,
     cover_image_focal_x: clampHeroFocal(input.cover_image_focal_x),
     cover_image_focal_y: clampHeroFocal(input.cover_image_focal_y),
-    cover_image_zoom: clampHeroZoom(input.cover_image_zoom),
+    cover_image_zoom: clampContainZoom(input.cover_image_zoom),
     hero_background_image_url: input.hero_background_image_url.trim() || null,
     hero_background_focal_x: clampHeroFocal(input.hero_background_focal_x),
     hero_background_focal_y: clampHeroFocal(input.hero_background_focal_y),
@@ -726,7 +730,7 @@ export async function saveHomeShowcaseSlide(input: SaveHomeShowcaseSlideInput) {
     hero_image_url: input.hero_image_url.trim() || null,
     hero_image_focal_x: Math.min(100, Math.max(0, Math.round(input.hero_image_focal_x))),
     hero_image_focal_y: Math.min(100, Math.max(0, Math.round(input.hero_image_focal_y))),
-    hero_image_zoom: Math.min(2.5, Math.max(1, Number(input.hero_image_zoom) || 1)),
+    hero_image_zoom: clampContainZoom(input.hero_image_zoom),
     eyebrow: input.eyebrow.trim() || null,
     lead: input.lead.trim() || null,
     metrics: showcaseMetricsFromForm({
@@ -941,7 +945,7 @@ export async function addModelImage(input: {
     image_url: input.image_url.trim(),
     focal_x: clampHeroFocal(input.focal_x),
     focal_y: clampHeroFocal(input.focal_y),
-    zoom: clampHeroZoom(input.zoom),
+    zoom: clampContainZoom(input.zoom),
     sort_order: Number.isFinite(input.sort_order) ? input.sort_order : 0,
   };
 
@@ -999,7 +1003,7 @@ export async function updateModelImage(input: {
     image_url,
     focal_x: clampHeroFocal(input.focal_x),
     focal_y: clampHeroFocal(input.focal_y),
-    zoom: clampHeroZoom(input.zoom),
+    zoom: clampContainZoom(input.zoom),
     sort_order: Number.isFinite(input.sort_order) ? input.sort_order : 0,
   };
 
