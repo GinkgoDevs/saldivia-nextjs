@@ -29,6 +29,8 @@ import {
   MediaDropzone,
   type WizardStep,
 } from "../_ui/admin-ui";
+import { SITE_IMAGE_PREVIEW } from "../_ui/admin-display-previews";
+import { AdminSitePreviewFrame } from "../_ui/AdminSitePreviewFrame";
 
 const PROJECT_WIZARD_STEPS: WizardStep[] = [
   {
@@ -511,17 +513,34 @@ export function ProvinceProjectsAdmin({ initial, provinceOptions }: Props) {
 
           <AdminWizardPanel stepId="media" currentStepId={currentStepId}>
             <AdminFormSection title="Imagen" description="Foto del colectivo o del proyecto en la empresa.">
-              <MediaDropzone
-                id="pp-img"
-                label="Imagen del proyecto"
-                value={form.image_url}
-                uploading={uploading}
-                disabled={busy}
-                compact
-                showUrlField={false}
-                onChange={(url) => setForm((f) => ({ ...f, image_url: url }))}
-                onFileSelect={onImageFile}
-              />
+              <AdminSitePreviewFrame
+                maxWidth={SITE_IMAGE_PREVIEW.mapProject.maxWidth}
+                frameClassName="rounded-curve-sm border border-white/12 bg-[#051018]/90 shadow-[0_12px_32px_rgba(0,0,0,0.35)]"
+                hint="Vista previa como en la card del mapa por provincia."
+                footer={
+                  form.title.trim() ? (
+                    <div className="p-4">
+                      <p className="font-headline text-sm font-bold leading-tight text-white">
+                        {form.title.trim()}
+                      </p>
+                    </div>
+                  ) : undefined
+                }
+              >
+                <MediaDropzone
+                  id="pp-img"
+                  label="Imagen del proyecto"
+                  value={form.image_url}
+                  uploading={uploading}
+                  disabled={busy}
+                  showUrlField={false}
+                  previewAspect={SITE_IMAGE_PREVIEW.mapProject.aspect}
+                  previewObjectFit={SITE_IMAGE_PREVIEW.mapProject.objectFit}
+                  previewBg={SITE_IMAGE_PREVIEW.mapProject.bg}
+                  onChange={(url) => setForm((f) => ({ ...f, image_url: url }))}
+                  onFileSelect={onImageFile}
+                />
+              </AdminSitePreviewFrame>
             </AdminFormSection>
             <AdminFormSection title="Detalles opcionales">
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">

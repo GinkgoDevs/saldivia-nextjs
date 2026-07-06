@@ -18,6 +18,10 @@ type Props = {
   uploading?: boolean;
   disabled?: boolean;
   previewAspect?: string;
+  /** Cómo encaja la imagen en el recuadro de preview (catálogo usa contain). */
+  previewObjectFit?: "cover" | "contain";
+  previewBg?: string;
+  previewImageClassName?: string;
   showUrlField?: boolean;
   emptyLabel?: string;
   kind?: "image" | "pdf";
@@ -35,6 +39,9 @@ export function MediaDropzone({
   uploading,
   disabled,
   previewAspect = "aspect-video",
+  previewObjectFit = "cover",
+  previewBg = "bg-primary",
+  previewImageClassName,
   showUrlField = true,
   emptyLabel = "Arrastrá un archivo o hacé clic para seleccionar",
   kind = "image",
@@ -119,12 +126,23 @@ export function MediaDropzone({
         {value && isImage ? (
           <div
             className={cn(
-              "relative w-full bg-primary",
+              "relative w-full",
+              previewBg,
               compact ? "h-24" : previewAspect,
             )}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img alt="" src={value} className="h-full w-full object-cover" draggable={false} />
+            <img
+              alt=""
+              src={value}
+              className={cn(
+                "h-full w-full",
+                previewImageClassName,
+                !previewImageClassName &&
+                  (previewObjectFit === "contain" ? "object-contain object-center" : "object-cover"),
+              )}
+              draggable={false}
+            />
             <div className="absolute inset-0 flex items-center justify-center bg-black/0 opacity-0 transition-opacity group-hover:bg-black/40 group-hover:opacity-100 group-focus-visible:bg-black/40 group-focus-visible:opacity-100">
               <span className="flex items-center gap-2 rounded-sm bg-black/70 px-3 py-1.5 text-xs font-medium text-white">
                 <Upload className="size-3.5" aria-hidden />

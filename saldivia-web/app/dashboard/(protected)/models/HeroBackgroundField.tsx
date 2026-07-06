@@ -5,6 +5,9 @@ import { ImageIcon, Trash2, ZoomIn } from "lucide-react";
 import { Button } from "@/app/components/ui/Button";
 import { Input } from "@/app/components/ui/Input";
 import { cn } from "@/app/components/ui/cn";
+import { SITE_IMAGE_PREVIEW } from "../_ui/admin-display-previews";
+
+const HERO_PREVIEW = SITE_IMAGE_PREVIEW.productHero;
 
 function clamp(n: number, min: number, max: number) {
   return Math.min(max, Math.max(min, n));
@@ -104,20 +107,22 @@ export function HeroBackgroundField({
         </p>
       ) : null}
 
-      <div
-        ref={previewRef}
-        className={cn(
-          "relative w-full overflow-hidden rounded-sm border border-outline-variant/30 bg-primary",
-          compact ? "h-24" : "aspect-[21/9]",
-          imageUrl && !disabled ? (dragging ? "cursor-grabbing" : "cursor-grab") : "",
-        )}
-        onPointerDown={onPointerDown}
-        onPointerMove={onPointerMove}
-        onPointerUp={onPointerUp}
-        onPointerCancel={onPointerUp}
-        role={imageUrl ? "img" : undefined}
-        aria-label={imageUrl ? `Vista previa del hero de ${modelName}` : undefined}
-      >
+      <div className={cn("mx-auto w-full", HERO_PREVIEW.maxWidth)}>
+        <div
+          ref={previewRef}
+          className={cn(
+            "relative w-full overflow-hidden rounded-sm border border-outline-variant/30",
+            HERO_PREVIEW.bg,
+            HERO_PREVIEW.aspect,
+            imageUrl && !disabled ? (dragging ? "cursor-grabbing" : "cursor-grab") : "",
+          )}
+          onPointerDown={onPointerDown}
+          onPointerMove={onPointerMove}
+          onPointerUp={onPointerUp}
+          onPointerCancel={onPointerUp}
+          role={imageUrl ? "img" : undefined}
+          aria-label={imageUrl ? `Vista previa del hero de ${modelName}` : undefined}
+        >
         {imageUrl ? (
           <>
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -153,11 +158,12 @@ export function HeroBackgroundField({
             </div>
           </>
         ) : (
-          <div className="flex h-full flex-col items-center justify-center gap-2 text-on-surface-variant">
+          <div className="flex h-full min-h-[12rem] flex-col items-center justify-center gap-2 text-on-surface-variant">
             <ImageIcon className="size-8 opacity-40" aria-hidden />
             <span className="text-xs">Sin imagen de hero para este modelo</span>
           </div>
         )}
+        </div>
       </div>
 
       {imageUrl ? (

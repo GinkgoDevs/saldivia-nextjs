@@ -5,6 +5,10 @@ import { ImageIcon, Trash2, Upload, ZoomIn } from "lucide-react";
 import { Button } from "@/app/components/ui/Button";
 import { Input } from "@/app/components/ui/Input";
 import { AdminField } from "../_ui/AdminField";
+import { cn } from "@/app/components/ui/cn";
+import { SITE_IMAGE_PREVIEW } from "../_ui/admin-display-previews";
+
+const SHOWCASE_PREVIEW = SITE_IMAGE_PREVIEW.showcase;
 
 function clamp(n: number, min: number, max: number) {
   return Math.min(max, Math.max(min, n));
@@ -82,25 +86,29 @@ export function ShowcaseImageField({
 
   return (
     <AdminField id="showcase-hero" label={label} hint={hint}>
-      <div
-        ref={previewRef}
-        className={`relative h-28 w-full overflow-hidden rounded-sm border border-outline-variant/30 bg-industrial-charcoal ${
-          canFrame ? (dragging ? "cursor-grabbing" : "cursor-grab") : ""
-        }`}
-        onPointerDown={onPointerDown}
-        onPointerMove={onPointerMove}
-        onPointerUp={onPointerUp}
-        onPointerCancel={onPointerUp}
-        role={displayUrl ? "img" : undefined}
-        aria-label={displayUrl ? "Vista previa del showcase" : undefined}
-      >
+      <div className={cn("mx-auto w-full", SHOWCASE_PREVIEW.maxWidth)}>
+        <div
+          ref={previewRef}
+          className={cn(
+            "relative w-full overflow-hidden rounded-sm border border-outline-variant/30",
+            SHOWCASE_PREVIEW.bg,
+            SHOWCASE_PREVIEW.aspect,
+            canFrame ? (dragging ? "cursor-grabbing" : "cursor-grab") : "",
+          )}
+          onPointerDown={onPointerDown}
+          onPointerMove={onPointerMove}
+          onPointerUp={onPointerUp}
+          onPointerCancel={onPointerUp}
+          role={displayUrl ? "img" : undefined}
+          aria-label={displayUrl ? "Vista previa del showcase" : undefined}
+        >
         {displayUrl ? (
           <>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               alt=""
               src={displayUrl}
-              className="pointer-events-none absolute inset-0 h-full w-full object-contain p-4"
+              className={cn("pointer-events-none absolute inset-0 h-full w-full", SHOWCASE_PREVIEW.imageClassName)}
               style={{
                 objectPosition: `${focalX}% ${focalY}%`,
                 transform: zoom > 1 ? `scale(${zoom})` : undefined,
@@ -114,11 +122,12 @@ export function ShowcaseImageField({
             </div>
           </>
         ) : (
-          <div className="flex h-full flex-col items-center justify-center gap-2 text-on-surface-variant">
+          <div className="flex h-full min-h-[12rem] flex-col items-center justify-center gap-2 text-on-surface-variant">
             <ImageIcon className="size-8 opacity-40" aria-hidden />
             <span className="text-xs">Sin imagen para el showcase</span>
           </div>
         )}
+        </div>
       </div>
 
       {displayUrl && hasCustomImage ? (
