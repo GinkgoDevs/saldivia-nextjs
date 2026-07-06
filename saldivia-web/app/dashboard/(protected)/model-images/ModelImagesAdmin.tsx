@@ -18,8 +18,9 @@ import {
   AdminCrudLayout,
   AdminCrudThumbnail,
   AdminField,
-  AdminFormActions,
+  AdminFullscreenForm,
   AdminModal,
+  AdminModalFooter,
   AdminSelect,
   adminToast,
   MediaDropzone,
@@ -271,8 +272,18 @@ export function ModelImagesAdmin({ models, initialImages }: Props) {
         open={modalOpen}
         onClose={closeModal}
         title={`Agregar imagen — ${selectedModel?.name ?? "modelo"}`}
+        fullscreen
+        footer={
+          <AdminModalFooter
+            formId="gallery-add-form"
+            saving={busy}
+            uploading={uploading}
+            saveLabel="Agregar imagen"
+            onCancel={closeModal}
+          />
+        }
       >
-        <form className="space-y-4" onSubmit={onAdd}>
+        <AdminFullscreenForm id="gallery-add-form" onSubmit={onAdd}>
           <MediaDropzone
             id="gallery-upload"
             label="Imagen"
@@ -292,14 +303,7 @@ export function ModelImagesAdmin({ models, initialImages }: Props) {
               onChange={(e) => setAddSortOrder(Number(e.target.value))}
             />
           </AdminField>
-          <AdminFormActions
-            saving={busy}
-            uploading={uploading}
-            saveLabel="Agregar imagen"
-            onClear={closeModal}
-            clearLabel="Cancelar"
-          />
-        </form>
+        </AdminFullscreenForm>
       </AdminModal>
     </>
   );

@@ -9,6 +9,9 @@ const SLIDES: ResolvedHomeShowcaseSlide[] = [
     slug: "aries-405",
     name: "Aries 405 DD",
     heroSrc: "/ARIES-305/345_1.png",
+    heroFocalX: 50,
+    heroFocalY: 50,
+    heroZoom: 1,
     eyebrow: "LONG DISTANCE SERIES",
     lead: "Buque insignia de dos pisos diseñado para máxima rentabilidad y confort premium.",
     specRows: [
@@ -26,6 +29,9 @@ const SLIDES: ResolvedHomeShowcaseSlide[] = [
     slug: "aries-365",
     name: "Aries 365",
     heroSrc: "/ARIES-305/345_4.png",
+    heroFocalX: 50,
+    heroFocalY: 50,
+    heroZoom: 1,
     eyebrow: "LARGA DISTANCIA",
     lead: "Plataforma interprovincial con estándares de confort y seguridad Saldivia.",
     specRows: [
@@ -43,6 +49,9 @@ const SLIDES: ResolvedHomeShowcaseSlide[] = [
     slug: "aries-305",
     name: "Aries 305",
     heroSrc: "/ARIES-305/345_5.png",
+    heroFocalX: 50,
+    heroFocalY: 50,
+    heroZoom: 1,
     eyebrow: "SERIE VERSÁTIL",
     lead: "Bus versátil disponible en versiones turismo 4×2, 4×4 y urbano para adaptarse a distintas rutas.",
     specRows: [

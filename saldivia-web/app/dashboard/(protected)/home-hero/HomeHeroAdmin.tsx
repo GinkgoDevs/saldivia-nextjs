@@ -10,6 +10,7 @@ import {
 } from "@/app/actions/admin-content";
 import { Input } from "@/app/components/ui/Input";
 import { Textarea } from "@/app/components/ui/Textarea";
+import { Button } from "@/app/components/ui/Button";
 import { uploadMediaFromBrowser } from "@/lib/upload-media-client";
 import type { HomeHeroSlideRow } from "@/types/home-hero";
 import {
@@ -20,12 +21,33 @@ import {
   AdminCrudLayout,
   AdminCrudThumbnail,
   AdminField,
-  AdminFormActions,
   AdminFormSection,
+  AdminFullscreenForm,
   AdminModal,
+  AdminModalFooter,
+  AdminWizardPanel,
   adminToast,
   MediaDropzone,
+  type WizardStep,
 } from "../_ui/admin-ui";
+
+const HERO_WIZARD_STEPS: WizardStep[] = [
+  {
+    id: "image",
+    title: "Imagen",
+    hint: "Foto de fondo del carrusel principal del home.",
+  },
+  {
+    id: "copy",
+    title: "Textos",
+    hint: "Título, subtítulo y antetítulo que se superponen a la imagen.",
+  },
+  {
+    id: "actions",
+    title: "Botones y publicación",
+    hint: "Enlaces de los CTAs, orden y visibilidad de la slide.",
+  },
+];
 
 type FormState = {
   id: string | null;
@@ -96,6 +118,7 @@ export function HomeHeroAdmin({ initialSlides }: Props) {
   const [busy, setBusy] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
+  const [wizardStep, setWizardStep] = useState(0);
   const [draggingId, setDraggingId] = useState<string | null>(null);
   const [dropTargetIndex, setDropTargetIndex] = useState<number | null>(null);
 
@@ -120,17 +143,39 @@ export function HomeHeroAdmin({ initialSlides }: Props) {
 
   function openEdit(s: HomeHeroSlideRow) {
     loadSlide(s);
+    setWizardStep(0);
     setModalOpen(true);
   }
 
   function openNew() {
     newSlide();
+    setWizardStep(0);
     setModalOpen(true);
   }
 
   function closeModal() {
     setModalOpen(false);
+    setWizardStep(0);
   }
+
+  function validateWizardStep(step: number): boolean {
+    if (step === 0 && !form.image_url.trim() && !form.title.trim()) {
+      adminToast.error("Subí una imagen o completá el título antes de continuar.");
+      return false;
+    }
+    return true;
+  }
+
+  function goNextStep() {
+    if (!validateWizardStep(wizardStep)) return;
+    setWizardStep((s) => Math.min(s + 1, HERO_WIZARD_STEPS.length - 1));
+  }
+
+  function goPrevStep() {
+    setWizardStep((s) => Math.max(s - 1, 0));
+  }
+
+  const currentStepId = HERO_WIZARD_STEPS[wizardStep]?.id ?? "image";
 
   async function onSave(e: React.FormEvent) {
     e.preventDefault();
@@ -297,141 +342,176 @@ export function HomeHeroAdmin({ initialSlides }: Props) {
         open={modalOpen}
         onClose={closeModal}
         title={editing ? `Editar: ${form.title || form.highlight || "slide"}` : "Nueva slide"}
-      >
-        <form className="space-y-5" onSubmit={onSave}>
-          <MediaDropzone
-            id="hero-slide-image"
-            label="Imagen de fondo"
-            hint="Foto amplia del bus o planta. Se verá detrás del texto en el home."
-            value={form.image_url}
-            previewAspect="aspect-[16/7]"
-            uploading={uploading}
-            disabled={busy}
-            onChange={(url) => setForm((f) => ({ ...f, image_url: url }))}
-            onFileSelect={onImageFile}
-          />
-
-          <AdminField id="hero-alt" label="Texto alternativo (accesibilidad)" hint="Describe la imagen para lectores de pantalla.">
-            <Input
-              id="hero-alt"
-              value={form.image_alt}
-              onChange={(e) => setForm((f) => ({ ...f, image_alt: e.target.value }))}
-            />
-          </AdminField>
-
-          <AdminField id="hero-eyebrow" label="Antetítulo" hint="Línea pequeña sobre el título.">
-            <Input
-              id="hero-eyebrow"
-              value={form.eyebrow}
-              onChange={(e) => setForm((f) => ({ ...f, eyebrow: e.target.value }))}
-              placeholder="Ingeniería de clase mundial"
-            />
-          </AdminField>
-
-          <div className="grid gap-4 sm:grid-cols-2">
-            <AdminField id="hero-title" label="Título (línea 1)" required>
-              <Input
-                id="hero-title"
-                value={form.title}
-                onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))}
-                placeholder="Nuevo ARIES"
-              />
-            </AdminField>
-            <AdminField id="hero-highlight" label="Destacado (línea 2)">
-              <Input
-                id="hero-highlight"
-                value={form.highlight}
-                onChange={(e) => setForm((f) => ({ ...f, highlight: e.target.value }))}
-                placeholder="405 DD"
-              />
-            </AdminField>
-          </div>
-
-          <AdminField id="hero-subtitle" label="Subtítulo / descripción">
-            <Textarea
-              id="hero-subtitle"
-              rows={3}
-              value={form.subtitle}
-              onChange={(e) => setForm((f) => ({ ...f, subtitle: e.target.value }))}
-            />
-          </AdminField>
-
-          <AdminFormSection
-            title="Botón principal"
-            description="Dejá ambos campos vacíos para ocultar este botón."
-          >
-            <div className="grid gap-3 sm:grid-cols-2">
-              <AdminField id="hero-p-label" label="Texto">
-                <Input
-                  id="hero-p-label"
-                  value={form.primary_label}
-                  onChange={(e) => setForm((f) => ({ ...f, primary_label: e.target.value }))}
-                  placeholder="Explorar modelos"
-                />
-              </AdminField>
-              <AdminField id="hero-p-href" label="Enlace">
-                <Input
-                  id="hero-p-href"
-                  value={form.primary_href}
-                  onChange={(e) => setForm((f) => ({ ...f, primary_href: e.target.value }))}
-                  placeholder="/flota"
-                />
-              </AdminField>
-            </div>
-          </AdminFormSection>
-
-          <AdminFormSection
-            title="Botón secundario"
-            description="Dejá ambos campos vacíos para ocultar este botón."
-          >
-            <div className="grid gap-3 sm:grid-cols-2">
-              <AdminField id="hero-s-label" label="Texto">
-                <Input
-                  id="hero-s-label"
-                  value={form.secondary_label}
-                  onChange={(e) => setForm((f) => ({ ...f, secondary_label: e.target.value }))}
-                  placeholder="Tour industrial"
-                />
-              </AdminField>
-              <AdminField id="hero-s-href" label="Enlace">
-                <Input
-                  id="hero-s-href"
-                  value={form.secondary_href}
-                  onChange={(e) => setForm((f) => ({ ...f, secondary_href: e.target.value }))}
-                  placeholder="/nosotros"
-                />
-              </AdminField>
-            </div>
-          </AdminFormSection>
-
-          <div className="grid gap-4 sm:grid-cols-2">
-            <AdminField id="hero-order" label="Orden">
-              <Input
-                id="hero-order"
-                type="number"
-                value={String(form.sort_order)}
-                onChange={(e) =>
-                  setForm((f) => ({ ...f, sort_order: Number.parseInt(e.target.value, 10) || 0 }))
-                }
-              />
-            </AdminField>
-            <AdminCheckbox
-              id="hero-active"
-              label="Slide activa"
-              description="Solo las slides activas se muestran en el home."
-              checked={form.active}
-              onChange={(e) => setForm((f) => ({ ...f, active: e.target.checked }))}
-            />
-          </div>
-
-          <AdminFormActions
+        fullscreen
+        footer={
+          <AdminModalFooter
+            formId="hero-slide-form"
             saving={busy}
             uploading={uploading}
-            onClear={closeModal}
-            clearLabel="Cancelar"
-            onDelete={editing ? () => void onDelete() : undefined}
+            hideSave={wizardStep < HERO_WIZARD_STEPS.length - 1}
+            onCancel={closeModal}
+            onDelete={
+              editing && wizardStep === HERO_WIZARD_STEPS.length - 1 ? () => void onDelete() : undefined
+            }
+            leading={
+              <>
+                {wizardStep > 0 ? (
+                  <Button type="button" variant="outline" disabled={busy} onClick={goPrevStep}>
+                    Anterior
+                  </Button>
+                ) : null}
+                {wizardStep < HERO_WIZARD_STEPS.length - 1 ? (
+                  <Button type="button" disabled={busy} onClick={goNextStep}>
+                    Siguiente
+                  </Button>
+                ) : null}
+              </>
+            }
           />
-        </form>
+        }
+      >
+        <AdminFullscreenForm
+          id="hero-slide-form"
+          steps={HERO_WIZARD_STEPS}
+          currentStep={wizardStep}
+          onStepClick={(index) => {
+            if (index < wizardStep) setWizardStep(index);
+            else if (index > wizardStep && validateWizardStep(wizardStep)) setWizardStep(index);
+          }}
+          onSubmit={(e) => {
+            if (wizardStep < HERO_WIZARD_STEPS.length - 1) {
+              e.preventDefault();
+              goNextStep();
+              return;
+            }
+            void onSave(e);
+          }}
+        >
+          <AdminWizardPanel stepId="image" currentStepId={currentStepId}>
+            <AdminFormSection title="Imagen de fondo" description="Foto amplia del bus o planta. Se verá detrás del texto.">
+              <MediaDropzone
+                id="hero-slide-image"
+                label="Imagen de fondo"
+                value={form.image_url}
+                previewAspect="aspect-[16/7]"
+                uploading={uploading}
+                disabled={busy}
+                onChange={(url) => setForm((f) => ({ ...f, image_url: url }))}
+                onFileSelect={onImageFile}
+              />
+              <AdminField id="hero-alt" label="Texto alternativo (accesibilidad)" hint="Describe la imagen para lectores de pantalla.">
+                <Input
+                  id="hero-alt"
+                  value={form.image_alt}
+                  onChange={(e) => setForm((f) => ({ ...f, image_alt: e.target.value }))}
+                />
+              </AdminField>
+            </AdminFormSection>
+          </AdminWizardPanel>
+
+          <AdminWizardPanel stepId="copy" currentStepId={currentStepId}>
+            <AdminFormSection title="Contenido principal">
+              <AdminField id="hero-eyebrow" label="Antetítulo" hint="Línea pequeña sobre el título.">
+                <Input
+                  id="hero-eyebrow"
+                  value={form.eyebrow}
+                  onChange={(e) => setForm((f) => ({ ...f, eyebrow: e.target.value }))}
+                  placeholder="Ingeniería de clase mundial"
+                />
+              </AdminField>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <AdminField id="hero-title" label="Título (línea 1)" required>
+                  <Input
+                    id="hero-title"
+                    value={form.title}
+                    onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))}
+                    placeholder="Nuevo ARIES"
+                  />
+                </AdminField>
+                <AdminField id="hero-highlight" label="Destacado (línea 2)">
+                  <Input
+                    id="hero-highlight"
+                    value={form.highlight}
+                    onChange={(e) => setForm((f) => ({ ...f, highlight: e.target.value }))}
+                    placeholder="405 DD"
+                  />
+                </AdminField>
+              </div>
+              <AdminField id="hero-subtitle" label="Subtítulo / descripción">
+                <Textarea
+                  id="hero-subtitle"
+                  rows={4}
+                  value={form.subtitle}
+                  onChange={(e) => setForm((f) => ({ ...f, subtitle: e.target.value }))}
+                />
+              </AdminField>
+            </AdminFormSection>
+          </AdminWizardPanel>
+
+          <AdminWizardPanel stepId="actions" currentStepId={currentStepId}>
+            <AdminFormSection title="Botón principal" description="Dejá ambos campos vacíos para ocultar este botón.">
+              <div className="grid gap-3 sm:grid-cols-2">
+                <AdminField id="hero-p-label" label="Texto">
+                  <Input
+                    id="hero-p-label"
+                    value={form.primary_label}
+                    onChange={(e) => setForm((f) => ({ ...f, primary_label: e.target.value }))}
+                    placeholder="Explorar modelos"
+                  />
+                </AdminField>
+                <AdminField id="hero-p-href" label="Enlace">
+                  <Input
+                    id="hero-p-href"
+                    value={form.primary_href}
+                    onChange={(e) => setForm((f) => ({ ...f, primary_href: e.target.value }))}
+                    placeholder="/flota"
+                  />
+                </AdminField>
+              </div>
+            </AdminFormSection>
+            <AdminFormSection title="Botón secundario" description="Dejá ambos campos vacíos para ocultar este botón.">
+              <div className="grid gap-3 sm:grid-cols-2">
+                <AdminField id="hero-s-label" label="Texto">
+                  <Input
+                    id="hero-s-label"
+                    value={form.secondary_label}
+                    onChange={(e) => setForm((f) => ({ ...f, secondary_label: e.target.value }))}
+                    placeholder="Tour industrial"
+                  />
+                </AdminField>
+                <AdminField id="hero-s-href" label="Enlace">
+                  <Input
+                    id="hero-s-href"
+                    value={form.secondary_href}
+                    onChange={(e) => setForm((f) => ({ ...f, secondary_href: e.target.value }))}
+                    placeholder="/nosotros"
+                  />
+                </AdminField>
+              </div>
+            </AdminFormSection>
+            <AdminFormSection title="Publicación">
+              <div className="grid gap-4 sm:grid-cols-2">
+                <AdminField id="hero-order" label="Orden">
+                  <Input
+                    id="hero-order"
+                    type="number"
+                    value={String(form.sort_order)}
+                    onChange={(e) =>
+                      setForm((f) => ({ ...f, sort_order: Number.parseInt(e.target.value, 10) || 0 }))
+                    }
+                  />
+                </AdminField>
+                <AdminCheckbox
+                  id="hero-active"
+                  label="Slide activa"
+                  description="Solo las slides activas se muestran en el home."
+                  checked={form.active}
+                  onChange={(e) => setForm((f) => ({ ...f, active: e.target.checked }))}
+                />
+              </div>
+            </AdminFormSection>
+          </AdminWizardPanel>
+        </AdminFullscreenForm>
       </AdminModal>
     </>
   );

@@ -24,12 +24,38 @@ import {
   AdminCrudLayout,
   AdminCrudThumbnail,
   AdminField,
-  AdminFormActions,
+  AdminFormSection,
   AdminModal,
   AdminSelect,
+  AdminStepIndicator,
+  AdminWizardPanel,
   adminToast,
   MediaDropzone,
+  type WizardStep,
 } from "../_ui/admin-ui";
+
+const MODEL_WIZARD_STEPS: WizardStep[] = [
+  {
+    id: "basics",
+    title: "Datos básicos",
+    hint: "Nombre, URL y descripción del colectivo. Son los datos que verá el visitante primero.",
+  },
+  {
+    id: "tech",
+    title: "Ficha técnica",
+    hint: "Especificaciones y características. Podés dejar variantes vacías si el modelo tiene una sola versión.",
+  },
+  {
+    id: "media",
+    title: "Imágenes y PDF",
+    hint: "Portada del catálogo, foto de fondo de la ficha y documento descargable.",
+  },
+  {
+    id: "publish",
+    title: "Publicación",
+    hint: "Orden en el menú, visibilidad en la web y si aparece en el showcase del inicio.",
+  },
+];
 
 const SEGMENTS: { value: ModelSegment; label: string }[] = [
   { value: "urbano", label: "Urbano" },
@@ -120,6 +146,9 @@ export function ModelsAdmin({ initial }: Props) {
   const [draggingId, setDraggingId] = useState<string | null>(null);
   const [dropTargetIndex, setDropTargetIndex] = useState<number | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
+  const [wizardStep, setWizardStep] = useState(0);
+
+  const currentStepId = MODEL_WIZARD_STEPS[wizardStep]?.id ?? MODEL_WIZARD_STEPS[0].id;
 
   useEffect(() => {
     setList(initial);
@@ -167,16 +196,19 @@ export function ModelsAdmin({ initial }: Props) {
 
   function openEdit(m: ModelAdmin) {
     load(m);
+    setWizardStep(0);
     setModalOpen(true);
   }
 
   function openNew() {
     newModel();
+    setWizardStep(0);
     setModalOpen(true);
   }
 
   function closeModal() {
     setModalOpen(false);
+    setWizardStep(0);
   }
 
   function newModel() {
@@ -323,6 +355,24 @@ export function ModelsAdmin({ initial }: Props) {
     await onDeleteModel(current ?? ({ id: form.id, name: form.name } as ModelAdmin));
   }
 
+  function validateWizardStep(stepIndex: number): boolean {
+    if (stepIndex !== 0) return true;
+    if (!form.name.trim() || !form.slug.trim()) {
+      adminToast.error("Completá el nombre y el slug antes de continuar.");
+      return false;
+    }
+    return true;
+  }
+
+  function goNextStep() {
+    if (!validateWizardStep(wizardStep)) return;
+    setWizardStep((s) => Math.min(s + 1, MODEL_WIZARD_STEPS.length - 1));
+  }
+
+  function goPrevStep() {
+    setWizardStep((s) => Math.max(s - 1, 0));
+  }
+
   async function onFile(which: "cover" | "hero" | "pdf", file: File | null) {
     if (!file) return;
     if (which === "hero" && !form.id) {
@@ -442,260 +492,322 @@ export function ModelsAdmin({ initial }: Props) {
         open={modalOpen}
         onClose={closeModal}
         title={editing ? `Editar: ${form.name || "modelo"}` : "Nuevo modelo"}
-        maxWidthClass="max-w-5xl"
+        fullscreen
+        footer={
+          <div className="flex flex-wrap items-center gap-3">
+            {wizardStep > 0 ? (
+              <Button type="button" variant="outline" disabled={busy} onClick={goPrevStep}>
+                Anterior
+              </Button>
+            ) : null}
+            {wizardStep < MODEL_WIZARD_STEPS.length - 1 ? (
+              <Button type="button" disabled={busy} onClick={goNextStep}>
+                Siguiente
+              </Button>
+            ) : (
+              <Button type="submit" form="model-wizard-form" disabled={busy || uploading}>
+                {uploading ? "Subiendo archivo…" : busy ? "Guardando…" : "Guardar modelo"}
+              </Button>
+            )}
+            <Button type="button" variant="ghost" disabled={busy} onClick={closeModal}>
+              Cancelar
+            </Button>
+            {editing && wizardStep === MODEL_WIZARD_STEPS.length - 1 ? (
+              <Button
+                type="button"
+                variant="outline"
+                className="ml-auto text-on-surface-variant"
+                disabled={busy}
+                onClick={() => void onDelete()}
+              >
+                Eliminar
+              </Button>
+            ) : null}
+          </div>
+        }
       >
-        <form className="space-y-5" onSubmit={onSave}>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <AdminField id="slug" label="Slug (URL)" required hint="Ej: aries-330 — se usa en /producto/[slug]">
-              <Input
-                id="slug"
-                value={form.slug}
-                onChange={(e) => setForm((f) => ({ ...f, slug: e.target.value }))}
-                placeholder="aries-330"
-                required
-              />
-            </AdminField>
-            <AdminField id="name" label="Nombre" required>
-              <Input
-                id="name"
-                value={form.name}
-                onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-                placeholder="Aries 330"
-                required
-              />
-            </AdminField>
-          </div>
-          <AdminField id="segment" label="Segmento">
-            <AdminSelect
-              id="segment"
-              value={form.segment}
-              onChange={(e) => setForm((f) => ({ ...f, segment: e.target.value as ModelSegment }))}
-            >
-              {SEGMENTS.map((s) => (
-                <option key={s.value} value={s.value}>
-                  {s.label}
-                </option>
-              ))}
-            </AdminSelect>
-          </AdminField>
-          <AdminField id="description" label="Descripción">
-            <Textarea
-              id="description"
-              rows={3}
-              value={form.description ?? ""}
-              onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
-            />
-          </AdminField>
-          <div className="space-y-3 rounded-sm border border-outline-variant/25 bg-surface-container-low/40 p-4">
-            <div>
-              <p className="text-xs font-bold uppercase tracking-wide text-secondary">
-                Configuraciones / variantes
-              </p>
-              <p className="mt-0.5 text-[11px] text-on-surface-variant">
-                Opcional en cualquier modelo. Agregá distintas versiones (ej. 4x2, 4x4, motor delantero) con
-                specs y características propias. Si no agregás ninguna, la ficha usa solo los datos compartidos
-                de abajo.
-              </p>
-            </div>
-            <ModelVariantsEditor variants={variantRows} onChange={setVariantRows} busy={busy} />
-          </div>
-          <div className="space-y-3 rounded-sm border border-outline-variant/25 bg-surface-container-low/40 p-4">
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <div>
-                <p className="text-xs font-bold uppercase tracking-wide text-secondary">
-                  {hasActiveVariants ? "Especificaciones compartidas" : "Especificaciones técnicas"}
-                </p>
-                <p className="mt-0.5 text-[11px] text-on-surface-variant">
-                  {hasActiveVariants
-                    ? "Aplican a todas las configuraciones (se combinan con las de cada variante en la ficha)."
-                    : "Tabla de la ficha del producto. Se guarda el orden de las filas."}
-                </p>
-              </div>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                disabled={busy}
-                onClick={() => setSpecRows((rows) => [...rows, specRowEmptyLocal()])}
-                className="gap-1"
-              >
-                <Plus className="size-4" aria-hidden />
-                Fila
-              </Button>
-            </div>
-            <div className="space-y-2">
-              {specRows.map((row, i) => (
-                <div key={i} className="flex flex-col gap-2 sm:flex-row sm:items-start">
-                  <Input
-                    aria-label={`Parámetro fila ${i + 1}`}
-                    className="sm:flex-1"
-                    placeholder="Parámetro"
-                    value={row.spec_key}
-                    onChange={(e) =>
-                      setSpecRows((rows) =>
-                        rows.map((r, j) => (j === i ? { ...r, spec_key: e.target.value } : r)),
-                      )
-                    }
-                  />
-                  <Input
-                    aria-label={`Detalle fila ${i + 1}`}
-                    className="sm:flex-[2]"
-                    placeholder="Detalle / valor"
-                    value={row.spec_value}
-                    onChange={(e) =>
-                      setSpecRows((rows) =>
-                        rows.map((r, j) => (j === i ? { ...r, spec_value: e.target.value } : r)),
-                      )
-                    }
-                  />
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    className="shrink-0 text-on-surface-variant"
-                    disabled={busy || specRows.length <= 1}
-                    aria-label={`Quitar fila ${i + 1}`}
-                    onClick={() =>
-                      setSpecRows((rows) => {
-                        const next = rows.filter((_, j) => j !== i);
-                        return next.length > 0 ? next : [specRowEmptyLocal()];
-                      })
-                    }
-                  >
-                    <Trash2 className="size-4" aria-hidden />
-                  </Button>
-                </div>
-              ))}
-            </div>
-          </div>
-          <div className="space-y-3 rounded-sm border border-outline-variant/25 bg-surface-container-low/40 p-4">
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <div>
-                <p className="text-xs font-bold uppercase tracking-wide text-secondary">
-                  {hasActiveVariants ? "Características compartidas" : "Características generales"}
-                </p>
-                <p className="mt-0.5 text-[11px] text-on-surface-variant">
-                  {hasActiveVariants
-                    ? "Ítems comunes a todas las configuraciones del modelo."
-                    : "Listado con viñetas bajo la ficha del producto."}
-                </p>
-              </div>
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                disabled={busy}
-                onClick={() => setFeatureBodies((rows) => [...rows, ""])}
-                className="gap-1"
-              >
-                <Plus className="size-4" aria-hidden />
-                Ítem
-              </Button>
-            </div>
-            <div className="space-y-2">
-              {featureBodies.map((body, i) => (
-                <div key={i} className="flex gap-2">
-                  <Textarea
-                    aria-label={`Característica ${i + 1}`}
-                    rows={2}
-                    className="min-h-[2.75rem] flex-1"
-                    placeholder="Texto del ítem"
-                    value={body}
-                    onChange={(e) =>
-                      setFeatureBodies((rows) => rows.map((b, j) => (j === i ? e.target.value : b)))
-                    }
-                  />
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    className="shrink-0 self-start text-on-surface-variant"
-                    disabled={busy || featureBodies.length <= 1}
-                    aria-label={`Quitar característica ${i + 1}`}
-                    onClick={() =>
-                      setFeatureBodies((rows) => {
-                        const next = rows.filter((_, j) => j !== i);
-                        return next.length > 0 ? next : [""];
-                      })
-                    }
-                  >
-                    <Trash2 className="size-4" aria-hidden />
-                  </Button>
-                </div>
-              ))}
-            </div>
-          </div>
-          <MediaDropzone
-            id="cover_image"
-            label="Portada en /flota"
-            hint="Tarjetas del catálogo de flota. Si falta, se usa una imagen por defecto."
-            value={form.cover_image_url ?? ""}
-            uploading={uploading}
-            disabled={busy}
-            previewAspect="aspect-[4/3]"
-            onChange={(url) => setForm((f) => ({ ...f, cover_image_url: url || null }))}
-            onFileSelect={(file) => void onFile("cover", file)}
-          />
-          <HeroBackgroundField
-            modelName={form.name}
-            modelId={form.id}
-            imageUrl={form.hero_background_image_url ?? ""}
-            focalX={form.hero_background_focal_x ?? 50}
-            focalY={form.hero_background_focal_y ?? 50}
-            zoom={form.hero_background_zoom ?? 1}
-            disabled={busy}
-            uploading={uploading}
-            onImageUrlChange={(url) => setForm((f) => ({ ...f, hero_background_image_url: url || null }))}
-            onFocalChange={(x, y) =>
-              setForm((f) => ({ ...f, hero_background_focal_x: x, hero_background_focal_y: y }))
+        <AdminStepIndicator
+          steps={MODEL_WIZARD_STEPS}
+          current={wizardStep}
+          onStepClick={(index) => {
+            if (index < wizardStep) setWizardStep(index);
+            else if (index > wizardStep && validateWizardStep(wizardStep)) setWizardStep(index);
+          }}
+        />
+        <form
+          id="model-wizard-form"
+          className="flex min-h-0 flex-1 flex-col"
+          onSubmit={(e) => {
+            if (wizardStep < MODEL_WIZARD_STEPS.length - 1) {
+              e.preventDefault();
+              goNextStep();
+              return;
             }
-            onZoomChange={(zoom) => setForm((f) => ({ ...f, hero_background_zoom: zoom }))}
-            onFileSelect={(file) => void onFile("hero", file)}
-          />
-          <MediaDropzone
-            id="pdf_url"
-            label="Ficha PDF"
-            hint="Documento técnico descargable desde la ficha del producto."
-            kind="pdf"
-            accept="application/pdf"
-            value={form.pdf_url ?? ""}
-            uploading={uploading}
-            disabled={busy}
-            previewAspect="aspect-auto min-h-[5rem]"
-            onChange={(url) => setForm((f) => ({ ...f, pdf_url: url || null }))}
-            onFileSelect={(file) => void onFile("pdf", file)}
-            emptyLabel="Arrastrá el PDF o hacé clic para seleccionar"
-          />
-          <div className="grid gap-4 sm:grid-cols-2">
-            <AdminField id="sort_order" label="Orden en flota / menú">
-              <Input
-                id="sort_order"
-                type="number"
-                value={form.sort_order ?? 0}
-                onChange={(e) => setForm((f) => ({ ...f, sort_order: Number(e.target.value) }))}
-              />
-            </AdminField>
-            <AdminCheckbox
-              id="active"
-              label="Activo (visible en web)"
-              checked={form.active}
-              onChange={(e) => setForm((f) => ({ ...f, active: e.target.checked }))}
-            />
+            void onSave(e);
+          }}
+        >
+          <div className="flex-1 overflow-y-auto px-4 py-6 sm:px-6 sm:py-8">
+            <div className="mx-auto max-w-3xl">
+              <AdminWizardPanel stepId="basics" currentStepId={currentStepId}>
+                <AdminFormSection
+                  title="Identidad del modelo"
+                  description="El slug forma la URL pública: /producto/[slug]. Usá minúsculas y guiones."
+                >
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    <AdminField id="name" label="Nombre comercial" required>
+                      <Input
+                        id="name"
+                        value={form.name}
+                        onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
+                        placeholder="Ej: N.A 405"
+                        required
+                      />
+                    </AdminField>
+                    <AdminField id="slug" label="Slug (URL)" required hint="Ej: aries-405">
+                      <Input
+                        id="slug"
+                        value={form.slug}
+                        onChange={(e) => setForm((f) => ({ ...f, slug: e.target.value }))}
+                        placeholder="aries-405"
+                        required
+                      />
+                    </AdminField>
+                  </div>
+                  <AdminField id="segment" label="Segmento">
+                    <AdminSelect
+                      id="segment"
+                      value={form.segment}
+                      onChange={(e) => setForm((f) => ({ ...f, segment: e.target.value as ModelSegment }))}
+                    >
+                      {SEGMENTS.map((s) => (
+                        <option key={s.value} value={s.value}>
+                          {s.label}
+                        </option>
+                      ))}
+                    </AdminSelect>
+                  </AdminField>
+                  <AdminField id="description" label="Descripción corta" hint="Aparece en la ficha y en el showcase si no personalizás el texto allí.">
+                    <Textarea
+                      id="description"
+                      rows={4}
+                      value={form.description ?? ""}
+                      onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
+                      placeholder="Breve texto de presentación del colectivo…"
+                    />
+                  </AdminField>
+                </AdminFormSection>
+              </AdminWizardPanel>
+
+              <AdminWizardPanel stepId="tech" currentStepId={currentStepId}>
+                <AdminFormSection
+                  title="Configuraciones (opcional)"
+                  description="Solo si el modelo tiene versiones distintas (4×2, 4×4, etc.). Si no aplica, pasá al siguiente paso."
+                >
+                  <ModelVariantsEditor variants={variantRows} onChange={setVariantRows} busy={busy} />
+                </AdminFormSection>
+                <AdminFormSection
+                  title={hasActiveVariants ? "Especificaciones compartidas" : "Especificaciones técnicas"}
+                  description="Filas de la tabla en la ficha del producto. La primera columna es el parámetro; la segunda, el valor."
+                >
+                  <div className="mb-3 flex justify-end">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      disabled={busy}
+                      onClick={() => setSpecRows((rows) => [...rows, specRowEmptyLocal()])}
+                      className="gap-1"
+                    >
+                      <Plus className="size-4" aria-hidden />
+                      Agregar fila
+                    </Button>
+                  </div>
+                  <div className="space-y-2">
+                    {specRows.map((row, i) => (
+                      <div key={i} className="flex flex-col gap-2 sm:flex-row sm:items-start">
+                        <Input
+                          aria-label={`Parámetro fila ${i + 1}`}
+                          className="sm:flex-1"
+                          placeholder="Ej: Motorización"
+                          value={row.spec_key}
+                          onChange={(e) =>
+                            setSpecRows((rows) =>
+                              rows.map((r, j) => (j === i ? { ...r, spec_key: e.target.value } : r)),
+                            )
+                          }
+                        />
+                        <Input
+                          aria-label={`Valor fila ${i + 1}`}
+                          className="sm:flex-[2]"
+                          placeholder="Ej: Diesel Euro VI"
+                          value={row.spec_value}
+                          onChange={(e) =>
+                            setSpecRows((rows) =>
+                              rows.map((r, j) => (j === i ? { ...r, spec_value: e.target.value } : r)),
+                            )
+                          }
+                        />
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          className="shrink-0 text-on-surface-variant"
+                          disabled={busy || specRows.length <= 1}
+                          aria-label={`Quitar fila ${i + 1}`}
+                          onClick={() =>
+                            setSpecRows((rows) => {
+                              const next = rows.filter((_, j) => j !== i);
+                              return next.length > 0 ? next : [specRowEmptyLocal()];
+                            })
+                          }
+                        >
+                          <Trash2 className="size-4" aria-hidden />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                </AdminFormSection>
+                <AdminFormSection
+                  title={hasActiveVariants ? "Características compartidas" : "Características generales"}
+                  description="Lista con viñetas bajo la ficha. Una línea por ítem."
+                >
+                  <div className="mb-3 flex justify-end">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      disabled={busy}
+                      onClick={() => setFeatureBodies((rows) => [...rows, ""])}
+                      className="gap-1"
+                    >
+                      <Plus className="size-4" aria-hidden />
+                      Agregar ítem
+                    </Button>
+                  </div>
+                  <div className="space-y-2">
+                    {featureBodies.map((body, i) => (
+                      <div key={i} className="flex gap-2">
+                        <Textarea
+                          aria-label={`Característica ${i + 1}`}
+                          rows={2}
+                          className="min-h-[2.75rem] flex-1"
+                          placeholder="Texto del ítem"
+                          value={body}
+                          onChange={(e) =>
+                            setFeatureBodies((rows) => rows.map((b, j) => (j === i ? e.target.value : b)))
+                          }
+                        />
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          className="shrink-0 self-start text-on-surface-variant"
+                          disabled={busy || featureBodies.length <= 1}
+                          aria-label={`Quitar característica ${i + 1}`}
+                          onClick={() =>
+                            setFeatureBodies((rows) => {
+                              const next = rows.filter((_, j) => j !== i);
+                              return next.length > 0 ? next : [""];
+                            })
+                          }
+                        >
+                          <Trash2 className="size-4" aria-hidden />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                </AdminFormSection>
+              </AdminWizardPanel>
+
+              <AdminWizardPanel stepId="media" currentStepId={currentStepId}>
+                <AdminFormSection
+                  title="Portada del catálogo"
+                  description="Imagen de la tarjeta en /flota. Recomendado: foto exterior del colectivo."
+                >
+                  <MediaDropzone
+                    id="cover_image"
+                    label="Portada"
+                    value={form.cover_image_url ?? ""}
+                    uploading={uploading}
+                    disabled={busy}
+                    previewAspect="aspect-[4/3]"
+                    onChange={(url) => setForm((f) => ({ ...f, cover_image_url: url || null }))}
+                    onFileSelect={(file) => void onFile("cover", file)}
+                  />
+                </AdminFormSection>
+                <AdminFormSection
+                  title="Hero de la ficha de producto"
+                  description="Foto de fondo en /producto/[slug]. Guardá el modelo una vez antes de subirla si es nuevo."
+                >
+                  <HeroBackgroundField
+                    modelName={form.name}
+                    modelId={form.id}
+                    imageUrl={form.hero_background_image_url ?? ""}
+                    focalX={form.hero_background_focal_x ?? 50}
+                    focalY={form.hero_background_focal_y ?? 50}
+                    zoom={form.hero_background_zoom ?? 1}
+                    disabled={busy}
+                    uploading={uploading}
+                    onImageUrlChange={(url) => setForm((f) => ({ ...f, hero_background_image_url: url || null }))}
+                    onFocalChange={(x, y) =>
+                      setForm((f) => ({ ...f, hero_background_focal_x: x, hero_background_focal_y: y }))
+                    }
+                    onZoomChange={(zoom) => setForm((f) => ({ ...f, hero_background_zoom: zoom }))}
+                    onFileSelect={(file) => void onFile("hero", file)}
+                  />
+                </AdminFormSection>
+                <AdminFormSection title="Ficha PDF (opcional)" description="Documento técnico descargable desde la ficha.">
+                  <MediaDropzone
+                    id="pdf_url"
+                    kind="pdf"
+                    accept="application/pdf"
+                    label="PDF"
+                    value={form.pdf_url ?? ""}
+                    uploading={uploading}
+                    disabled={busy}
+                    previewAspect="aspect-auto min-h-[5rem]"
+                    onChange={(url) => setForm((f) => ({ ...f, pdf_url: url || null }))}
+                    onFileSelect={(file) => void onFile("pdf", file)}
+                    emptyLabel="Arrastrá el PDF o hacé clic para seleccionar"
+                  />
+                </AdminFormSection>
+              </AdminWizardPanel>
+
+              <AdminWizardPanel stepId="publish" currentStepId={currentStepId}>
+                <AdminFormSection
+                  title="Visibilidad y orden"
+                  description="Los modelos inactivos no se muestran en el sitio. El orden define la posición en /flota y menús."
+                >
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <AdminField id="sort_order" label="Orden" hint="0 = primero en el listado.">
+                      <Input
+                        id="sort_order"
+                        type="number"
+                        value={form.sort_order ?? 0}
+                        onChange={(e) => setForm((f) => ({ ...f, sort_order: Number(e.target.value) }))}
+                      />
+                    </AdminField>
+                    <div className="flex items-end pb-1">
+                      <AdminCheckbox
+                        id="active"
+                        label="Visible en la web"
+                        description="Desactivá para ocultar sin borrar el modelo."
+                        checked={form.active}
+                        onChange={(e) => setForm((f) => ({ ...f, active: e.target.checked }))}
+                      />
+                    </div>
+                  </div>
+                  <AdminCheckbox
+                    id="show_in_showcase"
+                    label="Mostrar en el Showcase del inicio"
+                    description="Aparece en el carrusel técnico del home. Personalizá imagen y textos en Dashboard → Showcase."
+                    checked={form.show_in_showcase}
+                    onChange={(e) => setForm((f) => ({ ...f, show_in_showcase: e.target.checked }))}
+                  />
+                </AdminFormSection>
+              </AdminWizardPanel>
+            </div>
           </div>
-          <AdminCheckbox
-            id="show_in_showcase"
-            label="Mostrar en el Showcase técnico del home"
-            description="El carrusel del inicio muestra los modelos activos marcados aquí, en sort_order. Usa portada, descripción y las 2 primeras specs."
-            checked={form.show_in_showcase}
-            onChange={(e) => setForm((f) => ({ ...f, show_in_showcase: e.target.checked }))}
-          />
-          <AdminFormActions
-            saving={busy}
-            uploading={uploading}
-            onClear={closeModal}
-            clearLabel="Cancelar"
-            onDelete={editing ? () => void onDelete() : undefined}
-          />
         </form>
       </AdminModal>
     </>

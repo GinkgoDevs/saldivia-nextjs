@@ -12,18 +12,35 @@ import {
 } from "@/lib/argentina-map-provinces";
 import { Input } from "@/app/components/ui/Input";
 import { Textarea } from "@/app/components/ui/Textarea";
+import { Button } from "@/app/components/ui/Button";
 import {
   AdminCheckbox,
   AdminCrudBadge,
   AdminCrudCard,
   AdminCrudLayout,
   AdminField,
-  AdminFormActions,
   AdminFormSection,
+  AdminFullscreenForm,
   AdminModal,
+  AdminModalFooter,
   AdminSelect,
+  AdminWizardPanel,
   adminToast,
+  type WizardStep,
 } from "../_ui/admin-ui";
+
+const LOCATION_WIZARD_STEPS: WizardStep[] = [
+  {
+    id: "place",
+    title: "Ubicación",
+    hint: "Nombre, tipo y dirección que verá el visitante en el mapa.",
+  },
+  {
+    id: "contact",
+    title: "Contacto y mapa",
+    hint: "Coordenadas para Leaflet, teléfono y horario de atención.",
+  },
+];
 
 const TYPES: { value: LocationType; label: string }[] = [
   { value: "taller", label: "Taller" },
@@ -73,6 +90,7 @@ export function LocationsAdmin({ initial }: Props) {
   const [form, setForm] = useState<LocForm>(empty);
   const [busy, setBusy] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
+  const [wizardStep, setWizardStep] = useState(0);
 
   useEffect(() => {
     setList(initial);
@@ -107,17 +125,40 @@ export function LocationsAdmin({ initial }: Props) {
 
   function openEdit(row: Location) {
     load(row);
+    setWizardStep(0);
     setModalOpen(true);
   }
 
   function openNew() {
     newRow();
+    setWizardStep(0);
     setModalOpen(true);
   }
 
   function closeModal() {
     setModalOpen(false);
+    setWizardStep(0);
   }
+
+  function validateWizardStep(step: number): boolean {
+    if (step !== 0) return true;
+    if (!form.name.trim() || !form.province || !form.city.trim() || !form.address.trim()) {
+      adminToast.error("Completá nombre, provincia, ciudad y dirección antes de continuar.");
+      return false;
+    }
+    return true;
+  }
+
+  function goNextStep() {
+    if (!validateWizardStep(wizardStep)) return;
+    setWizardStep((s) => Math.min(s + 1, LOCATION_WIZARD_STEPS.length - 1));
+  }
+
+  function goPrevStep() {
+    setWizardStep((s) => Math.max(s - 1, 0));
+  }
+
+  const currentStepId = LOCATION_WIZARD_STEPS[wizardStep]?.id ?? "place";
 
   async function onDeleteLocation(row: Location) {
     if (!window.confirm(`¿Eliminar "${row.name}" del mapa?`)) return;
@@ -227,85 +268,133 @@ export function LocationsAdmin({ initial }: Props) {
         open={modalOpen}
         onClose={closeModal}
         title={editing ? `Editar: ${form.name || "ubicación"}` : "Nueva ubicación"}
+        fullscreen
+        footer={
+          <AdminModalFooter
+            formId="location-form"
+            saving={busy}
+            hideSave={wizardStep < LOCATION_WIZARD_STEPS.length - 1}
+            onCancel={closeModal}
+            onDelete={
+              editing && wizardStep === LOCATION_WIZARD_STEPS.length - 1 ? () => void onDelete() : undefined
+            }
+            leading={
+              <>
+                {wizardStep > 0 ? (
+                  <Button type="button" variant="outline" disabled={busy} onClick={goPrevStep}>
+                    Anterior
+                  </Button>
+                ) : null}
+                {wizardStep < LOCATION_WIZARD_STEPS.length - 1 ? (
+                  <Button type="button" disabled={busy} onClick={goNextStep}>
+                    Siguiente
+                  </Button>
+                ) : null}
+              </>
+            }
+          />
+        }
       >
-        <form className="space-y-5" onSubmit={onSave}>
-            <AdminField id="lname" label="Nombre" required>
-              <Input
-                id="lname"
-                value={form.name}
-                onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-                required
-              />
-            </AdminField>
+        <AdminFullscreenForm
+          id="location-form"
+          steps={LOCATION_WIZARD_STEPS}
+          currentStep={wizardStep}
+          onStepClick={(index) => {
+            if (index < wizardStep) setWizardStep(index);
+            else if (index > wizardStep && validateWizardStep(wizardStep)) setWizardStep(index);
+          }}
+          onSubmit={(e) => {
+            if (wizardStep < LOCATION_WIZARD_STEPS.length - 1) {
+              e.preventDefault();
+              goNextStep();
+              return;
+            }
+            void onSave(e);
+          }}
+        >
+          <AdminWizardPanel stepId="place" currentStepId={currentStepId}>
+            <AdminFormSection
+              title="Datos de la sede"
+              description="Aparecen en el mapa de atención del sitio."
+            >
+              <AdminField id="lname" label="Nombre" required>
+                <Input
+                  id="lname"
+                  value={form.name}
+                  onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
+                  required
+                />
+              </AdminField>
 
-            <div className="grid gap-4 sm:grid-cols-2">
-              <AdminField id="ltype" label="Tipo">
+              <div className="grid gap-4 sm:grid-cols-2">
+                <AdminField id="ltype" label="Tipo">
+                  <AdminSelect
+                    id="ltype"
+                    value={form.type}
+                    onChange={(e) => setForm((f) => ({ ...f, type: e.target.value as LocationType }))}
+                  >
+                    {TYPES.map((t) => (
+                      <option key={t.value} value={t.value}>
+                        {t.label}
+                      </option>
+                    ))}
+                  </AdminSelect>
+                </AdminField>
+                <AdminCheckbox
+                  id="lactive"
+                  label="Visible en el sitio"
+                  description="Si está desactivado, no aparece en el mapa."
+                  checked={form.active}
+                  onChange={(e) => setForm((f) => ({ ...f, active: e.target.checked }))}
+                />
+              </div>
+
+              <AdminField
+                id="prov"
+                label="Provincia"
+                required
+                hint="Debe coincidir con el identificador del mapa SVG (ej. buenos-aires, cordoba)."
+              >
                 <AdminSelect
-                  id="ltype"
-                  value={form.type}
-                  onChange={(e) => setForm((f) => ({ ...f, type: e.target.value as LocationType }))}
+                  id="prov"
+                  value={form.province}
+                  onChange={(e) => setForm((f) => ({ ...f, province: e.target.value }))}
+                  required
                 >
-                  {TYPES.map((t) => (
-                    <option key={t.value} value={t.value}>
-                      {t.label}
+                  <option value="">Seleccioná provincia</option>
+                  {form.province && !ARGENTINA_MAP_PROVINCE_IDS.has(form.province) ? (
+                    <option value={form.province}>{form.province} — valor actual</option>
+                  ) : null}
+                  {ARGENTINA_MAP_PROVINCES.map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.name}
                     </option>
                   ))}
                 </AdminSelect>
               </AdminField>
-              <AdminCheckbox
-                id="lactive"
-                label="Visible en el sitio"
-                description="Si está desactivado, no aparece en el mapa."
-                checked={form.active}
-                onChange={(e) => setForm((f) => ({ ...f, active: e.target.checked }))}
-              />
-            </div>
 
-            <AdminField
-              id="prov"
-              label="Provincia"
-              required
-              hint="Debe coincidir con el identificador del mapa SVG (ej. buenos-aires, cordoba)."
-            >
-              <AdminSelect
-                id="prov"
-                value={form.province}
-                onChange={(e) => setForm((f) => ({ ...f, province: e.target.value }))}
-                required
-              >
-                <option value="">Seleccioná provincia</option>
-                {form.province && !ARGENTINA_MAP_PROVINCE_IDS.has(form.province) ? (
-                  <option value={form.province}>
-                    {form.province} — valor actual
-                  </option>
-                ) : null}
-                {ARGENTINA_MAP_PROVINCES.map((p) => (
-                  <option key={p.id} value={p.id}>
-                    {p.name}
-                  </option>
-                ))}
-              </AdminSelect>
-            </AdminField>
+              <AdminField id="city" label="Ciudad" required>
+                <Input
+                  id="city"
+                  value={form.city}
+                  onChange={(e) => setForm((f) => ({ ...f, city: e.target.value }))}
+                  required
+                />
+              </AdminField>
 
-            <AdminField id="city" label="Ciudad" required>
-              <Input
-                id="city"
-                value={form.city}
-                onChange={(e) => setForm((f) => ({ ...f, city: e.target.value }))}
-                required
-              />
-            </AdminField>
+              <AdminField id="addr" label="Dirección" required>
+                <Textarea
+                  id="addr"
+                  rows={2}
+                  value={form.address}
+                  onChange={(e) => setForm((f) => ({ ...f, address: e.target.value }))}
+                  required
+                />
+              </AdminField>
+            </AdminFormSection>
+          </AdminWizardPanel>
 
-            <AdminField id="addr" label="Dirección" required>
-              <Textarea
-                id="addr"
-                rows={2}
-                value={form.address}
-                onChange={(e) => setForm((f) => ({ ...f, address: e.target.value }))}
-                required
-              />
-            </AdminField>
-
+          <AdminWizardPanel stepId="contact" currentStepId={currentStepId}>
             <AdminFormSection
               title="Coordenadas (opcional)"
               description="Para mapas con marcadores (Leaflet). Podés usar 0, 0 si solo importa la presencia en el SVG del home."
@@ -353,14 +442,8 @@ export function LocationsAdmin({ initial }: Props) {
                 </AdminField>
               </div>
             </AdminFormSection>
-
-            <AdminFormActions
-              saving={busy}
-              onClear={closeModal}
-              clearLabel="Cancelar"
-              onDelete={editing ? () => void onDelete() : undefined}
-            />
-          </form>
+          </AdminWizardPanel>
+        </AdminFullscreenForm>
       </AdminModal>
     </>
   );
