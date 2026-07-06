@@ -3,6 +3,7 @@ import { ProductJsonLd } from "@/app/components/ProductJsonLd";
 import { ProductVariantSpecs } from "@/app/components/producto/ProductVariantSpecs";
 import { ProductoHeroStagger } from "@/app/components/producto/ProductoHeroStagger";
 import { FadeUp } from "@/app/components/motion";
+import { PageHero } from "@/app/components/PageHero";
 import { getAries305GalleryPaths } from "@/lib/aries-305-gallery";
 import { getModelBySlug, getActiveModelSlugs } from "@/lib/supabase/model-detail";
 import { createStaticClient } from "@/lib/supabase/static-client";
@@ -109,21 +110,22 @@ export default async function ProductoPage({ params }: Props) {
         slug={slug}
       />
       <main>
-        <section className="relative flex min-h-[min(100svh,880px)] flex-col justify-end overflow-hidden bg-primary pb-14 pt-28 sm:min-h-[min(92svh,760px)] sm:justify-center sm:pb-16 sm:pt-24 md:pb-20 md:pt-28 lg:min-h-[min(88svh,820px)]">
-          <div className="absolute inset-0 z-0 overflow-hidden">
+        <PageHero
+          image={
             <div
               className={
                 hasCustomHero
-                  ? "pointer-events-none absolute inset-0"
+                  ? "h-full w-full"
                   : "pointer-events-none absolute left-1/2 top-1/2 h-[112%] w-[118%] max-w-none -translate-x-1/2 -translate-y-1/2 md:h-[110%] md:w-[115%]"
               }
             >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 alt=""
                 className={
                   hasCustomHero
-                    ? "animate-product-hero-image h-full w-full object-cover"
-                    : "animate-product-hero-image h-full w-full object-cover object-[62%_42%] opacity-[0.70] md:opacity-[0.76]"
+                    ? "h-full w-full object-cover"
+                    : "h-full w-full object-cover object-[62%_42%]"
                 }
                 src={hero}
                 style={
@@ -137,68 +139,14 @@ export default async function ProductoPage({ params }: Props) {
                 }
               />
             </div>
-            {hasCustomHero ? (
-              <>
-                <div
-                  className="absolute inset-0 md:hidden"
-                  aria-hidden
-                  style={{
-                    background:
-                      "linear-gradient(to top, rgba(0,23,50,0.92) 0%, rgba(0,23,50,0.55) 42%, rgba(0,23,50,0.18) 100%)",
-                  }}
-                />
-                <div
-                  className="absolute inset-0 hidden md:block"
-                  aria-hidden
-                  style={{
-                    background:
-                      "linear-gradient(105deg, rgba(0,23,50,0.9) 0%, rgba(0,23,50,0.78) 28%, rgba(0,23,50,0.35) 52%, rgba(0,23,50,0.08) 68%, transparent 82%)",
-                  }}
-                />
-              </>
-            ) : (
-              <>
-                <div
-                  className="absolute inset-0 md:hidden"
-                  aria-hidden
-                  style={{
-                    background:
-                      "linear-gradient(to top, #001732 0%, rgba(0,23,50,0.78) 38%, rgba(0,23,50,0.35) 100%)",
-                  }}
-                />
-                <div
-                  className="absolute inset-0 hidden md:block"
-                  aria-hidden
-                  style={{
-                    background:
-                      "linear-gradient(105deg, #001732 0%, rgba(0,23,50,0.93) 38%, rgba(0,23,50,0.52) 62%, rgba(0,23,50,0.12) 85%, transparent 100%)",
-                  }}
-                />
-                <div
-                  className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_95%_75%_at_15%_85%,rgba(32,149,212,0.28)_0%,transparent_52%)] mix-blend-screen opacity-90 md:opacity-100"
-                  aria-hidden
-                />
-                <div
-                  className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(0,8,18,0.55)_100%)] opacity-80 md:opacity-[0.65]"
-                  aria-hidden
-                />
-                <div
-                  className="pointer-events-none absolute inset-0 opacity-[0.07] industrial-grid mix-blend-overlay"
-                  aria-hidden
-                />
-              </>
-            )}
-          </div>
-          <div className="relative z-10 flex flex-col justify-center px-4 sm:px-6 md:px-8 lg:px-10">
-            <div className="container mx-auto max-w-7xl">
-              <ProductoHeroStagger
-                name={model.name}
-                description={model.description ?? defaultDesc}
-                pdfUrl={model.pdf_url}
-              />
-            </div>
-          </div>
-        </section>
+          }
+        >
+          <ProductoHeroStagger
+            name={model.name}
+            description={model.description ?? defaultDesc}
+            pdfUrl={model.pdf_url}
+          />
+        </PageHero>
 
         <ProductGalleryCarousel images={gallery} altPrefix={altPrefix} showcase />
 
@@ -229,7 +177,7 @@ export default async function ProductoPage({ params }: Props) {
         </section>
 
         <section
-          className="relative overflow-hidden bg-primary py-16 md:py-20 lg:py-24"
+          className="relative overflow-hidden bg-primary-brand py-16 md:py-20 lg:py-24"
           aria-labelledby="producto-cta-heading"
         >
           <div
@@ -268,7 +216,7 @@ export default async function ProductoPage({ params }: Props) {
           />
 
           <div className="container relative z-10 mx-auto px-4 sm:px-6 md:px-8">
-            <div className="mx-auto flex max-w-2xl flex-col rounded-curve-lg border border-white/15 bg-white p-8 shadow-[0px_32px_80px_rgba(0,0,0,0.35)] sm:p-10 md:p-12">
+            <div className="mx-auto flex max-w-2xl flex-col rounded-curve-lg border border-outline-variant/25 bg-surface-container-lowest p-8 shadow-elev-3 sm:p-10 md:p-12">
                 <p className="ui-section-eyebrow mb-3 text-saldivia-blue">Saldivia Precision</p>
                 <h2
                   id="producto-cta-heading"

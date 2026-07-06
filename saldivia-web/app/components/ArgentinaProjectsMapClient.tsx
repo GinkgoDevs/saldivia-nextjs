@@ -79,10 +79,13 @@ export default function ArgentinaProjectsMapClient({
   const [selectionLocked, setSelectionLocked] = useState(false);
   const [mapTooltip, setMapTooltip] = useState<MapTooltip>(null);
   const [isDesktopLayout, setIsDesktopLayout] = useState(false);
+  const [scrollBodyHeight, setScrollBodyHeight] = useState<number | undefined>(undefined);
   const [mapColumnHeight, setMapColumnHeight] = useState<number | undefined>(undefined);
 
   const sectionRef = useRef<HTMLElement | null>(null);
   const projectsPanelRef = useRef<HTMLDivElement | null>(null);
+  const projectsScrollRef = useRef<HTMLDivElement | null>(null);
+  const projectsContentRef = useRef<HTMLDivElement | null>(null);
   const svgRef = useRef<SVGSVGElement | null>(null);
   const mapSurfaceRef = useRef<HTMLDivElement | null>(null);
 
@@ -150,6 +153,34 @@ export default function ArgentinaProjectsMapClient({
       window.removeEventListener("resize", syncHeight);
     };
   }, [isDesktopLayout, activeProvinceId, selectionLocked]);
+
+  useEffect(() => {
+    if (!isDesktopLayout) {
+      setScrollBodyHeight(undefined);
+      return undefined;
+    }
+    const scrollEl = projectsScrollRef.current;
+    const contentEl = projectsContentRef.current;
+    if (!scrollEl || !contentEl) return undefined;
+
+    const syncHeight = () => {
+      const style = getComputedStyle(contentEl);
+      const padY =
+        parseFloat(style.paddingTop) + parseFloat(style.paddingBottom);
+      setScrollBodyHeight(Math.max(0, scrollEl.clientHeight - padY));
+    };
+
+    syncHeight();
+    const ro = new ResizeObserver(syncHeight);
+    ro.observe(scrollEl);
+    ro.observe(contentEl);
+    window.addEventListener("resize", syncHeight);
+
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", syncHeight);
+    };
+  }, [isDesktopLayout, activeProvinceId, activeProjects.length, selectionLocked, mapColumnHeight]);
 
   const updateTooltipForProvince = useCallback((provinceId: string) => {
     const svg = svgRef.current;
@@ -435,7 +466,11 @@ export default function ArgentinaProjectsMapClient({
               ref={projectsPanelRef}
               id="province-projects-panel"
               className="scroll-mt-28 border-t border-white/10 bg-[#071422]/60 lg:flex lg:min-h-0 lg:flex-col lg:overflow-hidden lg:border-l lg:border-t-0"
-              style={isDesktopLayout && mapColumnHeight ? { maxHeight: mapColumnHeight } : undefined}
+              style={
+                isDesktopLayout && mapColumnHeight
+                  ? { height: mapColumnHeight, maxHeight: mapColumnHeight }
+                  : undefined
+              }
               aria-live="polite"
               aria-atomic="true"
             >
@@ -488,13 +523,22 @@ export default function ArgentinaProjectsMapClient({
                 </div>
               </div>
 
-              <div className="px-5 py-6 md:px-7 md:py-7 lg:min-h-0 lg:flex-1 lg:overflow-y-auto lg:overscroll-contain lg:pr-4">
-                <ProvinceProjectCardsGrid
-                  key={activeProvince.id}
-                  projects={activeProjects}
-                  initialLimit={isDesktopLayout ? undefined : 8}
-                  compact={isDesktopLayout}
-                />
+              <div
+                ref={projectsScrollRef}
+                className="flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain lg:pr-4"
+              >
+                <div
+                  ref={projectsContentRef}
+                  className="flex min-h-0 flex-1 flex-col px-5 pt-6 pb-6 md:px-7 md:pt-7 md:pb-7 lg:h-full lg:pb-0"
+                >
+                  <ProvinceProjectCardsGrid
+                    key={activeProvince.id}
+                    projects={activeProjects}
+                    initialLimit={isDesktopLayout ? undefined : 8}
+                    compact={isDesktopLayout}
+                    viewportHeight={isDesktopLayout ? scrollBodyHeight : undefined}
+                  />
+                </div>
               </div>
             </div>
           </div>

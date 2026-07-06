@@ -117,7 +117,7 @@ const CRONOLOGIA = [
   },
 ] as const;
 
-const NODE_COLORS = ["bg-primary", "bg-secondary", "technical-gradient"] as const;
+const NODE_COLORS = ["bg-primary-brand", "bg-secondary", "technical-gradient"] as const;
 
 function ChronologyCard({
   year,
@@ -169,7 +169,7 @@ function ChronologyMedia({
       aria-hidden
       className="hidden h-52 items-center justify-center rounded-lg border border-white/10 bg-white/5 sm:h-64 lg:flex"
     >
-      <span className="material-symbols-outlined text-6xl text-secondary-container/30">{icon}</span>
+      <span className="material-symbols-outlined text-6xl text-accent-blue/30">{icon}</span>
     </div>
   );
 }
@@ -255,12 +255,12 @@ function StatCard({
 
   if (featured) {
     return (
-      <div ref={ref} className="relative overflow-hidden bg-primary p-6 sm:p-8">
+      <div ref={ref} className="relative overflow-hidden bg-primary-brand p-6 sm:p-8">
         <div className="absolute bottom-0 right-0 translate-x-1/4 translate-y-1/4 opacity-10 pointer-events-none">
           <span className="material-symbols-outlined" style={{ fontSize: "180px" }}>{icon}</span>
         </div>
         <div className="relative z-10">
-          <h4 className="mb-2 text-xs font-black uppercase tracking-widest text-secondary-container">{label}</h4>
+          <h4 className="mb-2 text-xs font-black uppercase tracking-widest text-accent-blue">{label}</h4>
           <div className="mb-3 text-5xl font-black tracking-tighter text-white sm:text-6xl">
             {display}
           </div>
@@ -384,11 +384,11 @@ export default function NosotrosTimeline() {
       >
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 bg-gradient-to-b from-primary/40 via-transparent to-black/30"
+          className="pointer-events-none absolute inset-0 bg-gradient-to-b from-primary-brand/40 via-transparent to-black/30"
         />
         <div className="container relative mx-auto px-4 sm:px-6">
           <div className="mb-12 text-center sm:mb-16 md:mb-20">
-            <span className="mb-4 block text-xs font-bold uppercase tracking-[0.35em] text-secondary-container">
+            <span className="mb-4 block text-xs font-bold uppercase tracking-[0.35em] text-accent-blue">
               Nuestra historia
             </span>
             <h2 className="mb-3 text-2xl font-black uppercase tracking-tighter text-white sm:mb-4 sm:text-3xl md:text-4xl">

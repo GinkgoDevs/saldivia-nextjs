@@ -14,7 +14,7 @@ export function PostventaPartsGrid() {
     <StaggerInView className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 md:grid-cols-4" stagger={0.08}>
       {parts.map((part) => (
         <StaggerItem key={part.code} className="group overflow-hidden rounded bg-surface-container-low">
-          <div className="h-48 overflow-hidden bg-white">
+          <div className="h-48 overflow-hidden bg-surface-container-lowest">
             <img
               alt={part.name}
               className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"

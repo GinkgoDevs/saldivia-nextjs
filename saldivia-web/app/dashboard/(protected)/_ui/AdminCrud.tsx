@@ -71,7 +71,7 @@ export function AdminReorderToggle({
         onClick={() => onChange(!enabled)}
         className={cn(
           "relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full transition-colors duration-200 outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
-          enabled ? "bg-primary" : "bg-outline-variant/50",
+          enabled ? "bg-primary-brand" : "bg-outline-variant/50",
           disabled && "cursor-not-allowed opacity-50",
         )}
       >
@@ -178,7 +178,7 @@ export function AdminCrudBadge({
 }) {
   const tones = {
     neutral: "bg-surface-container-high text-on-surface",
-    primary: "bg-primary/15 text-primary",
+    primary: "bg-primary-brand/15 text-primary",
     secondary: "bg-secondary/15 text-secondary",
     warning: "bg-amber-500/15 text-amber-900 dark:text-amber-100",
   };

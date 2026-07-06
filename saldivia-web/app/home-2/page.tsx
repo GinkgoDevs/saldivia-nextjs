@@ -60,14 +60,14 @@ export default function Home2Page() {
                   <div className="absolute inset-0 hub-bg transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]">
                     <img alt={card.imgAlt} className="h-full w-full object-cover" src={card.img} />
                   </div>
-                  <div className="absolute inset-0 bg-gradient-to-t from-primary via-primary/75 to-primary/20" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-primary-brand via-primary-brand/75 to-primary-brand/20" />
                   <div className="relative z-10 text-white">
                     <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-sm bg-accent-blue">
                       <span className="material-symbols-outlined text-2xl">{card.icon}</span>
                     </div>
                     <h3 className="font-headline text-2xl font-black uppercase tracking-tighter md:text-3xl">{card.title}</h3>
                     <p className="mt-3 font-headline text-sm leading-relaxed text-white/90 md:text-base">{card.copy}</p>
-                    <span className="mt-6 inline-flex items-center font-headline text-xs font-bold uppercase tracking-widest text-secondary-container transition-colors duration-200 group-hover:text-white">
+                    <span className="mt-6 inline-flex items-center font-headline text-xs font-bold uppercase tracking-widest text-accent-blue transition-colors duration-200 group-hover:text-white">
                       Ver en catálogo
                       <span className="material-symbols-outlined ml-1 text-lg transition-transform duration-200 group-hover:translate-x-0.5">arrow_forward</span>
                     </span>
@@ -81,7 +81,7 @@ export default function Home2Page() {
         {/* After-Sales Box */}
         <section className="bg-[#081b31] py-12 industrial-grid">
           <div className="container mx-auto px-4 md:px-6">
-            <div className="max-w-5xl mx-auto bg-primary border border-white/5 rounded-xl overflow-hidden shadow-2xl flex flex-col lg:flex-row items-center">
+            <div className="max-w-5xl mx-auto bg-primary-brand border border-white/5 rounded-xl overflow-hidden shadow-2xl flex flex-col lg:flex-row items-center">
               <div className="p-10 lg:w-[45%]">
                 <div className="flex items-center gap-4 mb-3">
                   <span className="material-symbols-outlined text-accent-blue text-3xl">manufacturing</span>
@@ -127,7 +127,7 @@ export default function Home2Page() {
             <h2 className="font-headline text-3xl md:text-5xl font-bold text-white mb-8">¿Está listo para renovar su flota?</h2>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
               <a className="bg-accent-blue hover:bg-accent-blue-alt text-white px-10 py-4 rounded-full font-bold shadow-xl transition-all" href="/trabaja-con-nosotros">CONTACTAR VENTAS</a>
-              <a className="bg-white text-primary px-10 py-4 rounded-full font-bold transition-all" href="/trabaja-con-nosotros">PEDIR PRESUPUESTO</a>
+              <a className="bg-white text-primary-brand px-10 py-4 rounded-full font-bold transition-all" href="/trabaja-con-nosotros">PEDIR PRESUPUESTO</a>
             </div>
           </div>
         </section>

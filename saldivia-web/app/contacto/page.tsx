@@ -2,6 +2,13 @@ import type { Metadata } from "next";
 
 import { ContactoForm } from "@/app/components/contact/ContactoForm";
 import { HeroStagger } from "@/app/components/motion";
+import {
+  PageHero,
+  PageHeroImage,
+  PAGE_HERO_EYEBROW_CLASS,
+  PAGE_HERO_LEAD_CLASS,
+  PAGE_HERO_TITLE_CLASS,
+} from "@/app/components/PageHero";
 import { getModels } from "@/lib/supabase/models";
 import { createClient } from "@/lib/supabase/server";
 import { PLANT_ADDRESS, PLANT_MAPS_HREF } from "@/lib/site-location";
@@ -25,31 +32,23 @@ export default async function ContactoPage() {
   return (
     <div className="bg-surface font-headline text-on-surface">
       <main>
-        <section className="relative flex min-h-[min(60svh,380px)] items-center overflow-hidden bg-primary-container pb-10 pt-20 sm:min-h-[320px] sm:pb-0 sm:pt-16">
-          <div className="absolute inset-0 z-0">
-            <img
-              className="h-full w-full object-cover object-center opacity-50"
-              alt="Unidades Saldivia en planta industrial"
+        <PageHero
+          image={
+            <PageHeroImage
               src="/hero-buses.png"
+              alt="Unidades Saldivia en planta industrial"
+              className="object-cover object-center"
             />
-            <div className="absolute inset-0 bg-gradient-to-r from-primary/85 via-primary/65 to-primary/35" />
-          </div>
-          <div className="container relative z-10 mx-auto px-4 sm:px-6 md:px-8">
-            <div className="max-w-3xl">
-              <HeroStagger>
-                <span className="mb-2 block text-xs font-bold uppercase tracking-[0.28em] text-secondary-container">
-                  Atención comercial
-                </span>
-                <h1 className="font-headline text-3xl font-black uppercase tracking-tighter text-white sm:text-4xl md:text-5xl">
-                  Contacto
-                </h1>
-                <p className="mt-4 max-w-2xl text-sm leading-relaxed text-white/85 sm:text-base">
-                  Consultas comerciales, presupuestos y asesoramiento para la renovación o ampliación de su flota.
-                </p>
-              </HeroStagger>
-            </div>
-          </div>
-        </section>
+          }
+        >
+          <HeroStagger>
+            <span className={PAGE_HERO_EYEBROW_CLASS}>Atención comercial</span>
+            <h1 className={PAGE_HERO_TITLE_CLASS}>Contacto</h1>
+            <p className={PAGE_HERO_LEAD_CLASS}>
+              Consultas comerciales, presupuestos y asesoramiento para la renovación o ampliación de su flota.
+            </p>
+          </HeroStagger>
+        </PageHero>
 
         <section className="mx-auto max-w-screen-xl px-4 py-12 sm:px-6 sm:py-16 md:px-8 md:py-20">
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">

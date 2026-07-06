@@ -71,7 +71,7 @@ export default function FooterNewsletter() {
         </Button>
       </form>
       {status === "sent" ? (
-        <p className="text-sm font-medium text-secondary-container" role="status">
+        <p className="text-sm font-medium text-brand-sky" role="status">
           Gracias. Pronto nos pondremos en contacto.
         </p>
       ) : null}

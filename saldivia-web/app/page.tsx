@@ -44,21 +44,21 @@ export default async function HomePage() {
 
         <TechnicalShowcase />
 
-        <div className="relative overflow-hidden bg-surface-container-low dark:bg-slate-900">
+        <div className="relative overflow-hidden bg-surface-container-low">
           <TrajectoryRail side="right" height="60%" />
-          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_20%,rgba(32,149,212,0.08),transparent_60%)] dark:bg-[radial-gradient(circle_at_50%_20%,rgba(32,149,212,0.18),transparent_60%)]" />
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_20%,rgba(32,149,212,0.08),transparent_60%)]" />
           <GalleryCarousel />
           {/* Final CTA */}
           <MotionReveal>
             <section className="relative py-20">
               <div className="container relative mx-auto px-4 md:px-6 text-center">
-                <p className="ui-section-eyebrow mb-3 text-secondary dark:text-secondary-container">
+                <p className="ui-section-eyebrow mb-3">
                   Atención comercial personalizada
                 </p>
-                <h2 className="ui-section-title mb-8 text-primary dark:text-white">
+                <h2 className="ui-section-title mb-8">
                   ¿Está listo para renovar su flota?
                 </h2>
-                <p className="ui-section-intro mx-auto mb-8 max-w-2xl dark:text-slate-300">
+                <p className="ui-section-intro mx-auto mb-8 max-w-2xl">
                   Lo acompañamos desde la configuración inicial hasta la entrega de la unidad, con tiempos de fabricación líderes y soporte postventa dedicado.
                 </p>
                 <Link

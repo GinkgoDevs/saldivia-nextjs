@@ -1,36 +1,36 @@
 import { FadeUp, HeroStagger, TrajectoryRail } from "../components/motion";
 import NosotrosTimeline from "../components/NosotrosTimeline";
+import {
+  PageHero,
+  PageHeroImage,
+  PAGE_HERO_EYEBROW_CLASS,
+  PAGE_HERO_LEAD_CLASS,
+  PAGE_HERO_TITLE_CLASS,
+} from "../components/PageHero";
 
 export default function NosotrosPage() {
   return (
     <div className="bg-surface text-on-surface font-headline">
       <main>
-        <section className="relative flex min-h-[min(52svh,380px)] items-center overflow-hidden asymmetric-gradient pt-24 pb-12 sm:min-h-[400px] sm:pb-10 md:min-h-[440px] md:pb-14 lg:min-h-[460px]">
-          <div className="absolute inset-0">
-            <img
-              className="h-full w-full object-cover object-center"
-              alt="Armado de la estructura de carrocería en planta industrial"
+        <PageHero
+          image={
+            <PageHeroImage
               src="/saldivia/carroceria.jpg"
+              alt="Armado de la estructura de carrocería en planta industrial"
+              className="object-cover object-center"
             />
-          </div>
-          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/55 to-black/20" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-          <div className="relative z-10 mx-auto w-full max-w-screen-2xl px-6 sm:px-10 md:px-14">
-            <HeroStagger>
-              <h1 className="max-w-5xl text-[clamp(2.5rem,6vw,5.5rem)] font-black uppercase leading-[0.9] tracking-tighter text-white">
-                Nosotros
-              </h1>
-              <div className="mt-10 flex max-w-3xl items-start gap-5">
-                <span className="mt-1 h-14 w-0.5 shrink-0 bg-secondary-container" />
-                <p className="text-base font-medium leading-relaxed text-white/80 sm:text-lg md:text-xl">
-                  Desde el 10 de agosto de 1995 trabajamos con una convicción clara: diseñar, fabricar y comercializar
-                  vehículos que acompañen el crecimiento del transporte de pasajeros, siempre con foco en la calidad, la
-                  innovación y el servicio postventa.
-                </p>
-              </div>
-            </HeroStagger>
-          </div>
-        </section>
+          }
+        >
+          <HeroStagger>
+            <span className={PAGE_HERO_EYEBROW_CLASS}>Nuestra historia</span>
+            <h1 className={PAGE_HERO_TITLE_CLASS}>Nosotros</h1>
+            <p className={PAGE_HERO_LEAD_CLASS}>
+              Desde el 10 de agosto de 1995 trabajamos con una convicción clara: diseñar, fabricar y comercializar
+              vehículos que acompañen el crecimiento del transporte de pasajeros, siempre con foco en la calidad, la
+              innovación y el servicio postventa.
+            </p>
+          </HeroStagger>
+        </PageHero>
 
         <NosotrosTimeline />
 

@@ -161,7 +161,7 @@ export default function GalleryCarousel() {
       }}
     >
       <div className="container mx-auto mb-12 px-4 text-center md:mb-14 md:px-6">
-        <h2 id="home-gallery-heading" className="ui-section-title text-primary dark:!text-white">
+        <h2 id="home-gallery-heading" className="ui-section-title">
           Galería de innovación
         </h2>
         <div className="technical-gradient mx-auto mt-5 h-1 w-24" />

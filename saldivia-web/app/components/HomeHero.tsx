@@ -16,7 +16,7 @@ export default function HomeHero() {
   return (
     <section
       id="saldivia-home-hero"
-      className="relative min-h-screen overflow-hidden bg-primary"
+      className="relative min-h-screen overflow-hidden bg-primary-brand"
       aria-labelledby="home-hero-heading"
     >
       <div className="absolute inset-0 z-0 bg-slate-900">
@@ -36,13 +36,13 @@ export default function HomeHero() {
       {/* Móvil: legibilidad del copy sobre la foto */}
       <div
         aria-hidden
-        className="absolute inset-x-0 bottom-0 z-[1] h-[52%] bg-gradient-to-t from-primary/70 via-primary/55 to-transparent lg:hidden"
+        className="absolute inset-x-0 bottom-0 z-[1] h-[52%] bg-gradient-to-t from-primary-brand/70 via-primary-brand/55 to-transparent lg:hidden"
       />
 
       {/* Desktop: corte diagonal tipo “avance” (alineado al wordmark inclinado) */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-y-0 right-0 z-[1] hidden w-[min(560px,52vw)] bg-primary/90 backdrop-blur-[2px] lg:block"
+        className="pointer-events-none absolute inset-y-0 right-0 z-[1] hidden w-[min(560px,52vw)] bg-primary-brand/90 backdrop-blur-[2px] lg:block"
         style={{
           clipPath: "polygon(26% 0, 100% 0, 100% 100%, 0% 100%)",
         }}
@@ -93,10 +93,9 @@ export default function HomeHero() {
               <Link
                 href="/nosotros"
                 className={buttonClass({
-                  variant: "outline",
+                  variant: "on-dark-outline",
                   size: "lg",
-                  className:
-                    "rounded-curve-md border-white/25 bg-white/[0.07] px-8 text-white backdrop-blur-md hover:border-secondary-container/70 hover:bg-white/[0.14] hover:text-white dark:border-white/20 dark:text-white md:px-10",
+                  className: "rounded-curve-md px-8 md:px-10",
                 })}
               >
                 Tour industrial
@@ -113,10 +112,9 @@ export default function HomeHero() {
                     <Link
                       href={item.href}
                       className={buttonClass({
-                        variant: "outline",
+                        variant: "on-dark-outline",
                         size: "sm",
-                        className:
-                          "rounded-curve-pill border-white/20 bg-primary/40 text-white backdrop-blur-sm hover:border-secondary-container/60 hover:bg-white/10 hover:text-white dark:border-white/20 dark:text-white",
+                        className: "rounded-curve-pill",
                       })}
                     >
                       {item.label}

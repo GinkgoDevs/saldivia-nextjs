@@ -40,7 +40,7 @@ export function MediaDropzone({
   disabled,
   previewAspect = "aspect-video",
   previewObjectFit = "cover",
-  previewBg = "bg-primary",
+  previewBg = "bg-primary-brand",
   previewImageClassName,
   showUrlField = true,
   emptyLabel = "Arrastrá un archivo o hacé clic para seleccionar",
@@ -105,7 +105,7 @@ export function MediaDropzone({
         className={cn(
           "group relative cursor-pointer overflow-hidden rounded-sm border-2 border-dashed transition-colors duration-200",
           dragOver
-            ? "border-primary bg-primary/5"
+            ? "border-primary bg-primary-brand/5"
             : "border-outline-variant/45 bg-surface-container-low/50 hover:border-secondary/50 hover:bg-surface-container-low",
           busy && "pointer-events-none opacity-70",
         )}

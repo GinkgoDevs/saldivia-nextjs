@@ -1,5 +1,13 @@
 import { HeroStagger } from "../components/motion";
 import { ContactoForm } from "../components/contact/ContactoForm";
+import {
+  PageHero,
+  PageHeroImage,
+  PAGE_HERO_EYEBROW_CLASS,
+  PAGE_HERO_LEAD_CLASS,
+  PAGE_HERO_TITLE_CLASS,
+  PAGE_HERO_ACCENT_CLASS,
+} from "../components/PageHero";
 import { getModels } from "@/lib/supabase/models";
 import { createClient } from "@/lib/supabase/server";
 
@@ -20,31 +28,27 @@ export default async function TrabajaConNosotrosPage() {
   return (
     <div className="bg-surface text-on-surface font-headline">
       <main>
-        <section className="relative flex min-h-[min(60svh,380px)] items-center overflow-hidden bg-primary-container pt-20 pb-10 sm:min-h-[320px] sm:pt-16 sm:pb-0">
-          <div className="absolute inset-0 z-0">
-            <img
-              className="h-full w-full object-cover object-left opacity-50 sm:object-center"
-              alt="Planta industrial con unidades en taller y linea de ensamble"
+        <PageHero
+          image={
+            <PageHeroImage
               src="/hero-buses2.png"
+              alt="Planta industrial con unidades en taller y línea de ensamble"
+              className="object-cover object-left sm:object-[50%_68%] md:object-[50%_65%]"
             />
-            <div className="absolute inset-0 bg-gradient-to-r from-primary/85 via-primary/65 to-primary/35" />
-          </div>
-          <div className="container relative z-10 mx-auto px-4 sm:px-6 md:px-8">
-            <div className="max-w-3xl">
-              <HeroStagger>
-                <span className="mb-2 block text-xs font-bold uppercase tracking-[0.28em] text-secondary-container">
-                  Contacto y RRHH
-                </span>
-                <h1 className="font-headline text-3xl font-black uppercase tracking-tighter text-white sm:text-4xl md:text-5xl">
-                  Trabaja con nosotros
-                </h1>
-                <p className="mt-4 max-w-2xl text-sm leading-relaxed text-white/85 sm:text-base">
-                  Envíenos su consulta comercial o su CV para futuras búsquedas laborales.
-                </p>
-              </HeroStagger>
-            </div>
-          </div>
-        </section>
+          }
+        >
+          <HeroStagger>
+            <span className={PAGE_HERO_EYEBROW_CLASS}>Contacto y RRHH</span>
+            <h1 className={PAGE_HERO_TITLE_CLASS}>
+              Trabaja
+              <br />
+              <span className={PAGE_HERO_ACCENT_CLASS}>con nosotros</span>
+            </h1>
+            <p className={PAGE_HERO_LEAD_CLASS}>
+              Envíenos su consulta comercial o su CV para futuras búsquedas laborales.
+            </p>
+          </HeroStagger>
+        </PageHero>
 
         <section className="mx-auto max-w-screen-xl px-4 py-12 sm:px-6 sm:py-16 md:px-8 md:py-20">
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">

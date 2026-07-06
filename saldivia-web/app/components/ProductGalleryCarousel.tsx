@@ -36,7 +36,7 @@ type Props = {
   showcase?: boolean;
 };
 
-const GALLERY_BG = "#EAEAEA";
+const GALLERY_BG = "var(--color-gallery-stage)";
 const AUTO_PLAY_MS = 5000;
 
 const slideVariants = {
@@ -135,7 +135,7 @@ function GalleryStage({
 
       {n > 1 && (
         <div
-          className="pointer-events-none absolute left-3 top-3 z-10 rounded-curve-sm bg-primary/75 px-2.5 py-1 font-mono text-[11px] font-bold tabular-nums text-white backdrop-blur-sm"
+          className="pointer-events-none absolute left-3 top-3 z-10 rounded-curve-sm bg-primary-brand/75 px-2.5 py-1 font-mono text-[11px] font-bold tabular-nums text-white backdrop-blur-sm"
           aria-live="polite"
         >
           {String(index + 1).padStart(2, "0")} / {String(n).padStart(2, "0")}
@@ -145,7 +145,7 @@ function GalleryStage({
       <button
         type="button"
         onClick={onOpenLightbox}
-        className="absolute right-3 top-3 z-10 flex h-9 w-9 cursor-pointer items-center justify-center rounded-curve-sm border border-white/20 bg-primary/75 text-white shadow-md backdrop-blur-sm transition-colors hover:bg-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-saldivia-blue"
+        className="absolute right-3 top-3 z-10 flex h-9 w-9 cursor-pointer items-center justify-center rounded-curve-sm border border-white/20 bg-primary-brand/75 text-white shadow-md backdrop-blur-sm transition-colors hover:bg-primary-brand focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-saldivia-blue"
         aria-label="Ver imagen ampliada"
       >
         <span className="material-symbols-outlined text-xl text-white">fullscreen</span>
@@ -166,7 +166,7 @@ function GalleryStage({
           <button
             type="button"
             onClick={onPrev}
-            className={`absolute top-1/2 z-10 flex -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border border-white/20 bg-primary/75 text-white shadow-md backdrop-blur-sm transition-colors hover:bg-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-saldivia-blue ${
+            className={`absolute top-1/2 z-10 flex -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border border-white/20 bg-primary-brand/75 text-white shadow-md backdrop-blur-sm transition-colors hover:bg-primary-brand focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-saldivia-blue ${
               showcase
                 ? "left-2 h-12 w-12 sm:left-4 md:left-6 md:h-14 md:w-14"
                 : "left-3 h-11 w-11 md:left-4"
@@ -178,7 +178,7 @@ function GalleryStage({
           <button
             type="button"
             onClick={onNext}
-            className={`absolute top-1/2 z-10 flex -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border border-white/20 bg-primary/75 text-white shadow-md backdrop-blur-sm transition-colors hover:bg-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-saldivia-blue ${
+            className={`absolute top-1/2 z-10 flex -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border border-white/20 bg-primary-brand/75 text-white shadow-md backdrop-blur-sm transition-colors hover:bg-primary-brand focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-saldivia-blue ${
               showcase
                 ? "right-2 h-12 w-12 sm:right-4 md:right-6 md:h-14 md:w-14"
                 : "right-3 h-11 w-11 md:right-4"
@@ -239,7 +239,7 @@ function ThumbnailRail({
             aria-selected={active}
             aria-label={`${altPrefix} — miniatura ${i + 1}`}
             onClick={() => onSelect(i)}
-            className={`relative shrink-0 cursor-pointer snap-center overflow-hidden rounded-curve-sm border-2 bg-white transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-saldivia-blue focus-visible:ring-offset-2 ${
+            className={`relative shrink-0 cursor-pointer snap-center overflow-hidden rounded-curve-sm border-2 bg-surface-container-lowest transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-saldivia-blue focus-visible:ring-offset-2 ${
               showcase
                 ? "h-16 w-20 sm:h-[4.5rem] sm:w-24 md:h-20 md:w-28"
                 : "h-[4.5rem] w-[5.5rem]"
@@ -307,7 +307,7 @@ function Lightbox({
 
   return createPortal(
     <div
-      className="fixed inset-0 z-[300] flex flex-col bg-primary/95 backdrop-blur-md"
+      className="fixed inset-0 z-[300] flex flex-col bg-primary-brand/95 backdrop-blur-md"
       role="dialog"
       aria-modal="true"
       aria-label={`Galería ampliada — ${altPrefix}`}
@@ -316,7 +316,7 @@ function Lightbox({
       <div className="flex shrink-0 items-center justify-between px-4 py-3 sm:px-6">
         <p className="font-headline text-sm font-bold uppercase tracking-wider text-white/80">
           {altPrefix}{" "}
-          <span className="font-mono tabular-nums text-secondary-container">
+          <span className="font-mono tabular-nums text-accent-blue">
             {index + 1}/{n}
           </span>
         </p>
@@ -487,7 +487,7 @@ export default function ProductGalleryCarousel({
   const stageClass = showcase
     ? "h-[min(70vh,820px)] min-h-[420px] w-full max-w-none overflow-hidden sm:h-[min(74vh,880px)] md:h-[min(78vh,920px)]"
     : embedded
-      ? "aspect-[4/3] w-full overflow-hidden rounded-curve-md border border-outline-variant/25 bg-white shadow-elev-1 sm:aspect-[3/4] lg:aspect-[4/5]"
+      ? "aspect-[4/3] w-full overflow-hidden rounded-curve-md border border-outline-variant/25 bg-surface-container-lowest shadow-elev-1 sm:aspect-[3/4] lg:aspect-[4/5]"
       : "aspect-[4/3] w-full overflow-hidden rounded-sm sm:aspect-video md:aspect-[21/9] md:rounded-md";
 
   const fillMode = embedded || showcase ? "contain" : "cover";
@@ -498,7 +498,7 @@ export default function ProductGalleryCarousel({
         ? "object-contain object-center p-0 scale-[1.14] sm:scale-[1.18] md:scale-[1.22]"
         : "object-contain p-3";
   const imageSizes = embedded ? "(max-width: 1024px) 100vw, 40vw" : "100vw";
-  const stageBackground = embedded ? undefined : showcase ? "#ffffff" : GALLERY_BG;
+  const stageBackground = embedded ? undefined : showcase ? "var(--color-surface-container-lowest)" : GALLERY_BG;
   const showControls = n > 1;
   const autoPlayProgress = autoPlayEnabled && !paused;
 
@@ -541,7 +541,7 @@ export default function ProductGalleryCarousel({
         <div
           className={
             showcase
-              ? "w-full border-t border-outline-variant/15 bg-[#f0f1f3] px-2 py-4 sm:px-4 md:py-5"
+              ? "w-full border-t border-outline-variant/15 bg-gallery-rail px-2 py-4 sm:px-4 md:py-5"
               : undefined
           }
         >
@@ -573,7 +573,7 @@ export default function ProductGalleryCarousel({
   if (showcase) {
     return (
       <>
-        <section className="w-full max-w-none bg-white" aria-label={`Galería ${altPrefix}`}>
+        <section className="w-full max-w-none bg-gallery-stage" aria-label={`Galería ${altPrefix}`}>
           {carousel}
         </section>
         {mounted && lightboxOpen && (

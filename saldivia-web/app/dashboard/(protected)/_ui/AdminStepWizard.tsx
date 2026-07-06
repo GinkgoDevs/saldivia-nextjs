@@ -36,7 +36,7 @@ export function AdminStepIndicator({ steps, current, onStepClick }: IndicatorPro
                 onClick={() => clickable && onStepClick(index)}
                 className={cn(
                   "flex size-7 shrink-0 items-center justify-center rounded-full text-xs font-bold transition-colors sm:size-8 sm:text-sm",
-                  active && "bg-primary text-on-primary",
+                  active && "bg-primary-brand text-on-primary",
                   done && "bg-secondary/20 text-secondary",
                   !active && !done && "bg-surface-container-high text-on-surface-variant",
                   clickable && "cursor-pointer hover:ring-2 hover:ring-primary/30",

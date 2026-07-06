@@ -135,8 +135,8 @@ function MapProjectImage({
   const [loaded, setLoaded] = useState(false);
   const [useNative, setUseNative] = useState(false);
   const imageSrc = optimizedStorageImageUrl(src) ?? src;
-
-  const focalStyle = imageFocalStyle(focalX, focalY, zoom);
+  const coverZoom = Math.max(1, zoom ?? 1);
+  const focalStyle = imageFocalStyle(focalX, focalY, coverZoom);
 
   if (useNative) {
     return (
@@ -148,7 +148,7 @@ function MapProjectImage({
           alt={alt}
           loading="lazy"
           decoding="async"
-          className={`h-full w-full object-cover transition-[opacity,transform] duration-500 group-hover:scale-[1.03] ${
+          className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-500 group-hover:scale-[1.03] ${
             loaded ? "opacity-100" : "opacity-0"
           }`}
           style={focalStyle}
@@ -166,7 +166,7 @@ function MapProjectImage({
         alt={alt}
         fill
         sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 280px"
-        className={`object-cover transition-[opacity,transform] duration-500 group-hover:scale-[1.03] ${
+        className={`object-cover transition-opacity duration-500 group-hover:scale-[1.03] ${
           loaded ? "opacity-100" : "opacity-0"
         }`}
         style={focalStyle}
@@ -180,17 +180,25 @@ function MapProjectImage({
 function ProjectCard({
   project,
   onOpen,
+  fillHeight = false,
 }: {
   project: ProvinceProjectCard;
   onOpen: () => void;
+  fillHeight?: boolean;
 }) {
   const hasImage = Boolean(project.imageUrl);
 
   return (
-    <article className="group flex flex-col overflow-hidden rounded-curve-sm border border-white/12 bg-[#051018]/90 shadow-[0_12px_32px_rgba(0,0,0,0.35)] transition-colors hover:border-cyan-400/35">
+    <article
+      className={`group flex flex-col overflow-hidden rounded-curve-sm border border-white/12 bg-[#051018]/90 shadow-[0_12px_32px_rgba(0,0,0,0.35)] transition-colors hover:border-cyan-400/35 ${
+        fillHeight ? "h-full min-h-0" : ""
+      }`}
+    >
       <button
         type="button"
-        className="relative aspect-[4/3] w-full overflow-hidden bg-[#0a1e36] text-left"
+        className={`relative w-full overflow-hidden bg-[#0a1e36] text-left ${
+          fillHeight ? "min-h-0 flex-1" : "aspect-[4/3]"
+        }`}
         onClick={hasImage ? onOpen : undefined}
         disabled={!hasImage}
         aria-label={hasImage ? `Ver imagen de ${project.title}` : project.title}
@@ -215,7 +223,7 @@ function ProjectCard({
           </span>
         )}
       </button>
-      <div className="flex flex-1 flex-col gap-1 p-4">
+      <div className={`flex shrink-0 flex-col gap-1 p-4 ${fillHeight ? "pt-3" : ""}`}>
         <h4 className="font-headline text-base font-bold leading-tight text-white md:text-lg">
           {project.title}
         </h4>
@@ -237,14 +245,47 @@ function ProjectCard({
   );
 }
 
+const GRID_GAP_PX = 16;
+const MIN_ROW_HEIGHT_PX = 150;
+
+function computeDesktopGridLayout(viewportHeight: number, rowCount: number) {
+  if (rowCount <= 0 || viewportHeight <= 0) return null;
+
+  const totalGaps = Math.max(0, rowCount - 1) * GRID_GAP_PX;
+  const minGridHeight = rowCount * MIN_ROW_HEIGHT_PX + totalGaps;
+
+  if (minGridHeight <= viewportHeight) {
+    return {
+      fillHeight: true,
+      gridHeight: viewportHeight,
+      gridTemplateRows: `repeat(${rowCount}, minmax(0, 1fr))`,
+    };
+  }
+
+  const visibleRows = Math.max(
+    1,
+    Math.floor((viewportHeight + GRID_GAP_PX) / (MIN_ROW_HEIGHT_PX + GRID_GAP_PX)),
+  );
+  const rowHeight = (viewportHeight - (visibleRows - 1) * GRID_GAP_PX) / visibleRows;
+
+  return {
+    fillHeight: true,
+    gridHeight: rowCount * rowHeight + totalGaps,
+    gridTemplateRows: `repeat(${rowCount}, ${rowHeight}px)`,
+  };
+}
+
 export function ProvinceProjectCardsGrid({
   projects,
   initialLimit,
   compact = false,
+  viewportHeight,
 }: {
   projects: ProvinceProjectCard[];
   initialLimit?: number;
   compact?: boolean;
+  /** Altura medida del área de scroll en desktop; reparte filas sin usar 1fr sin límite */
+  viewportHeight?: number;
 }) {
   const [lightbox, setLightbox] = useState<LightboxState>(null);
   const [mounted, setMounted] = useState(false);
@@ -293,10 +334,29 @@ export function ProvinceProjectCardsGrid({
     );
   }
 
+  const columnCount = compact ? 2 : 3;
+  const rowCount = Math.ceil(visibleProjects.length / columnCount);
+  const showMoreButton = hasLimit && !showAll;
+  const desktopLayout =
+    viewportHeight != null && viewportHeight > 0 && !showMoreButton
+      ? computeDesktopGridLayout(viewportHeight, rowCount)
+      : null;
+
   return (
-    <>
+    <div className={desktopLayout ? "flex h-full min-h-0 flex-1 flex-col" : undefined}>
       <div
-        className={`grid gap-4 sm:grid-cols-2 ${compact ? "lg:grid-cols-2" : "lg:grid-cols-3 xl:grid-cols-4"}`}
+        className={`grid gap-4 sm:grid-cols-2 ${compact ? "lg:grid-cols-2" : "lg:grid-cols-3 xl:grid-cols-4"} ${
+          desktopLayout ? "min-h-0 shrink-0" : ""
+        }`}
+        style={
+          desktopLayout
+            ? {
+                height: desktopLayout.gridHeight,
+                gridTemplateRows: desktopLayout.gridTemplateRows,
+                gap: GRID_GAP_PX,
+              }
+            : undefined
+        }
       >
         {visibleProjects.map((project, index) => {
           const imageIndex = withImages.findIndex(
@@ -306,6 +366,7 @@ export function ProvinceProjectCardsGrid({
             <ProjectCard
               key={`${project.title}-${index}`}
               project={project}
+              fillHeight={Boolean(desktopLayout?.fillHeight)}
               onOpen={() => {
                 if (imageIndex >= 0) openAt(imageIndex);
               }}
@@ -314,8 +375,8 @@ export function ProvinceProjectCardsGrid({
         })}
       </div>
 
-      {hasLimit && !showAll ? (
-        <div className="mt-6 flex justify-center">
+      {showMoreButton ? (
+        <div className="mt-6 flex shrink-0 justify-center">
           <button
             type="button"
             className="inline-flex items-center gap-2 rounded-full border border-cyan-400/35 bg-[#081a30]/90 px-5 py-2.5 text-sm font-bold uppercase tracking-[0.14em] text-accent-blue transition-colors hover:bg-cyan-400/10"
@@ -330,6 +391,6 @@ export function ProvinceProjectCardsGrid({
       {mounted && lightbox ? (
         <ProjectLightbox state={lightbox} onClose={close} onPrev={prev} onNext={next} />
       ) : null}
-    </>
+    </div>
   );
 }
