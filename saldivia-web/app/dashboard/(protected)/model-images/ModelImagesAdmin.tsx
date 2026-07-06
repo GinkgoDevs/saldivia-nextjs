@@ -8,11 +8,20 @@ import {
   deleteModelImage,
   reorderModelImages,
   updateModelImageSortOrder,
-  uploadMediaToBucket,
 } from "@/app/actions/admin-content";
+import { uploadMediaFromBrowser } from "@/lib/upload-media-client";
 import { Button } from "@/app/components/ui/Button";
 import { Input } from "@/app/components/ui/Input";
 import type { Model, ModelImage } from "@/types/model";
+import {
+  AdminField,
+  AdminFormActions,
+  AdminListPanel,
+  AdminSelect,
+  AdminStatusBanner,
+  AdminTwoColumn,
+  MediaDropzone,
+} from "../_ui/admin-ui";
 
 type Props = { models: Model[]; initialImages: ModelImage[] };
 
@@ -32,8 +41,11 @@ export function ModelImagesAdmin({ models, initialImages }: Props) {
   const [dropTargetIndex, setDropTargetIndex] = useState<number | null>(null);
   const [addUrl, setAddUrl] = useState("");
   const [addSortOrder, setAddSortOrder] = useState(0);
-  const [message, setMessage] = useState<string | null>(null);
+  const [message, setMessage] = useState<{ text: string; variant: "info" | "success" | "error" } | null>(
+    null,
+  );
   const [busy, setBusy] = useState(false);
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     setImages(initialImages);
@@ -60,22 +72,24 @@ export function ModelImagesAdmin({ models, initialImages }: Props) {
     [models, selectedModelId],
   );
 
-  async function onUpload(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setBusy(true);
+  async function onUploadFile(file: File) {
+    setUploading(true);
     setMessage(null);
-    const fd = new FormData();
-    fd.set("file", file);
-    const r = await uploadMediaToBucket(fd);
-    setBusy(false);
-    e.target.value = "";
-    if (!r.ok) {
-      setMessage(r.error === "unauthorized" ? "Sesión vencida." : (r.error ?? "Error al subir"));
-      return;
+    try {
+      const folder = selectedModelId ? `models/${selectedModelId}/gallery` : undefined;
+      const r = await uploadMediaFromBrowser(file, folder ? { folder } : undefined);
+      if (!r.ok) {
+        setMessage({
+          text: r.error === "unauthorized" ? "Sesión vencida." : (r.error ?? "Error al subir"),
+          variant: "error",
+        });
+        return;
+      }
+      setAddUrl(r.publicUrl);
+      setMessage({ text: "Archivo subido. Pulse «Agregar imagen» para guardarlo en la galería.", variant: "info" });
+    } finally {
+      setUploading(false);
     }
-    setAddUrl(r.publicUrl);
-    setMessage("Archivo subido. Hacé clic en 'Agregar' para guardarlo.");
   }
 
   async function onAdd(e: React.FormEvent) {
@@ -90,12 +104,12 @@ export function ModelImagesAdmin({ models, initialImages }: Props) {
     });
     setBusy(false);
     if (!r.ok) {
-      setMessage(r.error);
+      setMessage({ text: r.error, variant: "error" });
       return;
     }
     setAddUrl("");
     setAddSortOrder(modelImages.length + 1);
-    setMessage("Imagen agregada.");
+    setMessage({ text: "Imagen agregada a la galería.", variant: "success" });
     router.refresh();
   }
 
@@ -106,11 +120,11 @@ export function ModelImagesAdmin({ models, initialImages }: Props) {
     const r = await deleteModelImage(id);
     setBusy(false);
     if (!r.ok) {
-      setMessage(r.error);
+      setMessage({ text: r.error, variant: "error" });
       return;
     }
     setImages((prev) => prev.filter((img) => img.id !== id));
-    setMessage("Imagen eliminada.");
+    setMessage({ text: "Imagen eliminada.", variant: "success" });
   }
 
   async function onUpdateSortOrder(id: string, sort_order: number) {
@@ -119,11 +133,11 @@ export function ModelImagesAdmin({ models, initialImages }: Props) {
     const r = await updateModelImageSortOrder(id, sort_order);
     setBusy(false);
     if (!r.ok) {
-      setMessage(r.error);
+      setMessage({ text: r.error, variant: "error" });
       return;
     }
     setImages((prev) => prev.map((img) => (img.id === id ? { ...img, sort_order } : img)));
-    setMessage("Orden actualizado.");
+    setMessage({ text: "Orden actualizado.", variant: "success" });
   }
 
   async function onReorderDrop(fromIndex: number, toIndex: number) {
@@ -135,7 +149,10 @@ export function ModelImagesAdmin({ models, initialImages }: Props) {
     const r = await reorderModelImages(selectedModelId, orderedIds);
     setBusy(false);
     if (!r.ok) {
-      setMessage(r.error === "validation" ? "No se pudo guardar el orden." : r.error);
+      setMessage({
+        text: r.error === "validation" ? "No se pudo guardar el orden." : r.error,
+        variant: "error",
+      });
       return;
     }
     setImages((prev) =>
@@ -146,19 +163,15 @@ export function ModelImagesAdmin({ models, initialImages }: Props) {
         return { ...img, sort_order: idx };
       }),
     );
-    setMessage("Orden actualizado.");
+    setMessage({ text: "Orden actualizado.", variant: "success" });
     router.refresh();
   }
 
   return (
     <div className="space-y-8">
-      <div className="space-y-1">
-        <label className="text-xs font-bold text-secondary" htmlFor="model-select">
-          Modelo
-        </label>
-        <select
+      <AdminField id="model-select" label="Modelo" hint="Elegí el colectivo cuya galería querés editar.">
+        <AdminSelect
           id="model-select"
-          className="h-11 w-full max-w-sm rounded-curve-sm border border-outline-variant/40 bg-surface-container-lowest px-3 text-sm"
           value={selectedModelId}
           onChange={(e) => {
             setSelectedModelId(e.target.value);
@@ -171,24 +184,22 @@ export function ModelImagesAdmin({ models, initialImages }: Props) {
               {!m.active ? " (inactivo)" : ""}
             </option>
           ))}
-        </select>
-      </div>
+        </AdminSelect>
+      </AdminField>
 
-      <div className="grid gap-10 lg:grid-cols-[1fr_320px]">
-        <section>
-          <h2 className="text-sm font-bold uppercase tracking-widest text-primary">
-            Galería: {selectedModel?.name ?? "—"}
-          </h2>
-          <p className="mt-1 text-xs text-on-surface-variant">
-            {modelImages.length} {modelImages.length === 1 ? "imagen" : "imágenes"} · arrastrá con el
-            asa para ordenar (0 = primera en el carrusel)
-          </p>
+      <AdminTwoColumn
+        className="lg:grid-cols-[minmax(0,1fr)_minmax(300px,380px)]"
+        list={
+          <AdminListPanel
+            title={`Galería: ${selectedModel?.name ?? "—"}`}
+            description={`${modelImages.length} imagen${modelImages.length === 1 ? "" : "es"} · arrastrá con el asa para ordenar`}
+          >
           {modelImages.length === 0 ? (
-            <p className="mt-4 text-sm text-on-surface-variant">
+            <p className="p-6 text-center text-sm text-on-surface-variant">
               Sin imágenes para este modelo. Agregá una desde el panel de la derecha.
             </p>
           ) : (
-            <ul className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3">
+            <ul className="grid grid-cols-2 gap-0 divide-x divide-y divide-outline-variant/20 sm:grid-cols-2">
               {modelImages.map((img, index) => (
                 <li
                   key={img.id}
@@ -281,49 +292,45 @@ export function ModelImagesAdmin({ models, initialImages }: Props) {
               ))}
             </ul>
           )}
-        </section>
-
-        <section className="rounded border border-outline-variant/30 bg-surface-container-lowest p-6">
-          <h2 className="text-sm font-bold uppercase tracking-widest text-primary">
-            Agregar imagen
-          </h2>
+          </AdminListPanel>
+        }
+        form={
+        <section className="rounded-sm border border-outline-variant/30 bg-surface-container-lowest p-5">
+          <h2 className="text-sm font-bold uppercase tracking-widest text-primary">Agregar imagen</h2>
+          {message ? (
+            <div className="mt-3">
+              <AdminStatusBanner variant={message.variant}>{message.text}</AdminStatusBanner>
+            </div>
+          ) : null}
           <form className="mt-4 space-y-4" onSubmit={onAdd}>
-            <div className="space-y-1">
-              <label className="text-xs font-bold text-secondary">URL de imagen</label>
-              <Input
-                value={addUrl}
-                onChange={(e) => setAddUrl(e.target.value)}
-                placeholder="https://..."
-              />
-            </div>
-            <div className="space-y-1">
-              <label className="block text-xs text-on-surface-variant">O subir archivo</label>
-              <input
-                type="file"
-                accept="image/jpeg,image/png,image/webp"
-                className="text-xs"
-                onChange={(e) => void onUpload(e)}
-                disabled={busy}
-              />
-            </div>
-            <div className="space-y-1">
-              <label className="text-xs font-bold text-secondary" htmlFor="add-sort-order">
-                Orden
-              </label>
+            <MediaDropzone
+              id="gallery-upload"
+              label="Imagen"
+              hint="Se agregará a la galería del modelo seleccionado al pulsar el botón inferior."
+              value={addUrl}
+              uploading={uploading}
+              disabled={busy || !selectedModelId}
+              previewAspect="aspect-video"
+              onChange={setAddUrl}
+              onFileSelect={onUploadFile}
+            />
+            <AdminField id="add-sort-order" label="Orden en el carrusel" hint="0 = primera imagen.">
               <Input
                 id="add-sort-order"
                 type="number"
                 value={String(addSortOrder)}
                 onChange={(e) => setAddSortOrder(Number(e.target.value))}
               />
-            </div>
-            {message && <p className="text-sm text-on-surface-variant">{message}</p>}
-            <Button type="submit" disabled={busy || !addUrl.trim() || !selectedModelId}>
-              {busy ? "Guardando…" : "Agregar imagen"}
-            </Button>
+            </AdminField>
+            <AdminFormActions
+              saving={busy}
+              uploading={uploading}
+              saveLabel="Agregar imagen"
+            />
           </form>
         </section>
-      </div>
+        }
+      />
     </div>
   );
 }

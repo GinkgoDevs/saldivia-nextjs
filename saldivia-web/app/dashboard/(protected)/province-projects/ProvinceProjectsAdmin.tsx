@@ -3,10 +3,20 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { deleteProvinceProject, reorderProvinceProjects, saveProvinceProject } from "@/app/actions/admin-content";
+import { uploadMediaFromBrowser } from "@/lib/upload-media-client";
 import type { ProvinceProjectRow } from "@/types/province-project";
 import { Button } from "@/app/components/ui/Button";
 import { Input } from "@/app/components/ui/Input";
 import { Textarea } from "@/app/components/ui/Textarea";
+import {
+  AdminCheckbox,
+  AdminField,
+  AdminFormActions,
+  AdminSelect,
+  AdminStatusBanner,
+  AdminTwoColumn,
+  MediaDropzone,
+} from "../_ui/admin-ui";
 
 type ProvinceOption = { id: string; name: string };
 
@@ -66,8 +76,11 @@ export function ProvinceProjectsAdmin({ initial, provinceOptions }: Props) {
   const router = useRouter();
   const [list, setList] = useState(initial);
   const [form, setForm] = useState<FormState>(emptyForm);
-  const [message, setMessage] = useState<string | null>(null);
+  const [message, setMessage] = useState<{ text: string; variant: "info" | "success" | "error" } | null>(
+    null,
+  );
   const [busy, setBusy] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [orderProvince, setOrderProvince] = useState(provinceOptions[0]?.id ?? "");
 
   useEffect(() => {
@@ -87,7 +100,10 @@ export function ProvinceProjectsAdmin({ initial, provinceOptions }: Props) {
     const r = await reorderProvinceProjects(orderProvince, orderedIds);
     setBusy(false);
     if (!r.ok) {
-      setMessage(r.error === "validation" ? "No se pudo guardar el orden." : r.error);
+      setMessage({
+        text: r.error === "validation" ? "No se pudo guardar el orden." : r.error,
+        variant: "error",
+      });
       return;
     }
     setList((prev) =>
@@ -97,7 +113,7 @@ export function ProvinceProjectsAdmin({ initial, provinceOptions }: Props) {
         return { ...row, sort_order: idx };
       }),
     );
-    setMessage("Orden actualizado.");
+    setMessage({ text: "Orden actualizado.", variant: "success" });
     router.refresh();
   }
 
@@ -107,6 +123,22 @@ export function ProvinceProjectsAdmin({ initial, provinceOptions }: Props) {
 
   function newRow() {
     setForm(emptyForm());
+  }
+
+  async function onImageFile(file: File) {
+    setUploading(true);
+    setMessage(null);
+    try {
+      const r = await uploadMediaFromBrowser(file, { folder: "mapa-projects" });
+      if (!r.ok) {
+        setMessage({ text: r.error, variant: "error" });
+        return;
+      }
+      setForm((f) => ({ ...f, image_url: r.publicUrl }));
+      setMessage({ text: "Imagen subida. Pulse Guardar para publicar.", variant: "info" });
+    } finally {
+      setUploading(false);
+    }
   }
 
   async function onSave(e: React.FormEvent) {
@@ -127,10 +159,13 @@ export function ProvinceProjectsAdmin({ initial, provinceOptions }: Props) {
     });
     setBusy(false);
     if (!r.ok) {
-      setMessage(r.error === "validation" ? "Provincia y título son obligatorios." : r.error);
+      setMessage({
+        text: r.error === "validation" ? "Provincia y título son obligatorios." : r.error,
+        variant: "error",
+      });
       return;
     }
-    setMessage("Guardado.");
+    setMessage({ text: "Proyecto guardado.", variant: "success" });
     setForm(emptyForm());
     router.refresh();
   }
@@ -142,7 +177,7 @@ export function ProvinceProjectsAdmin({ initial, provinceOptions }: Props) {
     const r = await deleteProvinceProject(form.id);
     setBusy(false);
     if (!r.ok) {
-      setMessage(r.error);
+      setMessage({ text: r.error, variant: "error" });
       return;
     }
     setList((p) => p.filter((x) => x.id !== form.id));
@@ -243,15 +278,15 @@ export function ProvinceProjectsAdmin({ initial, provinceOptions }: Props) {
         <p className="mt-1 text-xs text-on-surface-variant">
           El <strong>slug de provincia</strong> debe coincidir con el mapa SVG (ej. buenos-aires, cordoba).
         </p>
-        {message && <p className="mt-2 text-sm text-on-surface-variant">{message}</p>}
-        <form className="mt-4 space-y-3" onSubmit={onSave}>
-          <div className="space-y-1">
-            <label className="text-xs font-bold text-secondary" htmlFor="pp-prov">
-              Provincia (mapa)
-            </label>
-            <select
+        {message ? (
+          <div className="mt-3">
+            <AdminStatusBanner variant={message.variant}>{message.text}</AdminStatusBanner>
+          </div>
+        ) : null}
+        <form className="mt-4 space-y-4" onSubmit={onSave}>
+          <AdminField id="pp-prov" label="Provincia (mapa)" required hint="Debe coincidir con el slug del mapa SVG.">
+            <AdminSelect
               id="pp-prov"
-              className="h-11 w-full rounded-curve-sm border border-outline-variant/40 bg-surface-container-lowest px-2 text-sm"
               value={form.province_slug}
               onChange={(e) => setForm((f) => ({ ...f, province_slug: e.target.value }))}
               required
@@ -262,41 +297,33 @@ export function ProvinceProjectsAdmin({ initial, provinceOptions }: Props) {
                   {p.name} ({p.id})
                 </option>
               ))}
-            </select>
-          </div>
-          <div className="space-y-1">
-            <label className="text-xs font-bold text-secondary" htmlFor="pp-title">
-              Título del proyecto
-            </label>
+            </AdminSelect>
+          </AdminField>
+          <AdminField id="pp-title" label="Título del proyecto" required>
             <Input
               id="pp-title"
               value={form.title}
               onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))}
               required
             />
-          </div>
-          <div className="space-y-1">
-            <label className="text-xs font-bold text-secondary" htmlFor="pp-desc">
-              Descripción
-            </label>
+          </AdminField>
+          <AdminField id="pp-desc" label="Descripción">
             <Textarea
               id="pp-desc"
               rows={3}
               value={form.description}
               onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
             />
-          </div>
-          <div className="space-y-1">
-            <label className="text-xs font-bold text-secondary" htmlFor="pp-img">
-              Imagen (URL pública)
-            </label>
-            <Input
-              id="pp-img"
-              placeholder="https://…supabase.co/storage/v1/object/public/media/mapa/…"
-              value={form.image_url}
-              onChange={(e) => setForm((f) => ({ ...f, image_url: e.target.value }))}
-            />
-          </div>
+          </AdminField>
+          <MediaDropzone
+            id="pp-img"
+            label="Imagen del proyecto"
+            value={form.image_url}
+            uploading={uploading}
+            disabled={busy}
+            onChange={(url) => setForm((f) => ({ ...f, image_url: url }))}
+            onFileSelect={onImageFile}
+          />
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div className="space-y-1">
               <label className="text-xs font-bold text-secondary" htmlFor="pp-loc">
@@ -343,26 +370,18 @@ export function ProvinceProjectsAdmin({ initial, provinceOptions }: Props) {
             </div>
           </div>
           <div className="flex items-end gap-2 pb-1">
-            <input
+            <AdminCheckbox
               id="pp-active"
-              type="checkbox"
+              label="Activo (visible en el sitio)"
               checked={form.active}
               onChange={(e) => setForm((f) => ({ ...f, active: e.target.checked }))}
             />
-            <label htmlFor="pp-active" className="text-sm">
-              Activo (visible en el sitio)
-            </label>
           </div>
-          <div className="flex flex-wrap gap-3">
-            <Button type="submit" disabled={busy}>
-              {busy ? "Guardando…" : "Guardar"}
-            </Button>
-            {form.id && (
-              <Button type="button" variant="outline" disabled={busy} onClick={() => void onDelete()}>
-                Eliminar
-              </Button>
-            )}
-          </div>
+          <AdminFormActions
+            saving={busy}
+            uploading={uploading}
+            onDelete={form.id ? () => void onDelete() : undefined}
+          />
         </form>
       </section>
     </div>

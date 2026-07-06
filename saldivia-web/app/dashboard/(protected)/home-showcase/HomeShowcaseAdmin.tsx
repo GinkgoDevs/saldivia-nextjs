@@ -6,13 +6,23 @@ import { useRouter } from "next/navigation";
 import {
   deleteHomeShowcaseSlide,
   saveHomeShowcaseSlide,
-  uploadMediaToBucket,
 } from "@/app/actions/admin-content";
 import { Button } from "@/app/components/ui/Button";
 import { Input } from "@/app/components/ui/Input";
 import { Textarea } from "@/app/components/ui/Textarea";
+import { uploadMediaFromBrowser } from "@/lib/upload-media-client";
 import type { AdminShowcaseSlide } from "@/lib/supabase/home-showcase";
 import type { Model } from "@/types/model";
+import {
+  AdminField,
+  AdminFormActions,
+  AdminFormSection,
+  AdminListPanel,
+  AdminSelect,
+  AdminStatusBanner,
+  AdminTwoColumn,
+  MediaDropzone,
+} from "../_ui/admin-ui";
 
 type FormState = {
   id: string | null;
@@ -66,8 +76,11 @@ export function HomeShowcaseAdmin({ initialSlides, models }: Props) {
   const router = useRouter();
   const [list, setList] = useState(initialSlides);
   const [form, setForm] = useState<FormState>(() => emptyForm(initialSlides.length));
-  const [message, setMessage] = useState<string | null>(null);
+  const [message, setMessage] = useState<{ text: string; variant: "info" | "success" | "error" } | null>(
+    null,
+  );
   const [busy, setBusy] = useState(false);
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     setList(initialSlides);
@@ -106,10 +119,10 @@ export function HomeShowcaseAdmin({ initialSlides, models }: Props) {
     });
     setBusy(false);
     if (!r.ok) {
-      setMessage(r.error);
+      setMessage({ text: r.error, variant: "error" });
       return;
     }
-    setMessage("Guardado.");
+    setMessage({ text: "Slide guardada.", variant: "success" });
     setForm(emptyForm(list.length + (form.id ? 0 : 1)));
     router.refresh();
   }
@@ -121,197 +134,188 @@ export function HomeShowcaseAdmin({ initialSlides, models }: Props) {
     const r = await deleteHomeShowcaseSlide(form.id);
     setBusy(false);
     if (!r.ok) {
-      setMessage(r.error);
+      setMessage({ text: r.error, variant: "error" });
       return;
     }
     setList((prev) => prev.filter((x) => x.id !== form.id));
     setForm(emptyForm(Math.max(0, list.length - 1)));
+    setMessage({ text: "Slide eliminada.", variant: "success" });
     router.refresh();
   }
 
-  async function onHeroUpload(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setBusy(true);
+  async function onHeroFile(file: File) {
+    setUploading(true);
     setMessage(null);
-    const fd = new FormData();
-    fd.set("file", file);
-    const r = await uploadMediaToBucket(fd);
-    setBusy(false);
-    e.target.value = "";
-    if (!r.ok) {
-      setMessage(r.error);
-      return;
+    try {
+      const r = await uploadMediaFromBrowser(file, { folder: "home-showcase" });
+      if (!r.ok) {
+        setMessage({ text: r.error, variant: "error" });
+        return;
+      }
+      setForm((f) => ({ ...f, hero_image_url: r.publicUrl }));
+      setMessage({ text: "Imagen subida. Pulse Guardar para publicar.", variant: "info" });
+    } finally {
+      setUploading(false);
     }
-    setForm((f) => ({ ...f, hero_image_url: r.publicUrl }));
   }
 
   return (
-    <div className="grid gap-10 lg:grid-cols-[1fr_380px]">
-      <div>
-        <h2 className="text-lg font-bold uppercase tracking-tight text-primary">Slides actuales</h2>
-        <p className="mt-1 text-sm text-on-surface-variant">
-          Orden de aparición: <code className="text-xs">sort_order</code> ascendente. En el home solo se listan modelos
-          activos.
-        </p>
-        <ul className="mt-4 divide-y divide-outline-variant/30 rounded border border-outline-variant/30 bg-surface-container-lowest">
-          {list.length === 0 ? (
-            <li className="p-4 text-sm text-on-surface-variant">No hay slides. Creá uno y enlazalo a un modelo.</li>
-          ) : (
-            list.map((s) => {
-              const label = s.model ? `${s.model.name} (${s.model.slug})` : s.model_id;
-              return (
-                <li key={s.id} className="flex flex-wrap items-center justify-between gap-2 p-4">
-                  <div>
-                    <p className="text-sm font-semibold text-primary">{label}</p>
-                    <p className="text-xs text-on-surface-variant">
-                      orden {s.sort_order}
-                      {s.model && !s.model.active ? " · modelo inactivo (no se muestra en el sitio)" : ""}
-                    </p>
-                  </div>
-                  <Button type="button" variant="outline" size="sm" onClick={() => loadSlide(s)}>
-                    Editar
-                  </Button>
-                </li>
-              );
-            })
-          )}
-        </ul>
-      </div>
+    <AdminTwoColumn
+      list={
+        <AdminListPanel
+          title="Slides del showcase"
+          description="Orden ascendente por sort_order. Solo modelos activos aparecen en el home."
+        >
+          <ul className="divide-y divide-outline-variant/25">
+            {list.length === 0 ? (
+              <li className="p-6 text-center text-sm text-on-surface-variant">
+                No hay slides. Creá uno y enlazalo a un modelo.
+              </li>
+            ) : (
+              list.map((s) => {
+                const label = s.model ? `${s.model.name} (${s.model.slug})` : s.model_id;
+                return (
+                  <li
+                    key={s.id}
+                    className={`flex items-center gap-3 p-3 ${
+                      form.id === s.id ? "bg-secondary-container/15 ring-1 ring-inset ring-primary/25" : ""
+                    }`}
+                  >
+                    {s.hero_image_url ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={s.hero_image_url} alt="" className="size-14 shrink-0 rounded-sm object-cover" />
+                    ) : (
+                      <div className="flex size-14 shrink-0 items-center justify-center rounded-sm bg-surface-container text-[10px] text-on-surface-variant">
+                        auto
+                      </div>
+                    )}
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-semibold text-primary">{label}</p>
+                      <p className="text-xs text-on-surface-variant">
+                        orden {s.sort_order}
+                        {s.model && !s.model.active ? " · modelo inactivo" : ""}
+                      </p>
+                    </div>
+                    <Button type="button" variant="outline" size="sm" onClick={() => loadSlide(s)}>
+                      Editar
+                    </Button>
+                  </li>
+                );
+              })
+            )}
+          </ul>
+        </AdminListPanel>
+      }
+      form={
+        <section className="rounded-sm border border-outline-variant/30 bg-surface-container-lowest p-5">
+          <h2 className="text-sm font-bold uppercase tracking-widest text-primary">
+            {editing ? "Editar slide" : "Nuevo slide"}
+          </h2>
+          {message ? (
+            <div className="mt-3">
+              <AdminStatusBanner variant={message.variant}>{message.text}</AdminStatusBanner>
+            </div>
+          ) : null}
+          <form className="mt-4 space-y-5" onSubmit={onSave}>
+            <AdminField id="showcase-model" label="Modelo" required hint="El slide mostrará datos de este colectivo.">
+              <AdminSelect
+                id="showcase-model"
+                required
+                value={form.model_id}
+                onChange={(e) => setForm((f) => ({ ...f, model_id: e.target.value }))}
+              >
+                <option value="">Elegir…</option>
+                {modelOptions.map((m) => (
+                  <option key={m.id} value={m.id}>
+                    {m.name} — {m.slug}
+                    {!m.active ? " (inactivo)" : ""}
+                  </option>
+                ))}
+              </AdminSelect>
+            </AdminField>
 
-      <div className="rounded border border-outline-variant/30 bg-surface-container-lowest p-6">
-        <h2 className="text-lg font-bold uppercase tracking-tight text-primary">
-          {editing ? "Editar slide" : "Nuevo slide"}
-        </h2>
-        <form className="mt-4 space-y-4" onSubmit={onSave}>
-          <label className="block text-sm font-medium text-primary">
-            Modelo
-            <select
-              required
-              className="mt-1 w-full rounded border border-outline-variant/40 bg-surface px-3 py-2 text-sm"
-              value={form.model_id}
-              onChange={(e) => setForm((f) => ({ ...f, model_id: e.target.value }))}
-            >
-              <option value="">Elegir…</option>
-              {modelOptions.map((m) => (
-                <option key={m.id} value={m.id}>
-                  {m.name} — {m.slug}
-                  {!m.active ? " (inactivo)" : ""}
-                </option>
-              ))}
-            </select>
-          </label>
-          <div className="space-y-1">
-            <label className="text-xs font-bold text-secondary" htmlFor="showcase-order">
-              Orden
-            </label>
-            <Input
-              id="showcase-order"
-              type="number"
-              value={String(form.sort_order)}
-              onChange={(e) =>
-                setForm((f) => ({ ...f, sort_order: Number.parseInt(e.target.value, 10) || 0 }))
-              }
+            <AdminField id="showcase-order" label="Orden">
+              <Input
+                id="showcase-order"
+                type="number"
+                value={String(form.sort_order)}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, sort_order: Number.parseInt(e.target.value, 10) || 0 }))
+                }
+              />
+            </AdminField>
+
+            <MediaDropzone
+              id="showcase-hero"
+              label="Imagen del showcase"
+              hint="Si está vacía, se usa la portada del modelo o la primera imagen de la galería."
+              value={form.hero_image_url}
+              uploading={uploading}
+              disabled={busy}
+              onChange={(url) => setForm((f) => ({ ...f, hero_image_url: url }))}
+              onFileSelect={onHeroFile}
             />
-          </div>
-          <div>
-            <div className="space-y-1">
-              <label className="text-xs font-bold text-secondary" htmlFor="showcase-hero-url">
-                Imagen hero (URL, opcional)
-              </label>
+
+            <AdminField id="showcase-eyebrow" label="Rubro / etiqueta" hint="Si vacío: según segmento del modelo.">
               <Input
-                id="showcase-hero-url"
-                value={form.hero_image_url}
-                onChange={(e) => setForm((f) => ({ ...f, hero_image_url: e.target.value }))}
-                placeholder="Si vacío: portada del modelo o primera imagen de galería"
+                id="showcase-eyebrow"
+                value={form.eyebrow}
+                onChange={(e) => setForm((f) => ({ ...f, eyebrow: e.target.value }))}
               />
-            </div>
-            <label className="mt-2 block text-xs text-on-surface-variant">
-              Subir archivo
-              <input type="file" accept="image/*" className="mt-1 block w-full text-sm" onChange={onHeroUpload} />
-            </label>
-          </div>
-          <div className="space-y-1">
-            <label className="text-xs font-bold text-secondary" htmlFor="showcase-eyebrow">
-              Rubro / etiqueta (opcional)
-            </label>
-            <Input
-              id="showcase-eyebrow"
-              value={form.eyebrow}
-              onChange={(e) => setForm((f) => ({ ...f, eyebrow: e.target.value }))}
-              placeholder="Si vacío: según segmento del modelo"
+            </AdminField>
+
+            <AdminField id="showcase-lead" label="Texto destacado" hint="Si vacío: descripción del modelo.">
+              <Textarea
+                id="showcase-lead"
+                value={form.lead}
+                onChange={(e) => setForm((f) => ({ ...f, lead: e.target.value }))}
+                rows={3}
+              />
+            </AdminField>
+
+            <AdminFormSection title="Métricas destacadas" description="Dos datos numéricos bajo el texto.">
+              <div className="grid gap-3 sm:grid-cols-2">
+                <AdminField id="showcase-s1v" label="Dato 1 — valor">
+                  <Input
+                    id="showcase-s1v"
+                    value={form.stat1_value}
+                    onChange={(e) => setForm((f) => ({ ...f, stat1_value: e.target.value }))}
+                  />
+                </AdminField>
+                <AdminField id="showcase-s1l" label="Dato 1 — etiqueta">
+                  <Input
+                    id="showcase-s1l"
+                    value={form.stat1_label}
+                    onChange={(e) => setForm((f) => ({ ...f, stat1_label: e.target.value }))}
+                  />
+                </AdminField>
+                <AdminField id="showcase-s2v" label="Dato 2 — valor">
+                  <Input
+                    id="showcase-s2v"
+                    value={form.stat2_value}
+                    onChange={(e) => setForm((f) => ({ ...f, stat2_value: e.target.value }))}
+                  />
+                </AdminField>
+                <AdminField id="showcase-s2l" label="Dato 2 — etiqueta">
+                  <Input
+                    id="showcase-s2l"
+                    value={form.stat2_label}
+                    onChange={(e) => setForm((f) => ({ ...f, stat2_label: e.target.value }))}
+                  />
+                </AdminField>
+              </div>
+            </AdminFormSection>
+
+            <AdminFormActions
+              saving={busy}
+              uploading={uploading}
+              onClear={newSlide}
+              clearLabel="Limpiar / nuevo"
+              onDelete={editing ? () => void onDelete() : undefined}
             />
-          </div>
-          <div className="space-y-1">
-            <label className="text-xs font-bold text-secondary" htmlFor="showcase-lead">
-              Texto destacado (opcional)
-            </label>
-            <Textarea
-              id="showcase-lead"
-              value={form.lead}
-              onChange={(e) => setForm((f) => ({ ...f, lead: e.target.value }))}
-              placeholder="Si vacío: descripción del modelo"
-              rows={3}
-            />
-          </div>
-          <div className="grid gap-3 sm:grid-cols-2">
-            <div className="space-y-1">
-              <label className="text-xs font-bold text-secondary" htmlFor="showcase-s1v">
-                Dato 1 — valor
-              </label>
-              <Input
-                id="showcase-s1v"
-                value={form.stat1_value}
-                onChange={(e) => setForm((f) => ({ ...f, stat1_value: e.target.value }))}
-              />
-            </div>
-            <div className="space-y-1">
-              <label className="text-xs font-bold text-secondary" htmlFor="showcase-s1l">
-                Dato 1 — etiqueta
-              </label>
-              <Input
-                id="showcase-s1l"
-                value={form.stat1_label}
-                onChange={(e) => setForm((f) => ({ ...f, stat1_label: e.target.value }))}
-              />
-            </div>
-            <div className="space-y-1">
-              <label className="text-xs font-bold text-secondary" htmlFor="showcase-s2v">
-                Dato 2 — valor
-              </label>
-              <Input
-                id="showcase-s2v"
-                value={form.stat2_value}
-                onChange={(e) => setForm((f) => ({ ...f, stat2_value: e.target.value }))}
-              />
-            </div>
-            <div className="space-y-1">
-              <label className="text-xs font-bold text-secondary" htmlFor="showcase-s2l">
-                Dato 2 — etiqueta
-              </label>
-              <Input
-                id="showcase-s2l"
-                value={form.stat2_label}
-                onChange={(e) => setForm((f) => ({ ...f, stat2_label: e.target.value }))}
-              />
-            </div>
-          </div>
-          {message ? <p className="text-sm text-saldivia-blue">{message}</p> : null}
-          <div className="flex flex-wrap gap-2 pt-2">
-            <Button type="submit" variant="primary" disabled={busy}>
-              Guardar
-            </Button>
-            <Button type="button" variant="ghost" onClick={newSlide} disabled={busy}>
-              Limpiar / nuevo
-            </Button>
-            {editing ? (
-              <Button type="button" variant="outline" onClick={() => void onDelete()} disabled={busy}>
-                Eliminar
-              </Button>
-            ) : null}
-          </div>
-        </form>
-      </div>
-    </div>
+          </form>
+        </section>
+      }
+    />
   );
 }
