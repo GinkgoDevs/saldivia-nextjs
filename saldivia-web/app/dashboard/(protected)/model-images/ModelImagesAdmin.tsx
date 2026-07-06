@@ -28,6 +28,8 @@ import {
   adminToast,
   MediaDropzone,
 } from "../_ui/admin-ui";
+import { SITE_IMAGE_PREVIEW } from "../_ui/admin-display-previews";
+import { AdminSitePreviewFrame } from "../_ui/AdminSitePreviewFrame";
 
 type Props = { models: Model[]; initialImages: ModelImage[] };
 
@@ -332,17 +334,25 @@ export function ModelImagesAdmin({ models, initialImages }: Props) {
             title={editing ? "Reemplazar o ajustar" : "Nueva imagen"}
             description="Subí un archivo o pegá una URL. El orden define la posición en el carrusel de la ficha."
           >
-            <MediaDropzone
-              id="gallery-upload"
-              label="Imagen"
-              value={form.image_url}
-              uploading={uploading}
-              disabled={busy || !selectedModelId}
-              compact
-              showUrlField
-              onChange={(url) => setForm((f) => ({ ...f, image_url: url }))}
-              onFileSelect={onUploadFile}
-            />
+            <AdminSitePreviewFrame
+              maxWidth={SITE_IMAGE_PREVIEW.productGallery.maxWidth}
+              frameClassName="rounded-curve-md border border-outline-variant/25 bg-white shadow-elev-1"
+              hint="Vista previa como en el carrusel de la ficha del producto."
+            >
+              <MediaDropzone
+                id="gallery-upload"
+                label="Imagen"
+                value={form.image_url}
+                uploading={uploading}
+                disabled={busy || !selectedModelId}
+                showUrlField
+                previewAspect={SITE_IMAGE_PREVIEW.productGallery.aspect}
+                previewObjectFit={SITE_IMAGE_PREVIEW.productGallery.objectFit}
+                previewBg={SITE_IMAGE_PREVIEW.productGallery.bg}
+                onChange={(url) => setForm((f) => ({ ...f, image_url: url }))}
+                onFileSelect={onUploadFile}
+              />
+            </AdminSitePreviewFrame>
             <AdminField id="gallery-sort-order" label="Orden en el carrusel" hint="0 = primera imagen.">
               <Input
                 id="gallery-sort-order"

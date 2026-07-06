@@ -35,6 +35,8 @@ import {
   MediaDropzone,
   type WizardStep,
 } from "../_ui/admin-ui";
+import { SITE_IMAGE_PREVIEW } from "../_ui/admin-display-previews";
+import { AdminSitePreviewFrame } from "../_ui/AdminSitePreviewFrame";
 
 const MODEL_WIZARD_STEPS: WizardStep[] = [
   {
@@ -719,21 +721,38 @@ export function ModelsAdmin({ initial }: Props) {
               </AdminWizardPanel>
 
               <AdminWizardPanel stepId="media" currentStepId={currentStepId}>
-                <div className="grid gap-3 lg:grid-cols-2">
-                  <AdminFormSection title="Portada del catálogo">
+                <AdminFormSection title="Portada del catálogo">
+                  <AdminSitePreviewFrame
+                    maxWidth={SITE_IMAGE_PREVIEW.catalogCover.maxWidth}
+                    frameClassName="border border-outline-variant/15 bg-white shadow-[0px_12px_32px_rgba(13,44,79,0.1)]"
+                    hint="Vista previa como en la card del catálogo (antes del hover)."
+                    footer={
+                      <div className="border-t border-primary/20 bg-primary px-4 py-2.5">
+                        <p className="truncate font-headline text-xs font-black uppercase tracking-[0.12em] text-white">
+                          {form.name.trim() || "Nombre del modelo"}
+                        </p>
+                      </div>
+                    }
+                  >
                     <MediaDropzone
                       id="cover_image"
                       label="Portada"
                       value={form.cover_image_url ?? ""}
                       uploading={uploading}
                       disabled={busy}
-                      compact
                       showUrlField={false}
+                      previewAspect={SITE_IMAGE_PREVIEW.catalogCover.aspect}
+                      previewObjectFit={SITE_IMAGE_PREVIEW.catalogCover.objectFit}
+                      previewBg={SITE_IMAGE_PREVIEW.catalogCover.bg}
                       onChange={(url) => setForm((f) => ({ ...f, cover_image_url: url || null }))}
                       onFileSelect={(file) => void onFile("cover", file)}
                     />
-                  </AdminFormSection>
-                  <AdminFormSection title="Hero de la ficha">
+                  </AdminSitePreviewFrame>
+                </AdminFormSection>
+                <AdminFormSection title="Hero de la ficha">
+                    <p className="mb-2 text-[11px] leading-relaxed text-on-surface-variant">
+                      Vista previa como en la ficha del producto. Arrastrá para encuadrar y ajustá el zoom.
+                    </p>
                     <HeroBackgroundField
                       modelName={form.name}
                       modelId={form.id}
@@ -743,7 +762,6 @@ export function ModelsAdmin({ initial }: Props) {
                       zoom={form.hero_background_zoom ?? 1}
                       disabled={busy}
                       uploading={uploading}
-                      compact
                       onImageUrlChange={(url) => setForm((f) => ({ ...f, hero_background_image_url: url || null }))}
                       onFocalChange={(x, y) =>
                         setForm((f) => ({ ...f, hero_background_focal_x: x, hero_background_focal_y: y }))
@@ -751,8 +769,7 @@ export function ModelsAdmin({ initial }: Props) {
                       onZoomChange={(zoom) => setForm((f) => ({ ...f, hero_background_zoom: zoom }))}
                       onFileSelect={(file) => void onFile("hero", file)}
                     />
-                  </AdminFormSection>
-                </div>
+                </AdminFormSection>
                 <AdminFormSection title="Ficha PDF (opcional)">
                   <MediaDropzone
                     id="pdf_url"

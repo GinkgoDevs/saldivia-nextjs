@@ -32,6 +32,8 @@ import {
   MediaDropzone,
   type WizardStep,
 } from "../_ui/admin-ui";
+import { SITE_IMAGE_PREVIEW } from "../_ui/admin-display-previews";
+import { AdminSitePreviewFrame } from "../_ui/AdminSitePreviewFrame";
 
 const HERO_WIZARD_STEPS: WizardStep[] = [
   {
@@ -393,18 +395,24 @@ export function HomeHeroAdmin({ initialSlides }: Props) {
         >
           <AdminWizardPanel stepId="image" currentStepId={currentStepId}>
             <AdminFormSection title="Imagen de fondo" description="Foto amplia del bus o planta. Se verá detrás del texto.">
-              <MediaDropzone
-                id="hero-slide-image"
-                label="Imagen de fondo"
-                value={form.image_url}
-                previewAspect="aspect-[16/7]"
-                compact
-                showUrlField={false}
-                uploading={uploading}
-                disabled={busy}
-                onChange={(url) => setForm((f) => ({ ...f, image_url: url }))}
-                onFileSelect={onImageFile}
-              />
+              <AdminSitePreviewFrame
+                maxWidth={SITE_IMAGE_PREVIEW.homeHero.maxWidth}
+                hint="Vista previa como fondo del hero del inicio (pantalla completa, object-cover)."
+              >
+                <MediaDropzone
+                  id="hero-slide-image"
+                  label="Imagen de fondo"
+                  value={form.image_url}
+                  previewAspect={SITE_IMAGE_PREVIEW.homeHero.aspect}
+                  previewObjectFit={SITE_IMAGE_PREVIEW.homeHero.objectFit}
+                  previewBg={SITE_IMAGE_PREVIEW.homeHero.bg}
+                  showUrlField={false}
+                  uploading={uploading}
+                  disabled={busy}
+                  onChange={(url) => setForm((f) => ({ ...f, image_url: url }))}
+                  onFileSelect={onImageFile}
+                />
+              </AdminSitePreviewFrame>
               <AdminField id="hero-alt" label="Texto alternativo (accesibilidad)" hint="Describe la imagen para lectores de pantalla.">
                 <Input
                   id="hero-alt"

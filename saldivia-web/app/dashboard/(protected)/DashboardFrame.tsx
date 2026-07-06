@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
@@ -52,6 +53,25 @@ const NAV_GROUPS = [
 function isActive(pathname: string, href: string, exact?: boolean) {
   if (exact) return pathname === href;
   return pathname === href || pathname.startsWith(`${href}/`);
+}
+
+function DashboardBrand() {
+  return (
+    <Link
+      href="/dashboard"
+      className="relative block h-8 w-[110px] shrink-0 sm:w-[120px] lg:h-9"
+      aria-label="Saldivia — panel admin"
+    >
+      <Image
+        src="/logo-saldivia.png"
+        alt="Saldivia"
+        fill
+        className="object-contain object-left"
+        sizes="120px"
+        priority
+      />
+    </Link>
+  );
 }
 
 export function DashboardFrame({
@@ -133,8 +153,8 @@ export function DashboardFrame({
       <header className="sticky top-0 z-40 border-b border-outline-variant/35 bg-surface-container-lowest/95 backdrop-blur-md lg:hidden">
         <div className="flex items-center justify-between gap-3 px-4 py-3">
           <div className="min-w-0">
-            <p className="text-xs font-bold uppercase tracking-widest text-secondary">Saldivia</p>
-            <p className="truncate text-xs text-on-surface-variant">{email ?? "Admin"}</p>
+            <DashboardBrand />
+            <p className="mt-1 truncate text-xs text-on-surface-variant">{email ?? "Admin"}</p>
           </div>
           <button
             type="button"
@@ -165,8 +185,8 @@ export function DashboardFrame({
         <aside className="hidden w-56 shrink-0 border-r border-outline-variant/30 bg-surface-container-lowest lg:block">
           <div className="sticky top-0 flex h-screen flex-col px-3 py-6">
             <div className="mb-6 px-2">
-              <p className="text-xs font-bold uppercase tracking-widest text-secondary">Saldivia</p>
-              <p className="mt-1 truncate text-xs text-on-surface-variant">{email ?? "Panel admin"}</p>
+              <DashboardBrand />
+              <p className="mt-2 truncate text-xs text-on-surface-variant">{email ?? "Panel admin"}</p>
             </div>
             <nav className="flex-1 space-y-5 overflow-y-auto">
               {NAV_GROUPS.map((group) => (
