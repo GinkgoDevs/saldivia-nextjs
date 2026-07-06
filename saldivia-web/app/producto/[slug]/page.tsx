@@ -75,6 +75,9 @@ export default async function ProductoPage({ params }: Props) {
   const hero =
     model.hero_background_image_url ?? model.cover_image_url ?? gallery[0] ?? DEFAULT_HERO;
   const hasCustomHero = Boolean(model.hero_background_image_url?.trim());
+  const heroFocalX = model.hero_background_focal_x ?? 50;
+  const heroFocalY = model.hero_background_focal_y ?? 50;
+  const heroZoom = model.hero_background_zoom ?? 1;
   const defaultDesc =
     "Uniendo caminos. El estándar de eficiencia para traslados de media y larga distancia, con la precisión Saldivia en cada unidad.";
 
@@ -100,10 +103,19 @@ export default async function ProductoPage({ params }: Props) {
                 alt=""
                 className={
                   hasCustomHero
-                    ? "animate-product-hero-image h-full w-full object-cover object-center"
+                    ? "animate-product-hero-image h-full w-full object-cover"
                     : "animate-product-hero-image h-full w-full object-cover object-[62%_42%] opacity-[0.70] md:opacity-[0.76]"
                 }
                 src={hero}
+                style={
+                  hasCustomHero
+                    ? {
+                        objectPosition: `${heroFocalX}% ${heroFocalY}%`,
+                        transform: heroZoom > 1 ? `scale(${heroZoom})` : undefined,
+                        transformOrigin: `${heroFocalX}% ${heroFocalY}%`,
+                      }
+                    : undefined
+                }
               />
             </div>
             {hasCustomHero ? (

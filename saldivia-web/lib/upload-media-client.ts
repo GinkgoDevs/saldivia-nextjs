@@ -7,7 +7,10 @@ export type MediaUploadResult =
   | { ok: false; error: string };
 
 /** Sube a Storage desde el navegador (evita límite de body en server actions). */
-export async function uploadMediaFromBrowser(file: File): Promise<MediaUploadResult> {
+export async function uploadMediaFromBrowser(
+  file: File,
+  options?: { folder?: string },
+): Promise<MediaUploadResult> {
   if (file.size < 1) {
     return { ok: false, error: "Archivo vacío." };
   }
@@ -25,7 +28,8 @@ export async function uploadMediaFromBrowser(file: File): Promise<MediaUploadRes
   }
 
   const safe = file.name.replace(/[^a-zA-Z0-9.-]/g, "_");
-  const path = `uploads/${user.id.slice(0, 8)}/${Date.now()}-${safe}`;
+  const folder = options?.folder?.replace(/[^a-zA-Z0-9/_-]/g, "_") ?? user.id.slice(0, 8);
+  const path = `uploads/${folder}/${Date.now()}-${safe}`;
 
   const { error } = await supabase.storage.from("media").upload(path, file, {
     contentType: file.type || "application/octet-stream",

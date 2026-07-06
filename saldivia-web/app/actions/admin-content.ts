@@ -82,6 +82,9 @@ type SaveModelInput = {
   description: string;
   cover_image_url: string;
   hero_background_image_url: string;
+  hero_background_focal_x: number;
+  hero_background_focal_y: number;
+  hero_background_zoom: number;
   pdf_url: string;
   sort_order: number;
   active: boolean;
@@ -125,6 +128,16 @@ function normalizeFeatureBodies(bodies: string[] | undefined, limit = MAX_FEATUR
     }));
 }
 
+function clampHeroFocal(n: number) {
+  if (!Number.isFinite(n)) return 50;
+  return Math.min(100, Math.max(0, Math.round(n)));
+}
+
+function clampHeroZoom(n: number) {
+  if (!Number.isFinite(n)) return 1;
+  return Math.min(2.5, Math.max(1, Math.round(n * 100) / 100));
+}
+
 export async function saveModel(input: SaveModelInput) {
   const { supabase, user } = await requireUser();
   if (!user) {
@@ -143,6 +156,9 @@ export async function saveModel(input: SaveModelInput) {
     description: input.description.trim() || null,
     cover_image_url: input.cover_image_url.trim() || null,
     hero_background_image_url: input.hero_background_image_url.trim() || null,
+    hero_background_focal_x: clampHeroFocal(input.hero_background_focal_x),
+    hero_background_focal_y: clampHeroFocal(input.hero_background_focal_y),
+    hero_background_zoom: clampHeroZoom(input.hero_background_zoom),
     pdf_url: input.pdf_url.trim() || null,
     sort_order: Number.isFinite(input.sort_order) ? input.sort_order : 0,
     active: input.active,
@@ -156,30 +172,81 @@ export async function saveModel(input: SaveModelInput) {
   const { show_in_showcase: _drop, ...rowLegacy } = row;
   const isMissingShowcaseColumn = (msg?: string) => !!msg?.includes("show_in_showcase");
   const isMissingHeroColumn = (msg?: string) => !!msg?.includes("hero_background_image_url");
+  const isMissingHeroFocal = (msg?: string) => !!msg?.includes("hero_background_focal");
+
+  const stripHeroFocal = <T extends Record<string, unknown>>(r: T) => {
+    const {
+      hero_background_focal_x: _x,
+      hero_background_focal_y: _y,
+      hero_background_zoom: _z,
+      ...rest
+    } = r;
+    return rest;
+  };
+
+  const stripHeroImage = <T extends Record<string, unknown>>(r: T) => {
+    const {
+      hero_background_image_url: _h,
+      hero_background_focal_x: _x,
+      hero_background_focal_y: _y,
+      hero_background_zoom: _z,
+      ...rest
+    } = r;
+    return rest;
+  };
 
   let modelId: string;
+  let warning: string | undefined;
+
+  async function persistModelRow(isInsert: boolean) {
+    let payload: Record<string, unknown> = { ...row };
+    let result = isInsert
+      ? await supabase.from("models").insert(payload).select("id").single()
+      : await supabase.from("models").update(payload).eq("id", modelId);
+
+    let error = result.error;
+
+    if (isMissingShowcaseColumn(error?.message)) {
+      payload = { ...rowLegacy };
+      result = isInsert
+        ? await supabase.from("models").insert(payload).select("id").single()
+        : await supabase.from("models").update(payload).eq("id", modelId);
+      error = result.error;
+    }
+
+    if (isMissingHeroFocal(error?.message)) {
+      payload = stripHeroFocal(payload);
+      warning =
+        "Falta la migración 009 (encuadre del hero). Ejecutala en Supabase; el resto se guardó.";
+      result = isInsert
+        ? await supabase.from("models").insert(payload).select("id").single()
+        : await supabase.from("models").update(payload).eq("id", modelId);
+      error = result.error;
+    }
+
+    if (isMissingHeroColumn(error?.message)) {
+      payload = stripHeroImage(payload);
+      if (input.hero_background_image_url.trim()) {
+        warning =
+          "Falta la migración 008 (hero por modelo). Ejecutala en Supabase; la imagen de hero no se guardó.";
+      }
+      result = isInsert
+        ? await supabase.from("models").insert(payload).select("id").single()
+        : await supabase.from("models").update(payload).eq("id", modelId);
+      error = result.error;
+    }
+
+    return { result, error };
+  }
 
   if (input.id) {
     modelId = input.id;
-    let { error } = await supabase.from("models").update(row).eq("id", modelId);
-    if (isMissingShowcaseColumn(error?.message)) {
-      ({ error } = await supabase.from("models").update(rowLegacy).eq("id", modelId));
-    }
-    if (isMissingHeroColumn(error?.message)) {
-      const { hero_background_image_url: _h, ...withoutHero } = row;
-      ({ error } = await supabase.from("models").update(withoutHero).eq("id", modelId));
-    }
-    if (error) return { ok: false as const, error: error.message };
+    const persisted = await persistModelRow(false);
+    if (persisted.error) return { ok: false as const, error: persisted.error.message };
   } else {
-    let { data, error } = await supabase.from("models").insert(row).select("id").single();
-    if (isMissingShowcaseColumn(error?.message)) {
-      ({ data, error } = await supabase.from("models").insert(rowLegacy).select("id").single());
-    }
-    if (isMissingHeroColumn(error?.message)) {
-      const { hero_background_image_url: _h, ...withoutHero } = row;
-      ({ data, error } = await supabase.from("models").insert(withoutHero).select("id").single());
-    }
-    if (error) return { ok: false as const, error: error.message };
+    const persisted = await persistModelRow(true);
+    if (persisted.error) return { ok: false as const, error: persisted.error.message };
+    const data = persisted.result.data as { id?: string } | null;
     if (!data?.id) return { ok: false as const, error: "validation" };
     modelId = data.id;
   }
@@ -339,7 +406,7 @@ export async function saveModel(input: SaveModelInput) {
   }
 
   revalidateContent();
-  return { ok: true as const, id: modelId };
+  return { ok: true as const, id: modelId, warning };
 }
 
 export async function deleteModel(id: string) {

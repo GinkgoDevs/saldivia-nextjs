@@ -43,19 +43,53 @@ export async function getModelBySlug(
   const { data: modelRow, error: modelError } = await supabase
     .from("models")
     .select(
-      "id, slug, name, segment, description, cover_image_url, hero_background_image_url, pdf_url, active, created_at, sort_order",
+      "id, slug, name, segment, description, cover_image_url, hero_background_image_url, hero_background_focal_x, hero_background_focal_y, hero_background_zoom, pdf_url, active, created_at, sort_order",
     )
     .eq("slug", normalized)
     .eq("active", true)
     .maybeSingle();
 
   if (modelError) {
+    if (modelError.message.includes("hero_background_focal")) {
+      const fallback = await supabase
+        .from("models")
+        .select(
+          "id, slug, name, segment, description, cover_image_url, hero_background_image_url, pdf_url, active, created_at, sort_order",
+        )
+        .eq("slug", normalized)
+        .eq("active", true)
+        .maybeSingle();
+      if (fallback.error) {
+        console.error("[getModelBySlug] model", fallback.error.message);
+        return null;
+      }
+      if (!fallback.data) return null;
+      const model = {
+        ...fallback.data,
+        hero_background_focal_x: 50,
+        hero_background_focal_y: 50,
+        hero_background_zoom: 1,
+      } as Model;
+      return fetchModelDetail(supabase, model);
+    }
     console.error("[getModelBySlug] model", modelError.message);
     return null;
   }
   if (!modelRow) return null;
 
-  const model = modelRow as Model;
+  const model = {
+    ...modelRow,
+    hero_background_focal_x: (modelRow as Model).hero_background_focal_x ?? 50,
+    hero_background_focal_y: (modelRow as Model).hero_background_focal_y ?? 50,
+    hero_background_zoom: (modelRow as Model).hero_background_zoom ?? 1,
+  } as Model;
+  return fetchModelDetail(supabase, model);
+}
+
+async function fetchModelDetail(
+  supabase: SupabaseClient,
+  model: Model,
+): Promise<ModelDetail | null> {
   const modelId = model.id;
 
   const [{ data: products, error: pErr }, { data: images, error: iErr }, { data: general_features, error: fErr }, { data: variants, error: vErr }] =

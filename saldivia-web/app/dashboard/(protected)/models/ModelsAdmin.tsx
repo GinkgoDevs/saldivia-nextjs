@@ -15,6 +15,7 @@ import {
   type SpecRow,
   type VariantFormRow,
 } from "./ModelVariantsEditor";
+import { HeroBackgroundField } from "./HeroBackgroundField";
 
 const SEGMENTS: { value: ModelSegment; label: string }[] = [
   { value: "urbano", label: "Urbano" },
@@ -31,6 +32,9 @@ const empty: Omit<Model, "id" | "created_at"> & { id: string | null } = {
   description: null,
   cover_image_url: null,
   hero_background_image_url: null,
+  hero_background_focal_x: 50,
+  hero_background_focal_y: 50,
+  hero_background_zoom: 1,
   pdf_url: null,
   active: true,
   show_in_showcase: false,
@@ -131,6 +135,9 @@ export function ModelsAdmin({ initial }: Props) {
       description: m.description,
       cover_image_url: m.cover_image_url,
       hero_background_image_url: m.hero_background_image_url,
+      hero_background_focal_x: m.hero_background_focal_x ?? 50,
+      hero_background_focal_y: m.hero_background_focal_y ?? 50,
+      hero_background_zoom: m.hero_background_zoom ?? 1,
       pdf_url: m.pdf_url,
       active: m.active,
       show_in_showcase: m.show_in_showcase ?? false,
@@ -193,6 +200,9 @@ export function ModelsAdmin({ initial }: Props) {
         description: form.description ?? "",
         cover_image_url: form.cover_image_url ?? "",
         hero_background_image_url: form.hero_background_image_url ?? "",
+        hero_background_focal_x: form.hero_background_focal_x ?? 50,
+        hero_background_focal_y: form.hero_background_focal_y ?? 50,
+        hero_background_zoom: form.hero_background_zoom ?? 1,
         pdf_url: form.pdf_url ?? "",
         sort_order: form.sort_order ?? 0,
         active: form.active,
@@ -205,9 +215,45 @@ export function ModelsAdmin({ initial }: Props) {
         setMessage(r.error);
         return;
       }
-      setMessage("Guardado.");
-      setForm(empty);
-      setVariantRows([]);
+      const savedId = r.id;
+      const savedHero = {
+        hero_background_image_url: form.hero_background_image_url,
+        hero_background_focal_x: form.hero_background_focal_x ?? 50,
+        hero_background_focal_y: form.hero_background_focal_y ?? 50,
+        hero_background_zoom: form.hero_background_zoom ?? 1,
+      };
+      setList((prev) => {
+        const patch = {
+          slug: form.slug,
+          name: form.name,
+          segment: form.segment,
+          description: form.description,
+          cover_image_url: form.cover_image_url,
+          ...savedHero,
+          pdf_url: form.pdf_url,
+          active: form.active,
+          show_in_showcase: form.show_in_showcase ?? false,
+          sort_order: form.sort_order ?? 0,
+        };
+        const exists = prev.some((m) => m.id === savedId);
+        if (exists) {
+          return prev.map((m) => (m.id === savedId ? { ...m, ...patch } : m));
+        }
+        return [
+          ...prev,
+          {
+            ...empty,
+            id: savedId,
+            created_at: new Date().toISOString(),
+            ...patch,
+            products: [],
+            model_general_features: [],
+            model_variants: [],
+          },
+        ];
+      });
+      setForm((f) => ({ ...f, id: savedId }));
+      setMessage(r.warning ?? "Guardado.");
       router.refresh();
     } catch {
       setMessage("No se pudo guardar. Intente de nuevo.");
@@ -234,10 +280,17 @@ export function ModelsAdmin({ initial }: Props) {
 
   async function onFile(which: "cover" | "hero" | "pdf", file: File | null) {
     if (!file) return;
+    if (which === "hero" && !form.id) {
+      setMessage("Guardá el modelo una vez antes de subir el hero (cada colectivo tiene el suyo).");
+      return;
+    }
     setUploading(true);
     setMessage(null);
     try {
-      const r = await uploadMediaFromBrowser(file);
+      const r = await uploadMediaFromBrowser(
+        file,
+        which === "hero" && form.id ? { folder: `models/${form.id}/hero` } : undefined,
+      );
       if (!r.ok) {
         setMessage(
           r.error === "unauthorized" ? "Sesión vencida." : r.error,
@@ -247,11 +300,17 @@ export function ModelsAdmin({ initial }: Props) {
       if (which === "cover") {
         setForm((f) => ({ ...f, cover_image_url: r.publicUrl }));
       } else if (which === "hero") {
-        setForm((f) => ({ ...f, hero_background_image_url: r.publicUrl }));
+        setForm((f) => ({
+          ...f,
+          hero_background_image_url: r.publicUrl,
+          hero_background_focal_x: 50,
+          hero_background_focal_y: 50,
+          hero_background_zoom: 1,
+        }));
       } else {
         setForm((f) => ({ ...f, pdf_url: r.publicUrl }));
       }
-      setMessage("Archivo subido. Pulse Guardar para aplicar los cambios.");
+      setMessage("Archivo subido. Pulse Guardar para aplicar los cambios a este modelo.");
     } catch {
       setMessage("Error al subir el archivo.");
     } finally {
@@ -332,6 +391,7 @@ export function ModelsAdmin({ initial }: Props) {
                     ? ` · ${m.model_variants!.length} config.`
                     : ""}
                   {m.show_in_showcase ? " · showcase" : ""}
+                  {m.hero_background_image_url ? " · hero" : ""}
                 </span>
               </button>
             </li>
@@ -560,26 +620,22 @@ export function ModelsAdmin({ initial }: Props) {
               onChange={(e) => void onFile("cover", e.target.files?.[0] ?? null)}
             />
           </div>
-          <div className="space-y-1">
-            <label className="text-xs font-bold text-secondary" htmlFor="hero_background_image_url">
-              Fondo del hero en la ficha del producto (URL o archivo)
-            </label>
-            <p className="text-[11px] text-on-surface-variant">
-              Imagen amplia detrás del título en <code className="text-xs">/producto/[slug]</code>. Si está vacío, se
-              usa la portada de flota y luego la galería.
-            </p>
-            <Input
-              id="hero_background_image_url"
-              value={form.hero_background_image_url ?? ""}
-              onChange={(e) => setForm((f) => ({ ...f, hero_background_image_url: e.target.value }))}
-            />
-            <input
-              type="file"
-              accept="image/jpeg,image/png,image/webp"
-              className="text-xs"
-              onChange={(e) => void onFile("hero", e.target.files?.[0] ?? null)}
-            />
-          </div>
+          <HeroBackgroundField
+            modelName={form.name}
+            modelId={form.id}
+            imageUrl={form.hero_background_image_url ?? ""}
+            focalX={form.hero_background_focal_x ?? 50}
+            focalY={form.hero_background_focal_y ?? 50}
+            zoom={form.hero_background_zoom ?? 1}
+            disabled={busy}
+            uploading={uploading}
+            onImageUrlChange={(url) => setForm((f) => ({ ...f, hero_background_image_url: url || null }))}
+            onFocalChange={(x, y) =>
+              setForm((f) => ({ ...f, hero_background_focal_x: x, hero_background_focal_y: y }))
+            }
+            onZoomChange={(zoom) => setForm((f) => ({ ...f, hero_background_zoom: zoom }))}
+            onFileSelect={(file) => void onFile("hero", file)}
+          />
           <div className="space-y-1">
             <label className="text-xs font-bold text-secondary" htmlFor="pdf_url">
               Ficha PDF (URL)
