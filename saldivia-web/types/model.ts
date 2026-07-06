@@ -44,6 +44,11 @@ export type Model = {
   cover_image_url: string | null;
   /** Fondo del hero en la ficha /producto/[slug]; si falta, se usa cover_image_url */
   hero_background_image_url: string | null;
+  /** Encuadre del hero (0–100). */
+  hero_background_focal_x: number;
+  hero_background_focal_y: number;
+  /** Zoom del hero (1 = normal). */
+  hero_background_zoom: number;
   pdf_url: string | null;
   active: boolean;
   /** Si true, el modelo se muestra en el "Showcase técnico" del home. */

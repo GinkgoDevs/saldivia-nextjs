@@ -15,12 +15,29 @@ function groupRowsByModelId<T extends { model_id: string | null }>(rows: T[]): M
 }
 
 const MODEL_COLUMNS =
-  "id, slug, name, segment, description, cover_image_url, hero_background_image_url, pdf_url, active, show_in_showcase, created_at, sort_order";
+  "id, slug, name, segment, description, cover_image_url, hero_background_image_url, hero_background_focal_x, hero_background_focal_y, hero_background_zoom, pdf_url, active, show_in_showcase, created_at, sort_order";
 const MODEL_COLUMNS_LEGACY =
   "id, slug, name, segment, description, cover_image_url, hero_background_image_url, pdf_url, active, created_at, sort_order";
+const MODEL_COLUMNS_NO_HERO =
+  "id, slug, name, segment, description, cover_image_url, pdf_url, active, show_in_showcase, created_at, sort_order";
+
+function withHeroDefaults<T extends Record<string, unknown>>(rows: T[]): T[] {
+  return rows.map((r) => ({
+    ...r,
+    hero_background_focal_x: (r as { hero_background_focal_x?: number }).hero_background_focal_x ?? 50,
+    hero_background_focal_y: (r as { hero_background_focal_y?: number }).hero_background_focal_y ?? 50,
+    hero_background_zoom: (r as { hero_background_zoom?: number }).hero_background_zoom ?? 1,
+    hero_background_image_url:
+      (r as { hero_background_image_url?: string | null }).hero_background_image_url ?? null,
+  }));
+}
 
 function withShowcaseDefault<T extends Record<string, unknown>>(rows: T[]): T[] {
   return rows.map((r) => ("show_in_showcase" in r ? r : { ...r, show_in_showcase: false }));
+}
+
+function normalizeModelRows<T extends Record<string, unknown>>(rows: T[]): T[] {
+  return withHeroDefaults(withShowcaseDefault(rows));
 }
 
 export type ModelFilters = {
@@ -49,8 +66,14 @@ export async function getModels(
   };
 
   let { data, error } = await runQuery(MODEL_COLUMNS);
+  if (error?.message?.includes("hero_background_focal")) {
+    ({ data, error } = await runQuery(MODEL_COLUMNS_LEGACY));
+  }
   if (error?.message?.includes("show_in_showcase")) {
     ({ data, error } = await runQuery(MODEL_COLUMNS_LEGACY));
+  }
+  if (error?.message?.includes("hero_background_image_url")) {
+    ({ data, error } = await runQuery(MODEL_COLUMNS_NO_HERO));
   }
 
   if (error) {
@@ -58,7 +81,7 @@ export async function getModels(
   }
 
   return {
-    data: withShowcaseDefault((data ?? []) as unknown as Model[]),
+    data: normalizeModelRows((data ?? []) as unknown as Model[]),
     error: null,
   };
 }
@@ -75,14 +98,20 @@ export async function getModelBySlug(
     supabase.from("models").select(columns).eq("slug", slug).eq("active", true).maybeSingle();
 
   let { data, error } = await runQuery(MODEL_COLUMNS);
+  if (error?.message?.includes("hero_background_focal")) {
+    ({ data, error } = await runQuery(MODEL_COLUMNS_LEGACY));
+  }
   if (error?.message?.includes("show_in_showcase")) {
     ({ data, error } = await runQuery(MODEL_COLUMNS_LEGACY));
+  }
+  if (error?.message?.includes("hero_background_image_url")) {
+    ({ data, error } = await runQuery(MODEL_COLUMNS_NO_HERO));
   }
 
   if (error) return { data: null, error: new Error(error.message) };
   if (!data) return { data: null, error: new Error(`Model not found: ${slug}`) };
 
-  return { data: withShowcaseDefault([data as unknown as Model])[0], error: null };
+  return { data: normalizeModelRows([data as unknown as Model])[0], error: null };
 }
 
 export async function getAllModelsForAdmin(
@@ -97,15 +126,21 @@ export async function getAllModelsForAdmin(
       .order("name");
 
   let { data: models, error: modelsError } = await runModelsQuery(MODEL_COLUMNS);
+  if (modelsError?.message?.includes("hero_background_focal")) {
+    ({ data: models, error: modelsError } = await runModelsQuery(MODEL_COLUMNS_LEGACY));
+  }
   if (modelsError?.message?.includes("show_in_showcase")) {
     ({ data: models, error: modelsError } = await runModelsQuery(MODEL_COLUMNS_LEGACY));
+  }
+  if (modelsError?.message?.includes("hero_background_image_url")) {
+    ({ data: models, error: modelsError } = await runModelsQuery(MODEL_COLUMNS_NO_HERO));
   }
 
   if (modelsError) {
     return { data: null, error: new Error(modelsError.message) };
   }
 
-  const modelList = withShowcaseDefault((models ?? []) as unknown as Model[]);
+  const modelList = normalizeModelRows((models ?? []) as unknown as Model[]);
   if (modelList.length === 0) {
     return { data: [], error: null };
   }
