@@ -1,6 +1,7 @@
 "use client";
 
 import { motion, useReducedMotion } from "framer-motion";
+import { FadeUp } from "../components/motion";
 import { FlotaModelCard, type FlotaModel } from "./FlotaModelCard";
 
 const gridList = {
