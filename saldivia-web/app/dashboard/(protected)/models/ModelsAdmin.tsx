@@ -16,6 +16,18 @@ import {
   type VariantFormRow,
 } from "./ModelVariantsEditor";
 import { HeroBackgroundField } from "./HeroBackgroundField";
+import {
+  AdminCheckbox,
+  AdminField,
+  AdminFormActions,
+  AdminListPanel,
+  AdminSelect,
+  AdminStatusBanner,
+  AdminTwoColumn,
+  MediaDropzone,
+} from "../_ui/admin-ui";
+
+type AdminMessage = { text: string; variant: "info" | "success" | "error" } | null;
 
 const SEGMENTS: { value: ModelSegment; label: string }[] = [
   { value: "urbano", label: "Urbano" },
@@ -101,7 +113,7 @@ export function ModelsAdmin({ initial }: Props) {
   const [specRows, setSpecRows] = useState<SpecRowLocal[]>([specRowEmptyLocal()]);
   const [featureBodies, setFeatureBodies] = useState<string[]>([""]);
   const [variantRows, setVariantRows] = useState<VariantFormRow[]>([]);
-  const [message, setMessage] = useState<string | null>(null);
+  const [message, setMessage] = useState<AdminMessage>(null);
   const [busy, setBusy] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [draggingId, setDraggingId] = useState<string | null>(null);
@@ -149,6 +161,7 @@ export function ModelsAdmin({ initial }: Props) {
     setFeatureBodies(feats.length > 0 ? feats : [""]);
     const vars = variantsFromModel(m);
     setVariantRows(vars);
+    setMessage(null);
   }
 
   function newModel() {
@@ -156,6 +169,7 @@ export function ModelsAdmin({ initial }: Props) {
     setSpecRows([specRowEmptyLocal()]);
     setFeatureBodies([""]);
     setVariantRows([]);
+    setMessage(null);
   }
 
   async function onReorderDrop(fromIndex: number, toIndex: number) {
@@ -167,7 +181,10 @@ export function ModelsAdmin({ initial }: Props) {
     const r = await reorderModels(orderedIds);
     setBusy(false);
     if (!r.ok) {
-      setMessage(r.error === "validation" ? "No se pudo guardar el orden." : r.error);
+      setMessage({
+        text: r.error === "validation" ? "No se pudo guardar el orden." : r.error,
+        variant: "error",
+      });
       return;
     }
     setList((prev) =>
@@ -183,7 +200,7 @@ export function ModelsAdmin({ initial }: Props) {
       if (idx === -1) return f;
       return { ...f, sort_order: idx };
     });
-    setMessage("Orden actualizado.");
+    setMessage({ text: "Orden actualizado.", variant: "success" });
     router.refresh();
   }
 
@@ -212,7 +229,7 @@ export function ModelsAdmin({ initial }: Props) {
         variants: variantRows.filter((v) => v.name.trim() || v.code.trim()),
       });
       if (!r.ok) {
-        setMessage(r.error);
+        setMessage({ text: r.error, variant: "error" });
         return;
       }
       const savedId = r.id;
@@ -253,10 +270,13 @@ export function ModelsAdmin({ initial }: Props) {
         ];
       });
       setForm((f) => ({ ...f, id: savedId }));
-      setMessage(r.warning ?? "Guardado.");
+      setMessage({
+        text: r.warning ?? "Modelo guardado.",
+        variant: r.warning ? "info" : "success",
+      });
       router.refresh();
     } catch {
-      setMessage("No se pudo guardar. Intente de nuevo.");
+      setMessage({ text: "No se pudo guardar. Intente de nuevo.", variant: "error" });
     } finally {
       setBusy(false);
     }
@@ -271,17 +291,21 @@ export function ModelsAdmin({ initial }: Props) {
     const r = await deleteModel(form.id);
     setBusy(false);
     if (!r.ok) {
-      setMessage(r.error);
+      setMessage({ text: r.error, variant: "error" });
       return;
     }
     setList((prev) => prev.filter((m) => m.id !== form.id));
     setForm(empty);
+    setMessage({ text: "Modelo eliminado.", variant: "success" });
   }
 
   async function onFile(which: "cover" | "hero" | "pdf", file: File | null) {
     if (!file) return;
     if (which === "hero" && !form.id) {
-      setMessage("Guardá el modelo una vez antes de subir el hero (cada colectivo tiene el suyo).");
+      setMessage({
+        text: "Guardá el modelo una vez antes de subir el hero (cada colectivo tiene el suyo).",
+        variant: "info",
+      });
       return;
     }
     setUploading(true);
@@ -292,9 +316,10 @@ export function ModelsAdmin({ initial }: Props) {
         which === "hero" && form.id ? { folder: `models/${form.id}/hero` } : undefined,
       );
       if (!r.ok) {
-        setMessage(
-          r.error === "unauthorized" ? "Sesión vencida." : r.error,
-        );
+        setMessage({
+          text: r.error === "unauthorized" ? "Sesión vencida." : r.error,
+          variant: "error",
+        });
         return;
       }
       if (which === "cover") {
@@ -310,109 +335,134 @@ export function ModelsAdmin({ initial }: Props) {
       } else {
         setForm((f) => ({ ...f, pdf_url: r.publicUrl }));
       }
-      setMessage("Archivo subido. Pulse Guardar para aplicar los cambios a este modelo.");
+      setMessage({
+        text: "Archivo subido. Pulse Guardar para aplicar los cambios a este modelo.",
+        variant: "info",
+      });
     } catch {
-      setMessage("Error al subir el archivo.");
+      setMessage({ text: "Error al subir el archivo.", variant: "error" });
     } finally {
       setUploading(false);
     }
   }
 
   return (
-    <div className="grid gap-10 lg:grid-cols-2">
-      <section>
-        <h2 className="text-sm font-bold uppercase tracking-widest text-primary">Listado</h2>
-        <p className="mt-1 text-xs text-on-surface-variant">
-          Ordenados por <code className="text-[10px]">sort_order</code> (flota, menú, home). Arrastrá con el asa para
-          reordenar.
-        </p>
-        <ul className="mt-4 max-h-[480px] space-y-2 overflow-y-auto rounded-sm border border-outline-variant/30 p-2">
-          {sortedList.map((m, index) => (
-            <li
-              key={m.id}
-              className={`flex overflow-hidden rounded-sm border transition-shadow ${
-                dropTargetIndex === index
-                  ? "border-primary ring-2 ring-primary/30"
-                  : "border-transparent"
-              } ${draggingId === m.id ? "opacity-50" : ""}`}
-              onDragOver={(e) => {
-                e.preventDefault();
-                e.dataTransfer.dropEffect = "move";
-                setDropTargetIndex(index);
-              }}
-              onDrop={(e) => {
-                e.preventDefault();
-                setDropTargetIndex(null);
-                setDraggingId(null);
-                const plain = e.dataTransfer.getData("text/plain");
-                const pipe = plain.indexOf("|");
-                const from = pipe > 0 ? Number.parseInt(plain.slice(0, pipe), 10) : Number.NaN;
-                if (!Number.isFinite(from)) return;
-                void onReorderDrop(from, index);
-              }}
-            >
-              <div
-                role="button"
-                tabIndex={busy ? -1 : 0}
-                draggable={!busy}
-                aria-label="Arrastrar para reordenar modelo"
-                title="Arrastrar para reordenar"
-                className="flex shrink-0 cursor-grab touch-none items-center border-r border-outline-variant/25 bg-surface-container-high px-1.5 text-on-surface-variant outline-none hover:bg-surface-container focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary active:cursor-grabbing [&[aria-disabled=true]]:cursor-not-allowed [&[aria-disabled=true]]:opacity-50"
-                aria-disabled={busy}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") e.preventDefault();
+    <AdminTwoColumn
+      className="lg:grid-cols-[minmax(0,1fr)_minmax(340px,480px)]"
+      list={
+        <AdminListPanel
+          title="Modelos"
+          description="Orden por sort_order (flota, menú, home). Arrastrá con el asa para reordenar."
+          action={
+            <Button type="button" variant="outline" size="sm" className="gap-1" onClick={newModel}>
+              <Plus className="size-4" aria-hidden />
+              Nuevo
+            </Button>
+          }
+        >
+          <ul className="divide-y divide-outline-variant/25">
+            {sortedList.map((m, index) => (
+              <li
+                key={m.id}
+                className={`flex overflow-hidden transition-shadow ${
+                  dropTargetIndex === index ? "ring-2 ring-inset ring-primary/30" : ""
+                } ${draggingId === m.id ? "opacity-50" : ""}`}
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  e.dataTransfer.dropEffect = "move";
+                  setDropTargetIndex(index);
                 }}
-                onDragStart={(e) => {
-                  e.stopPropagation();
-                  setDraggingId(m.id);
-                  e.dataTransfer.effectAllowed = "move";
-                  e.dataTransfer.setData("text/plain", `${index}|${m.id}`);
-                }}
-                onDragEnd={() => {
-                  setDraggingId(null);
+                onDrop={(e) => {
+                  e.preventDefault();
                   setDropTargetIndex(null);
+                  setDraggingId(null);
+                  const plain = e.dataTransfer.getData("text/plain");
+                  const pipe = plain.indexOf("|");
+                  const from = pipe > 0 ? Number.parseInt(plain.slice(0, pipe), 10) : Number.NaN;
+                  if (!Number.isFinite(from)) return;
+                  void onReorderDrop(from, index);
                 }}
               >
-                <GripVertical className="size-5" aria-hidden />
-              </div>
-              <button
-                type="button"
-                onClick={() => load(m)}
-                className={`min-w-0 flex-1 rounded-r-sm px-3 py-2 text-left text-sm transition ${
-                  form.id === m.id
-                    ? "bg-secondary-container/25 text-primary"
-                    : "hover:bg-surface-container-high"
-                }`}
-              >
-                <span className="block font-bold">{m.name}</span>
-                <span className="text-xs text-on-surface-variant">
-                  orden {m.sort_order ?? 0} · {m.slug} · {m.segment} {m.active ? "" : "· inactivo"}
-                  {(m.model_variants?.length ?? 0) > 0
-                    ? ` · ${m.model_variants!.length} config.`
-                    : ""}
-                  {m.show_in_showcase ? " · showcase" : ""}
-                  {m.hero_background_image_url ? " · hero" : ""}
-                </span>
-              </button>
-            </li>
-          ))}
-        </ul>
-        <Button className="mt-4" type="button" variant="outline" size="sm" onClick={newModel}>
-          Nuevo modelo
-        </Button>
-      </section>
-
-      <section>
-        <h2 className="text-sm font-bold uppercase tracking-widest text-primary">
-          {editing ? "Editar" : "Crear"} modelo
-        </h2>
-        {message && <p className="mt-2 text-sm text-on-surface-variant">{message}</p>}
-        <form className="mt-4 space-y-4" onSubmit={onSave}>
+                <div
+                  role="button"
+                  tabIndex={busy ? -1 : 0}
+                  draggable={!busy}
+                  aria-label="Arrastrar para reordenar modelo"
+                  title="Arrastrar para reordenar"
+                  className="flex shrink-0 cursor-grab touch-none items-center border-r border-outline-variant/20 bg-surface-container-high px-1.5 text-on-surface-variant outline-none hover:bg-surface-container focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary active:cursor-grabbing [&[aria-disabled=true]]:cursor-not-allowed [&[aria-disabled=true]]:opacity-50"
+                  aria-disabled={busy}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") e.preventDefault();
+                  }}
+                  onDragStart={(e) => {
+                    e.stopPropagation();
+                    setDraggingId(m.id);
+                    e.dataTransfer.effectAllowed = "move";
+                    e.dataTransfer.setData("text/plain", `${index}|${m.id}`);
+                  }}
+                  onDragEnd={() => {
+                    setDraggingId(null);
+                    setDropTargetIndex(null);
+                  }}
+                >
+                  <GripVertical className="size-5" aria-hidden />
+                </div>
+                {m.cover_image_url ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={m.cover_image_url} alt="" className="h-16 w-20 shrink-0 object-cover" />
+                ) : (
+                  <div className="flex h-16 w-20 shrink-0 items-center justify-center bg-surface-container text-[9px] text-on-surface-variant">
+                    sin foto
+                  </div>
+                )}
+                <button
+                  type="button"
+                  onClick={() => load(m)}
+                  className={`min-w-0 flex-1 cursor-pointer px-3 py-2 text-left text-sm transition ${
+                    form.id === m.id
+                      ? "bg-secondary-container/20 text-primary"
+                      : "hover:bg-surface-container-high"
+                  }`}
+                >
+                  <span className="block truncate font-bold">{m.name}</span>
+                  <span className="block truncate text-xs text-on-surface-variant">
+                    orden {m.sort_order ?? 0} · {m.slug} · {m.segment}
+                    {!m.active ? " · inactivo" : ""}
+                  </span>
+                  <span className="mt-0.5 flex flex-wrap gap-1">
+                    {(m.model_variants?.length ?? 0) > 0 ? (
+                      <span className="rounded bg-surface-container-high px-1.5 py-0.5 text-[10px]">
+                        {m.model_variants!.length} config.
+                      </span>
+                    ) : null}
+                    {m.show_in_showcase ? (
+                      <span className="rounded bg-secondary/15 px-1.5 py-0.5 text-[10px] text-secondary">
+                        showcase
+                      </span>
+                    ) : null}
+                    {m.hero_background_image_url ? (
+                      <span className="rounded bg-primary/15 px-1.5 py-0.5 text-[10px] text-primary">hero</span>
+                    ) : null}
+                  </span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        </AdminListPanel>
+      }
+      form={
+        <section className="rounded-sm border border-outline-variant/30 bg-surface-container-lowest p-5">
+          <h2 className="text-sm font-bold uppercase tracking-widest text-primary">
+            {editing ? `Editar: ${form.name || "modelo"}` : "Crear modelo"}
+          </h2>
+          {message ? (
+            <div className="mt-3">
+              <AdminStatusBanner variant={message.variant}>{message.text}</AdminStatusBanner>
+            </div>
+          ) : null}
+          <form className="mt-4 space-y-4" onSubmit={onSave}>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div className="space-y-1">
-              <label className="text-xs font-bold text-secondary" htmlFor="slug">
-                Slug (URL)
-              </label>
+            <AdminField id="slug" label="Slug (URL)" required hint="Ej: aries-330 — se usa en /producto/[slug]">
               <Input
                 id="slug"
                 value={form.slug}
@@ -420,11 +470,8 @@ export function ModelsAdmin({ initial }: Props) {
                 placeholder="aries-330"
                 required
               />
-            </div>
-            <div className="space-y-1">
-              <label className="text-xs font-bold text-secondary" htmlFor="name">
-                Nombre
-              </label>
+            </AdminField>
+            <AdminField id="name" label="Nombre" required>
               <Input
                 id="name"
                 value={form.name}
@@ -432,15 +479,11 @@ export function ModelsAdmin({ initial }: Props) {
                 placeholder="Aries 330"
                 required
               />
-            </div>
+            </AdminField>
           </div>
-          <div className="space-y-1">
-            <label className="text-xs font-bold text-secondary" htmlFor="segment">
-              Segmento
-            </label>
-            <select
+          <AdminField id="segment" label="Segmento">
+            <AdminSelect
               id="segment"
-              className="h-11 w-full rounded-curve-sm border border-outline-variant/40 bg-surface-container-lowest px-3 text-sm"
               value={form.segment}
               onChange={(e) => setForm((f) => ({ ...f, segment: e.target.value as ModelSegment }))}
             >
@@ -449,19 +492,16 @@ export function ModelsAdmin({ initial }: Props) {
                   {s.label}
                 </option>
               ))}
-            </select>
-          </div>
-          <div className="space-y-1">
-            <label className="text-xs font-bold text-secondary" htmlFor="description">
-              Descripción
-            </label>
+            </AdminSelect>
+          </AdminField>
+          <AdminField id="description" label="Descripción">
             <Textarea
               id="description"
               rows={3}
               value={form.description ?? ""}
               onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
             />
-          </div>
+          </AdminField>
           <div className="space-y-3 rounded-sm border border-outline-variant/25 bg-surface-container-low/40 p-4">
             <div>
               <p className="text-xs font-bold uppercase tracking-wide text-secondary">
@@ -601,25 +641,17 @@ export function ModelsAdmin({ initial }: Props) {
               ))}
             </div>
           </div>
-          <div className="space-y-1">
-            <label className="text-xs font-bold text-secondary" htmlFor="cover_image_url">
-              Portada en /flota (URL o archivo)
-            </label>
-            <p className="text-[11px] text-on-surface-variant">
-              Tarjetas del catálogo de flota; si falta, se usa una imagen por defecto del sitio.
-            </p>
-            <Input
-              id="cover_image_url"
-              value={form.cover_image_url ?? ""}
-              onChange={(e) => setForm((f) => ({ ...f, cover_image_url: e.target.value }))}
-            />
-            <input
-              type="file"
-              accept="image/jpeg,image/png,image/webp"
-              className="text-xs"
-              onChange={(e) => void onFile("cover", e.target.files?.[0] ?? null)}
-            />
-          </div>
+          <MediaDropzone
+            id="cover_image"
+            label="Portada en /flota"
+            hint="Tarjetas del catálogo de flota. Si falta, se usa una imagen por defecto."
+            value={form.cover_image_url ?? ""}
+            uploading={uploading}
+            disabled={busy}
+            previewAspect="aspect-[4/3]"
+            onChange={(url) => setForm((f) => ({ ...f, cover_image_url: url || null }))}
+            onFileSelect={(file) => void onFile("cover", file)}
+          />
           <HeroBackgroundField
             modelName={form.name}
             modelId={form.id}
@@ -636,70 +668,51 @@ export function ModelsAdmin({ initial }: Props) {
             onZoomChange={(zoom) => setForm((f) => ({ ...f, hero_background_zoom: zoom }))}
             onFileSelect={(file) => void onFile("hero", file)}
           />
-          <div className="space-y-1">
-            <label className="text-xs font-bold text-secondary" htmlFor="pdf_url">
-              Ficha PDF (URL)
-            </label>
-            <Input
-              id="pdf_url"
-              value={form.pdf_url ?? ""}
-              onChange={(e) => setForm((f) => ({ ...f, pdf_url: e.target.value }))}
-            />
-            <input type="file" accept="application/pdf" className="text-xs" onChange={(e) => void onFile("pdf", e.target.files?.[0] ?? null)} />
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-1">
-              <label className="text-xs font-bold text-secondary" htmlFor="sort_order">
-                Orden
-              </label>
+          <MediaDropzone
+            id="pdf_url"
+            label="Ficha PDF"
+            hint="Documento técnico descargable desde la ficha del producto."
+            kind="pdf"
+            accept="application/pdf"
+            value={form.pdf_url ?? ""}
+            uploading={uploading}
+            disabled={busy}
+            previewAspect="aspect-auto min-h-[5rem]"
+            onChange={(url) => setForm((f) => ({ ...f, pdf_url: url || null }))}
+            onFileSelect={(file) => void onFile("pdf", file)}
+            emptyLabel="Arrastrá el PDF o hacé clic para seleccionar"
+          />
+          <div className="grid gap-4 sm:grid-cols-2">
+            <AdminField id="sort_order" label="Orden en flota / menú">
               <Input
                 id="sort_order"
                 type="number"
                 value={form.sort_order ?? 0}
                 onChange={(e) => setForm((f) => ({ ...f, sort_order: Number(e.target.value) }))}
               />
-            </div>
-            <div className="flex items-end gap-2 pb-1">
-              <input
-                id="active"
-                type="checkbox"
-                checked={form.active}
-                onChange={(e) => setForm((f) => ({ ...f, active: e.target.checked }))}
-              />
-              <label htmlFor="active" className="text-sm">
-                Activo (visible en web)
-              </label>
-            </div>
-          </div>
-          <div className="flex items-start gap-2 rounded-sm border border-outline-variant/25 bg-surface-container-low/40 p-4">
-            <input
-              id="show_in_showcase"
-              type="checkbox"
-              className="mt-0.5"
-              checked={form.show_in_showcase}
-              onChange={(e) => setForm((f) => ({ ...f, show_in_showcase: e.target.checked }))}
+            </AdminField>
+            <AdminCheckbox
+              id="active"
+              label="Activo (visible en web)"
+              checked={form.active}
+              onChange={(e) => setForm((f) => ({ ...f, active: e.target.checked }))}
             />
-            <label htmlFor="show_in_showcase" className="text-sm">
-              Mostrar en el Showcase técnico del home
-              <span className="mt-0.5 block text-[11px] font-normal text-on-surface-variant">
-                El carrusel del inicio muestra los modelos activos marcados aquí, en el mismo orden
-                (<code className="text-[10px]">sort_order</code>). Usa la portada, descripción y las 2 primeras
-                especificaciones del modelo.
-              </span>
-            </label>
           </div>
-          <div className="flex flex-wrap gap-3">
-            <Button type="submit" disabled={busy || uploading}>
-              {uploading ? "Subiendo archivo…" : busy ? "Guardando…" : "Guardar"}
-            </Button>
-            {editing && (
-              <Button type="button" variant="outline" disabled={busy || uploading} onClick={() => void onDelete()}>
-                Eliminar
-              </Button>
-            )}
-          </div>
+          <AdminCheckbox
+            id="show_in_showcase"
+            label="Mostrar en el Showcase técnico del home"
+            description="El carrusel del inicio muestra los modelos activos marcados aquí, en sort_order. Usa portada, descripción y las 2 primeras specs."
+            checked={form.show_in_showcase}
+            onChange={(e) => setForm((f) => ({ ...f, show_in_showcase: e.target.checked }))}
+          />
+          <AdminFormActions
+            saving={busy}
+            uploading={uploading}
+            onDelete={editing ? () => void onDelete() : undefined}
+          />
         </form>
-      </section>
-    </div>
+        </section>
+      }
+    />
   );
 }

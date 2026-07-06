@@ -197,8 +197,29 @@ export function HeroBackgroundField({
         />
       </div>
 
-      <div>
-        <label className="inline-flex cursor-pointer items-center gap-2 rounded-sm border border-outline-variant/40 bg-surface-container-lowest px-3 py-2 text-xs font-medium hover:bg-surface-container-high">
+      <div
+        role="button"
+        tabIndex={disabled || uploading || !modelId ? -1 : 0}
+        aria-disabled={disabled || uploading || !modelId}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            (e.currentTarget.querySelector("input[type=file]") as HTMLInputElement | null)?.click();
+          }
+        }}
+        onDragOver={(e) => {
+          e.preventDefault();
+        }}
+        onDrop={(e) => {
+          e.preventDefault();
+          const file = e.dataTransfer.files?.[0];
+          if (file) onFileSelect(file);
+        }}
+        className={`rounded-sm border-2 border-dashed border-outline-variant/45 bg-surface-container-low/40 p-3 text-center transition-colors hover:border-secondary/50 ${
+          disabled || uploading || !modelId ? "opacity-60" : "cursor-pointer"
+        }`}
+      >
+        <label className="inline-flex cursor-pointer items-center gap-2 text-xs font-medium text-on-surface">
           <input
             type="file"
             accept="image/jpeg,image/png,image/webp"
@@ -210,13 +231,13 @@ export function HeroBackgroundField({
               e.target.value = "";
             }}
           />
-          {uploading ? "Subiendo…" : "Seleccionar imagen"}
+          {uploading ? "Subiendo…" : "Arrastrá una imagen o hacé clic para seleccionar"}
         </label>
-        {!modelId && (
+        {!modelId ? (
           <p className="mt-1 text-[10px] text-on-surface-variant">
-            Guardá el modelo una vez para habilitar la subida de archivos.
+            Guardá el modelo una vez para habilitar la subida.
           </p>
-        )}
+        ) : null}
       </div>
     </div>
   );
