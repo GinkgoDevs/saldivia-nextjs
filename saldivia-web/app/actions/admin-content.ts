@@ -155,6 +155,7 @@ export async function saveModel(input: SaveModelInput) {
 
   const { show_in_showcase: _drop, ...rowLegacy } = row;
   const isMissingShowcaseColumn = (msg?: string) => !!msg?.includes("show_in_showcase");
+  const isMissingHeroColumn = (msg?: string) => !!msg?.includes("hero_background_image_url");
 
   let modelId: string;
 
@@ -164,11 +165,19 @@ export async function saveModel(input: SaveModelInput) {
     if (isMissingShowcaseColumn(error?.message)) {
       ({ error } = await supabase.from("models").update(rowLegacy).eq("id", modelId));
     }
+    if (isMissingHeroColumn(error?.message)) {
+      const { hero_background_image_url: _h, ...withoutHero } = row;
+      ({ error } = await supabase.from("models").update(withoutHero).eq("id", modelId));
+    }
     if (error) return { ok: false as const, error: error.message };
   } else {
     let { data, error } = await supabase.from("models").insert(row).select("id").single();
     if (isMissingShowcaseColumn(error?.message)) {
       ({ data, error } = await supabase.from("models").insert(rowLegacy).select("id").single());
+    }
+    if (isMissingHeroColumn(error?.message)) {
+      const { hero_background_image_url: _h, ...withoutHero } = row;
+      ({ data, error } = await supabase.from("models").insert(withoutHero).select("id").single());
     }
     if (error) return { ok: false as const, error: error.message };
     if (!data?.id) return { ok: false as const, error: "validation" };

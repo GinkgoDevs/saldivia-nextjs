@@ -3,7 +3,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { GripVertical, Plus, Trash2 } from "lucide-react";
-import { deleteModel, reorderModels, saveModel, uploadMediaToBucket } from "@/app/actions/admin-content";
+import { deleteModel, reorderModels, saveModel } from "@/app/actions/admin-content";
+import { uploadMediaFromBrowser } from "@/lib/upload-media-client";
 import type { Model, ModelAdmin, ModelSegment, ModelVariantAdmin } from "@/types/model";
 import { Button } from "@/app/components/ui/Button";
 import { Input } from "@/app/components/ui/Input";
@@ -98,6 +99,7 @@ export function ModelsAdmin({ initial }: Props) {
   const [variantRows, setVariantRows] = useState<VariantFormRow[]>([]);
   const [message, setMessage] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [draggingId, setDraggingId] = useState<string | null>(null);
   const [dropTargetIndex, setDropTargetIndex] = useState<number | null>(null);
 
@@ -182,31 +184,36 @@ export function ModelsAdmin({ initial }: Props) {
     e.preventDefault();
     setBusy(true);
     setMessage(null);
-    const r = await saveModel({
-      id: form.id,
-      slug: form.slug,
-      name: form.name,
-      segment: form.segment,
-      description: form.description ?? "",
-      cover_image_url: form.cover_image_url ?? "",
-      hero_background_image_url: form.hero_background_image_url ?? "",
-      pdf_url: form.pdf_url ?? "",
-      sort_order: form.sort_order ?? 0,
-      active: form.active,
-      show_in_showcase: form.show_in_showcase,
-      tech_specs: specRows,
-      general_feature_bodies: featureBodies,
-      variants: variantRows.filter((v) => v.name.trim() || v.code.trim()),
-    });
-    setBusy(false);
-    if (!r.ok) {
-      setMessage(r.error);
-      return;
+    try {
+      const r = await saveModel({
+        id: form.id,
+        slug: form.slug,
+        name: form.name,
+        segment: form.segment,
+        description: form.description ?? "",
+        cover_image_url: form.cover_image_url ?? "",
+        hero_background_image_url: form.hero_background_image_url ?? "",
+        pdf_url: form.pdf_url ?? "",
+        sort_order: form.sort_order ?? 0,
+        active: form.active,
+        show_in_showcase: form.show_in_showcase,
+        tech_specs: specRows,
+        general_feature_bodies: featureBodies,
+        variants: variantRows.filter((v) => v.name.trim() || v.code.trim()),
+      });
+      if (!r.ok) {
+        setMessage(r.error);
+        return;
+      }
+      setMessage("Guardado.");
+      setForm(empty);
+      setVariantRows([]);
+      router.refresh();
+    } catch {
+      setMessage("No se pudo guardar. Intente de nuevo.");
+    } finally {
+      setBusy(false);
     }
-    setMessage("Guardado.");
-    setForm(empty);
-    setVariantRows([]);
-    router.refresh();
   }
 
   async function onDelete() {
@@ -227,23 +234,28 @@ export function ModelsAdmin({ initial }: Props) {
 
   async function onFile(which: "cover" | "hero" | "pdf", file: File | null) {
     if (!file) return;
-    setBusy(true);
-    const fd = new FormData();
-    fd.set("file", file);
-    const r = await uploadMediaToBucket(fd);
-    setBusy(false);
-    if (!r.ok) {
-      setMessage(
-        r.error === "unauthorized" ? "Sesión vencida." : (r as { error?: string }).error ?? "Error al subir",
-      );
-      return;
-    }
-    if (which === "cover") {
-      setForm((f) => ({ ...f, cover_image_url: r.publicUrl }));
-    } else if (which === "hero") {
-      setForm((f) => ({ ...f, hero_background_image_url: r.publicUrl }));
-    } else {
-      setForm((f) => ({ ...f, pdf_url: r.publicUrl }));
+    setUploading(true);
+    setMessage(null);
+    try {
+      const r = await uploadMediaFromBrowser(file);
+      if (!r.ok) {
+        setMessage(
+          r.error === "unauthorized" ? "Sesión vencida." : r.error,
+        );
+        return;
+      }
+      if (which === "cover") {
+        setForm((f) => ({ ...f, cover_image_url: r.publicUrl }));
+      } else if (which === "hero") {
+        setForm((f) => ({ ...f, hero_background_image_url: r.publicUrl }));
+      } else {
+        setForm((f) => ({ ...f, pdf_url: r.publicUrl }));
+      }
+      setMessage("Archivo subido. Pulse Guardar para aplicar los cambios.");
+    } catch {
+      setMessage("Error al subir el archivo.");
+    } finally {
+      setUploading(false);
     }
   }
 
@@ -621,11 +633,11 @@ export function ModelsAdmin({ initial }: Props) {
             </label>
           </div>
           <div className="flex flex-wrap gap-3">
-            <Button type="submit" disabled={busy}>
-              {busy ? "Guardando…" : "Guardar"}
+            <Button type="submit" disabled={busy || uploading}>
+              {uploading ? "Subiendo archivo…" : busy ? "Guardando…" : "Guardar"}
             </Button>
             {editing && (
-              <Button type="button" variant="outline" disabled={busy} onClick={() => void onDelete()}>
+              <Button type="button" variant="outline" disabled={busy || uploading} onClick={() => void onDelete()}>
                 Eliminar
               </Button>
             )}
