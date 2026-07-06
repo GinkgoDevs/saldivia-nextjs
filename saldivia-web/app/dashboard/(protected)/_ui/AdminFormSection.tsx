@@ -12,13 +12,13 @@ export function AdminFormSection({ title, description, children, className }: Pr
   return (
     <fieldset
       className={cn(
-        "space-y-4 rounded-sm border border-outline-variant/25 bg-surface-container-low/40 p-4",
+        "space-y-2.5 rounded-sm border border-outline-variant/25 bg-surface-container-low/40 p-3",
         className,
       )}
     >
-      <legend className="px-1 text-xs font-bold uppercase tracking-wide text-secondary">{title}</legend>
+      <legend className="px-1 text-[11px] font-bold uppercase tracking-wide text-secondary">{title}</legend>
       {description ? (
-        <p className="-mt-2 text-[11px] leading-relaxed text-on-surface-variant">{description}</p>
+        <p className="-mt-1 line-clamp-2 text-[10px] leading-snug text-on-surface-variant">{description}</p>
       ) : null}
       {children}
     </fieldset>

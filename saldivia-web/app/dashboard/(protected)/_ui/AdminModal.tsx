@@ -51,7 +51,7 @@ export function AdminModal({
         aria-labelledby="admin-modal-title"
         className={cn("fixed inset-0 z-50 flex flex-col bg-surface-container-lowest", className)}
       >
-        <header className="flex shrink-0 items-center justify-between gap-4 border-b border-outline-variant/25 bg-surface-container-low px-4 py-3 sm:px-6 sm:py-4">
+        <header className="flex shrink-0 items-center justify-between gap-4 border-b border-outline-variant/25 bg-surface-container-low px-4 py-2.5 sm:px-5">
           <h2
             id="admin-modal-title"
             className="min-w-0 truncate text-base font-bold uppercase tracking-tight text-primary sm:text-lg"
@@ -73,7 +73,7 @@ export function AdminModal({
         </header>
         <div className="flex min-h-0 flex-1 flex-col">{children}</div>
         {footer ? (
-          <footer className="shrink-0 border-t border-outline-variant/25 bg-surface-container-low px-4 py-3 sm:px-6 sm:py-4">
+          <footer className="shrink-0 border-t border-outline-variant/25 bg-surface-container-low px-4 py-2.5 sm:px-5">
             {footer}
           </footer>
         ) : null}

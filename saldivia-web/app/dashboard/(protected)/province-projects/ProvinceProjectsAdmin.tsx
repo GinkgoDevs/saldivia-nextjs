@@ -493,7 +493,7 @@ export function ProvinceProjectsAdmin({ initial, provinceOptions }: Props) {
               <AdminField id="pp-desc" label="Descripción">
                 <Textarea
                   id="pp-desc"
-                  rows={4}
+                  rows={2}
                   value={form.description}
                   onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
                 />
@@ -509,6 +509,8 @@ export function ProvinceProjectsAdmin({ initial, provinceOptions }: Props) {
                 value={form.image_url}
                 uploading={uploading}
                 disabled={busy}
+                compact
+                showUrlField={false}
                 onChange={(url) => setForm((f) => ({ ...f, image_url: url }))}
                 onFileSelect={onImageFile}
               />

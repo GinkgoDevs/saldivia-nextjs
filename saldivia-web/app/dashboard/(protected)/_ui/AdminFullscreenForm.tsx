@@ -21,15 +21,15 @@ export function AdminFullscreenForm({
   onStepClick,
 }: Props) {
   return (
-    <>
+    <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
       {steps && steps.length > 0 ? (
         <AdminStepIndicator steps={steps} current={currentStep} onStepClick={onStepClick} />
       ) : null}
-      <form id={id} className="flex min-h-0 flex-1 flex-col" onSubmit={onSubmit}>
-        <div className="flex-1 overflow-y-auto px-4 py-6 sm:px-6 sm:py-8">
-          <div className="mx-auto max-w-3xl space-y-5">{children}</div>
+      <form id={id} className="flex min-h-0 flex-1 flex-col overflow-hidden" onSubmit={onSubmit}>
+        <div className="flex min-h-0 flex-1 flex-col justify-center overflow-hidden px-4 py-3 sm:px-5">
+          <div className="mx-auto w-full max-w-3xl space-y-3">{children}</div>
         </div>
       </form>
-    </>
+    </div>
   );
 }

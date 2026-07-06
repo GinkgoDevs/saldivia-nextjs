@@ -394,6 +394,8 @@ export function HomeHeroAdmin({ initialSlides }: Props) {
                 label="Imagen de fondo"
                 value={form.image_url}
                 previewAspect="aspect-[16/7]"
+                compact
+                showUrlField={false}
                 uploading={uploading}
                 disabled={busy}
                 onChange={(url) => setForm((f) => ({ ...f, image_url: url }))}
@@ -440,7 +442,7 @@ export function HomeHeroAdmin({ initialSlides }: Props) {
               <AdminField id="hero-subtitle" label="Subtítulo / descripción">
                 <Textarea
                   id="hero-subtitle"
-                  rows={4}
+                  rows={2}
                   value={form.subtitle}
                   onChange={(e) => setForm((f) => ({ ...f, subtitle: e.target.value }))}
                 />
@@ -449,9 +451,9 @@ export function HomeHeroAdmin({ initialSlides }: Props) {
           </AdminWizardPanel>
 
           <AdminWizardPanel stepId="actions" currentStepId={currentStepId}>
-            <AdminFormSection title="Botón principal" description="Dejá ambos campos vacíos para ocultar este botón.">
+            <AdminFormSection title="Botones del slide">
               <div className="grid gap-3 sm:grid-cols-2">
-                <AdminField id="hero-p-label" label="Texto">
+                <AdminField id="hero-p-label" label="Principal — texto">
                   <Input
                     id="hero-p-label"
                     value={form.primary_label}
@@ -459,7 +461,7 @@ export function HomeHeroAdmin({ initialSlides }: Props) {
                     placeholder="Explorar modelos"
                   />
                 </AdminField>
-                <AdminField id="hero-p-href" label="Enlace">
+                <AdminField id="hero-p-href" label="Principal — enlace">
                   <Input
                     id="hero-p-href"
                     value={form.primary_href}
@@ -467,11 +469,7 @@ export function HomeHeroAdmin({ initialSlides }: Props) {
                     placeholder="/flota"
                   />
                 </AdminField>
-              </div>
-            </AdminFormSection>
-            <AdminFormSection title="Botón secundario" description="Dejá ambos campos vacíos para ocultar este botón.">
-              <div className="grid gap-3 sm:grid-cols-2">
-                <AdminField id="hero-s-label" label="Texto">
+                <AdminField id="hero-s-label" label="Secundario — texto">
                   <Input
                     id="hero-s-label"
                     value={form.secondary_label}
@@ -479,7 +477,7 @@ export function HomeHeroAdmin({ initialSlides }: Props) {
                     placeholder="Tour industrial"
                   />
                 </AdminField>
-                <AdminField id="hero-s-href" label="Enlace">
+                <AdminField id="hero-s-href" label="Secundario — enlace">
                   <Input
                     id="hero-s-href"
                     value={form.secondary_href}
@@ -490,7 +488,7 @@ export function HomeHeroAdmin({ initialSlides }: Props) {
               </div>
             </AdminFormSection>
             <AdminFormSection title="Publicación">
-              <div className="grid gap-4 sm:grid-cols-2">
+              <div className="grid gap-3 sm:grid-cols-2">
                 <AdminField id="hero-order" label="Orden">
                   <Input
                     id="hero-order"

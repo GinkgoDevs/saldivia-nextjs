@@ -386,7 +386,7 @@ export function HomeShowcaseAdmin({ initialSlides }: Props) {
                     id="showcase-lead"
                     value={form.lead}
                     onChange={(e) => setForm((f) => (f ? { ...f, lead: e.target.value } : f))}
-                    rows={4}
+                    rows={2}
                   />
                 </AdminField>
               </AdminFormSection>
