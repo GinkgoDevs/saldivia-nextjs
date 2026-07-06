@@ -7,6 +7,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { getStaticHeroSlides } from "@/lib/supabase/home-hero";
 import { imageFocalStyle } from "@/lib/image-focal";
 import type { ResolvedHeroSlide } from "@/types/home-hero";
+import { buttonClass } from "./ui/Button";
 
 const INTERVAL_MS = 11_000;
 const TRANSITION_MS = 1800;
@@ -137,7 +138,11 @@ export default function HomeHero3({
                     {slide.primary && (
                       <Link
                         href={slide.primary.href}
-                        className="inline-flex min-h-[48px] cursor-pointer items-center justify-center rounded-sm bg-white px-8 py-4 font-headline text-sm font-black uppercase tracking-widest text-slate-900 shadow-xl transition-colors duration-200 hover:bg-white/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 md:px-10 md:py-5"
+                        className={buttonClass({
+                          variant: "on-dark",
+                          size: "lg",
+                          className: "rounded-sm shadow-xl md:px-10",
+                        })}
                       >
                         {slide.primary.label}
                         <span className="material-symbols-outlined ml-2 text-xl" aria-hidden>
@@ -148,7 +153,11 @@ export default function HomeHero3({
                     {slide.secondary && (
                       <Link
                         href={slide.secondary.href}
-                        className="inline-flex min-h-[48px] cursor-pointer items-center justify-center rounded-sm border border-white/25 bg-white/5 px-8 py-4 font-headline text-sm font-black uppercase tracking-widest text-white backdrop-blur-md transition-colors duration-200 hover:border-white/40 hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 md:px-10 md:py-5"
+                        className={buttonClass({
+                          variant: "on-dark-outline",
+                          size: "lg",
+                          className: "rounded-sm md:px-10",
+                        })}
                       >
                         {slide.secondary.label}
                       </Link>

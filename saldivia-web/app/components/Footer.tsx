@@ -20,7 +20,7 @@ function SocialLink({
   icon: ReactNode;
 }) {
   const className =
-    "inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded text-white transition-colors hover:text-accent-blue focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue focus-visible:ring-offset-2 focus-visible:ring-offset-primary";
+    "inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded text-white transition-colors hover:text-accent-blue focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue focus-visible:ring-offset-2 focus-visible:ring-offset-primary-brand";
 
   if (external) {
     return (
@@ -44,14 +44,17 @@ function SocialLink({
 }
 
 const footerNavLinkClass =
-  "inline-block py-1 text-sm font-semibold uppercase tracking-wide text-[#c4c6cf] transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue focus-visible:ring-offset-2 focus-visible:ring-offset-primary sm:text-base";
+  "inline-block py-1 text-sm font-semibold uppercase tracking-wide text-[#c4c6cf] transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue focus-visible:ring-offset-2 focus-visible:ring-offset-primary-brand sm:text-base";
 
 export default function Footer() {
   const instagramHref = getSocialInstagramHref();
   const linkedinHref = getSocialLinkedinHref();
 
   return (
-    <footer className="w-full border-t border-white/10 bg-primary text-[#faf9fc]">
+    <footer
+      className="ui-brand-navy-surface w-full border-t border-white/10 text-[#faf9fc]"
+      style={{ backgroundColor: "#001732" }}
+    >
       <div className="mx-auto grid w-full max-w-screen-2xl grid-cols-1 gap-10 px-6 py-14 md:grid-cols-2 md:gap-12 md:px-10 md:py-16 lg:px-12">
         <div className="space-y-6">
           <Link

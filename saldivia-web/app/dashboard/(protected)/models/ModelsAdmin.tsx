@@ -750,9 +750,9 @@ export function ModelsAdmin({ initial }: Props) {
                     zoom={form.cover_image_zoom ?? 1}
                     uploading={uploading}
                     disabled={busy}
-                    frameClassName="border border-outline-variant/15 bg-white shadow-[0px_12px_32px_rgba(13,44,79,0.1)]"
+                    frameClassName="border border-outline-variant/15 bg-surface-container-lowest shadow-elev-1"
                     frameFooter={
-                      <div className="border-t border-primary/20 bg-primary px-4 py-2.5">
+                      <div className="ui-flota-model-name-bar px-4 py-2.5">
                         <p className="truncate font-headline text-xs font-black uppercase tracking-[0.12em] text-white">
                           {form.name.trim() || "Nombre del modelo"}
                         </p>

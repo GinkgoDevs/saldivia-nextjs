@@ -75,7 +75,7 @@ function CountCell({
         {display.toLocaleString("es-AR")}
         {suffix}
       </div>
-      <div className="ui-caption-caps text-on-surface-variant dark:text-slate-400">
+      <div className="ui-caption-caps text-on-surface-variant dark:text-on-primary-container">
         {label}
       </div>
     </motion.div>
@@ -110,7 +110,7 @@ function StaticStatCell({
       }
     >
       <div className="mb-2 font-headline text-5xl font-extrabold tabular-nums text-accent-blue">{value}</div>
-      <div className="ui-caption-caps text-on-surface-variant dark:text-slate-400">
+      <div className="ui-caption-caps text-on-surface-variant dark:text-on-primary-container">
         {label}
       </div>
     </motion.div>
@@ -126,14 +126,14 @@ export function CountUpStatsRow() {
   return (
     <section
       ref={ref}
-      className="bg-surface-container py-20 text-on-surface dark:bg-primary dark:text-white"
+      className="bg-surface-container-lowest py-20 text-on-surface dark:bg-primary-container dark:text-on-primary-container"
     >
       <div className="container mx-auto px-4 md:px-6">
         <header className="mb-14 text-center md:mb-16">
-          <p className="ui-section-eyebrow text-secondary dark:text-secondary-container">
+          <p className="ui-section-eyebrow">
             Indicadores clave
           </p>
-          <h2 className="ui-section-title text-primary md:text-3xl dark:text-white">
+          <h2 className="ui-section-title md:text-3xl dark:text-white">
             Trayectoria en números
           </h2>
           <div className="technical-gradient mx-auto mt-4 h-1 w-20 rounded-full" />

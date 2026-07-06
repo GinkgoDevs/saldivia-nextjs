@@ -11,7 +11,7 @@ export default function HomeHero2() {
   return (
     <section
       id="saldivia-home-hero"
-      className="relative overflow-hidden bg-primary"
+      className="relative overflow-hidden bg-primary-brand"
       style={{ height: '125dvh' }}
       aria-labelledby="home-hero-heading-2"
     >
@@ -31,12 +31,12 @@ export default function HomeHero2() {
 
       <div
         aria-hidden
-        className="absolute inset-x-0 bottom-0 z-[1] h-[52%] bg-gradient-to-t from-primary/70 via-primary/55 to-transparent lg:hidden"
+        className="absolute inset-x-0 bottom-0 z-[1] h-[52%] bg-gradient-to-t from-primary-brand/70 via-primary-brand/55 to-transparent lg:hidden"
       />
 
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-y-0 right-0 z-[1] hidden w-[min(560px,52vw)] bg-primary/90 backdrop-blur-[2px] lg:block"
+        className="pointer-events-none absolute inset-y-0 right-0 z-[1] hidden w-[min(560px,52vw)] bg-primary-brand/90 backdrop-blur-[2px] lg:block"
         style={{ clipPath: "polygon(26% 0, 100% 0, 100% 100%, 0% 100%)" }}
       />
 
@@ -69,7 +69,7 @@ export default function HomeHero2() {
             <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center sm:gap-5 md:mt-10">
               <Link
                 href="/flota"
-                className="inline-flex min-h-[48px] cursor-pointer items-center justify-center rounded-sm bg-accent-blue px-8 py-4 font-headline text-sm font-black uppercase tracking-widest text-white shadow-xl transition-colors duration-200 hover:bg-accent-blue-alt focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-primary md:px-10 md:py-5"
+                className="inline-flex min-h-[48px] cursor-pointer items-center justify-center rounded-sm bg-accent-blue px-8 py-4 font-headline text-sm font-black uppercase tracking-widest text-white shadow-xl transition-colors duration-200 hover:bg-accent-blue-alt focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-primary-brand md:px-10 md:py-5"
               >
                 Explorar modelos
                 <span className="material-symbols-outlined ml-2 text-xl" aria-hidden>
@@ -78,7 +78,7 @@ export default function HomeHero2() {
               </Link>
               <Link
                 href="/nosotros"
-                className="inline-flex min-h-[48px] cursor-pointer items-center justify-center rounded-sm border border-white/25 bg-white/5 px-8 py-4 font-headline text-sm font-black uppercase tracking-widest text-white backdrop-blur-md transition-colors duration-200 hover:border-white/40 hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue focus-visible:ring-offset-2 focus-visible:ring-offset-primary md:px-10 md:py-5"
+                className="inline-flex min-h-[48px] cursor-pointer items-center justify-center rounded-sm border border-white/25 bg-white/5 px-8 py-4 font-headline text-sm font-black uppercase tracking-widest text-white backdrop-blur-md transition-colors duration-200 hover:border-white/40 hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue focus-visible:ring-offset-2 focus-visible:ring-offset-primary-brand md:px-10 md:py-5"
               >
                 Tour industrial
               </Link>
@@ -93,7 +93,7 @@ export default function HomeHero2() {
                   <li key={item.href}>
                     <Link
                       href={item.href}
-                      className="inline-flex min-h-[44px] cursor-pointer items-center rounded-sm border border-white/20 bg-primary/30 px-4 py-2.5 font-headline text-xs font-bold uppercase tracking-wider text-white backdrop-blur-sm transition-colors duration-200 hover:border-secondary-container/60 hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue focus-visible:ring-offset-2 focus-visible:ring-offset-primary"
+                      className="inline-flex min-h-[44px] cursor-pointer items-center rounded-sm border border-white/20 bg-primary-brand/30 px-4 py-2.5 font-headline text-xs font-bold uppercase tracking-wider text-white backdrop-blur-sm transition-colors duration-200 hover:border-secondary-container/60 hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue focus-visible:ring-offset-2 focus-visible:ring-offset-primary-brand"
                     >
                       {item.label}
                     </Link>

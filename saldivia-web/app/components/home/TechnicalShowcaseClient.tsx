@@ -207,10 +207,9 @@ export function TechnicalShowcaseClient({ slides }: { slides: ResolvedHomeShowca
             <div className="flex flex-col gap-3">
               <Link
                 className={buttonClass({
-                  variant: "outline",
+                  variant: "on-dark",
                   size: "lg",
-                  className:
-                    "group justify-center rounded-sm border-white bg-white text-industrial-charcoal hover:border-accent-blue hover:bg-accent-blue hover:text-white",
+                  className: "group justify-center rounded-sm",
                 })}
                 href={`/producto/${slide.slug}`}
               >
@@ -225,10 +224,9 @@ export function TechnicalShowcaseClient({ slides }: { slides: ResolvedHomeShowca
                   target="_blank"
                   rel="noopener noreferrer"
                   className={buttonClass({
-                    variant: "ghost",
+                    variant: "on-dark-ghost",
                     size: "lg",
-                    className:
-                      "justify-center rounded-sm border border-white/20 text-white hover:bg-white/10",
+                    className: "justify-center rounded-sm",
                   })}
                 >
                   Descargar ficha técnica

@@ -43,21 +43,26 @@ function ModelCardInner({
         ? "aspect-[4/3]"
         : "aspect-square md:aspect-[4/5]";
 
+  const flotaCardSurface = "ui-flota-card-surface";
+
   const wrapClass =
     variant === "grid"
-      ? "group relative flex flex-col overflow-hidden border border-outline-variant/15 bg-white shadow-[0px_20px_48px_rgba(13,44,79,0.12)] transition-shadow duration-300 hover:border-accent-blue/25 hover:shadow-[0px_28px_64px_rgba(13,44,79,0.18)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue focus-visible:ring-offset-2"
-      : "ui-surface-card group relative flex flex-col overflow-hidden rounded-curve-md hover:border-accent-blue/45 hover:shadow-elev-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue focus-visible:ring-offset-2";
+      ? `group relative flex flex-col overflow-hidden border border-outline-variant/15 ${flotaCardSurface} shadow-elev-2 transition-shadow duration-300 hover:border-accent-blue/25 hover:shadow-elev-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue focus-visible:ring-offset-2`
+      : `group relative flex flex-col overflow-hidden rounded-curve-md border border-outline-variant/30 ${flotaCardSurface} shadow-elev-1 transition-all duration-base ease-brand-fluid hover:border-accent-blue/45 hover:shadow-elev-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue focus-visible:ring-offset-2`;
 
   return (
     <a href={href} className={wrapClass}>
-      <div className={`relative ${aspectClass} w-full shrink-0 overflow-hidden bg-surface-container-lowest`}>
+      <div className={`relative ${aspectClass} w-full shrink-0 overflow-hidden ${flotaCardSurface}`}>
         <div className="absolute inset-0 flex items-center justify-center transition-opacity duration-500 group-hover:opacity-0">
           <img alt="" className="h-full w-full object-contain object-center" src={src} style={coverStyle} />
         </div>
       </div>
 
-      <div className="relative z-[1] border-t border-primary/20 bg-primary px-4 py-3 transition-opacity duration-500 group-hover:opacity-0 sm:px-5 sm:py-3.5">
-        <p className="font-headline text-sm font-black uppercase tracking-[0.14em] text-white sm:text-[0.95rem]">
+      <div
+        className="ui-flota-model-name-bar relative z-[1] shrink-0 px-4 py-3 transition-opacity duration-500 group-hover:opacity-0 sm:px-5 sm:py-3.5"
+        style={{ backgroundColor: "#001732", borderTop: "1px solid rgb(255 255 255 / 0.2)" }}
+      >
+        <p className="font-headline text-sm font-black uppercase tracking-[0.14em] text-[#ffffff] sm:text-[0.95rem]">
           {model.name}
         </p>
       </div>
@@ -73,7 +78,7 @@ function ModelCardInner({
           src={src}
           style={coverStyle}
         />
-        <div className="absolute inset-0 bg-primary/85" />
+        <div className="ui-brand-navy-overlay absolute inset-0" />
 
         <div className="absolute inset-3 sm:inset-4 md:inset-5">
           <div className="absolute left-0 top-0 h-11 w-11 origin-top-left scale-75 border-l-[3px] border-t-[3px] border-accent-blue opacity-0 transition-all delay-75 duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-100 group-hover:opacity-100" />

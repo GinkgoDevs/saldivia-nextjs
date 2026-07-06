@@ -7,14 +7,14 @@ import { buttonClass } from "../components/ui/Button";
 export function NosotrosBentoGrid() {
   return (
     <StaggerInView className="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-3" stagger={0.11}>
-      <StaggerItem className="group relative flex flex-col justify-between overflow-hidden bg-primary p-6 md:col-span-2 sm:p-8 md:p-12">
+      <StaggerItem className="group relative flex flex-col justify-between overflow-hidden bg-primary-brand p-6 md:col-span-2 sm:p-8 md:p-12">
         <div className="absolute bottom-0 right-0 translate-x-1/4 translate-y-1/4 transform opacity-10 transition-transform duration-700 group-hover:scale-110">
           <span className="material-symbols-outlined" style={{ fontSize: "240px" }}>
             directions_bus
           </span>
         </div>
         <div className="relative z-10">
-          <h4 className="mb-2 text-sm font-black uppercase tracking-widest text-secondary-container">Producción Histórica</h4>
+          <h4 className="mb-2 text-sm font-black uppercase tracking-widest text-accent-blue">Producción Histórica</h4>
           <div className="mb-4 text-5xl font-black tracking-tighter text-white sm:text-6xl md:text-7xl">+4.100</div>
           <p className="max-w-sm text-base text-on-primary-container sm:text-lg">
             Unidades producidas con una amplia diversidad de modelos para el transporte de pasajeros.
@@ -24,7 +24,7 @@ export function NosotrosBentoGrid() {
           className={buttonClass({
             variant: "link-cta",
             size: "sm",
-            className: "mt-8 min-h-0 self-start px-0 py-0 text-white hover:text-secondary-container",
+            className: "mt-8 min-h-0 self-start px-0 py-0 text-white hover:text-accent-blue",
           })}
           href="/flota"
         >

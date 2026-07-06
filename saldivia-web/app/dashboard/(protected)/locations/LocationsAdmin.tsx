@@ -238,7 +238,7 @@ export function LocationsAdmin({ initial }: Props) {
             <AdminCrudCard
               key={l.id}
               media={
-                <div className="hidden h-28 w-28 shrink-0 items-center justify-center bg-primary/10 text-primary sm:flex">
+                <div className="hidden h-28 w-28 shrink-0 items-center justify-center bg-primary-brand/10 text-primary sm:flex">
                   <MapPin className="size-8" aria-hidden />
                 </div>
               }

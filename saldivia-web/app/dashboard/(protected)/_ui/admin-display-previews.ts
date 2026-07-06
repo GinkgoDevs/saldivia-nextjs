@@ -13,7 +13,7 @@ export const SITE_IMAGE_PREVIEW = {
   productHero: {
     aspect: "aspect-[3/4] sm:aspect-video lg:aspect-[21/9]",
     objectFit: "cover" as const,
-    bg: "bg-primary",
+    bg: "bg-primary-brand",
     maxWidth: "max-w-2xl",
     zoomMin: IMAGE_ZOOM_RANGE.cover.min,
     zoomMax: IMAGE_ZOOM_RANGE.cover.max,

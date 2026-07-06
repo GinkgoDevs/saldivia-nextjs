@@ -1,10 +1,17 @@
 import { getModels } from "@/lib/supabase/models";
 import { createClient } from "@/lib/supabase/server";
-import Image from "next/image";
 import Link from "next/link";
 import { buttonClass } from "../components/ui/Button";
 import { FlotaGrid } from "./FlotaGrid";
 import { FadeUp, HeroStagger } from "../components/motion";
+import {
+  PageHero,
+  PageHeroImage,
+  PAGE_HERO_EYEBROW_CLASS,
+  PAGE_HERO_LEAD_CLASS,
+  PAGE_HERO_TITLE_CLASS,
+  PAGE_HERO_ACCENT_CLASS,
+} from "../components/PageHero";
 import type { FlotaModel } from "./FlotaModelCard";
 
 export default async function FlotaPage() {
@@ -29,40 +36,33 @@ export default async function FlotaPage() {
   return (
     <div className="min-h-screen bg-surface font-headline text-on-surface">
       <main>
-        <section className="relative flex min-h-[min(100svh,520px)] items-center overflow-hidden pt-20 pb-12 sm:min-h-[420px] sm:pt-16 sm:pb-0 md:min-h-[480px]">
-          <Image
-            src="/hero-flota-2.jpeg"
-            alt="Flota de buses Saldivia en planta"
-            fill
-            className="object-cover object-[50%_72%] sm:object-[50%_68%] md:object-[50%_65%]"
-            priority
-            sizes="100vw"
-          />
-          <div className="pointer-events-none absolute inset-0 bg-black/60" />
-          <div className="pointer-events-none absolute inset-0 industrial-grid-light opacity-[0.08]" />
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-black/40 to-transparent" />
-          <div className="relative z-10 mx-auto w-full max-w-screen-2xl px-4 sm:px-6 md:px-8">
-            <HeroStagger>
-              <span className="ui-section-eyebrow mb-4 block text-secondary-container">
-                Catálogo de productos
-              </span>
-              <h1 className="max-w-4xl font-headline text-3xl font-black uppercase leading-[0.95] tracking-tighter text-white sm:text-4xl md:text-6xl lg:text-7xl">
-                Nuestros
-                <br />
-                <span className="text-secondary-container">modelos</span>
-              </h1>
-              <p className="mt-0 max-w-2xl font-headline text-sm font-medium leading-relaxed text-on-primary-container sm:mt-2 sm:text-base md:text-lg">
-                Todas las unidades del catálogo Saldivia en un solo lugar, con la precisión industrial y el estándar de
-                calidad de cada carrocería.
+        <PageHero
+          image={
+            <PageHeroImage
+              src="/hero-flota-2.jpeg"
+              alt="Flota de buses Saldivia en planta"
+              priority
+            />
+          }
+        >
+          <HeroStagger>
+            <span className={PAGE_HERO_EYEBROW_CLASS}>Catálogo de productos</span>
+            <h1 className={PAGE_HERO_TITLE_CLASS}>
+              Nuestros
+              <br />
+              <span className={PAGE_HERO_ACCENT_CLASS}>modelos</span>
+            </h1>
+            <p className={PAGE_HERO_LEAD_CLASS}>
+              Todas las unidades del catálogo Saldivia en un solo lugar, con la precisión industrial y el estándar de
+              calidad de cada carrocería.
+            </p>
+            {error && (
+              <p className="mt-2 text-sm text-red-200 sm:mt-4">
+                No pudimos cargar el catálogo en este momento. Intente más tarde.
               </p>
-              {error && (
-                <p className="mt-2 text-sm text-red-200 sm:mt-4">
-                  No pudimos cargar el catálogo en este momento. Intente más tarde.
-                </p>
-              )}
-            </HeroStagger>
-          </div>
-        </section>
+            )}
+          </HeroStagger>
+        </PageHero>
 
         <FlotaGrid models={models} />
 

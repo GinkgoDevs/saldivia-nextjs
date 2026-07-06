@@ -19,6 +19,7 @@ import {
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { buttonClass } from "@/app/components/ui/Button";
+import ThemeToggle from "@/app/components/ThemeToggle";
 import { cn } from "@/app/components/ui/cn";
 import { AdminToastHost } from "./_ui/admin-ui";
 
@@ -121,6 +122,10 @@ export function DashboardFrame({
         mobile ? "mt-4 border-t border-outline-variant/25 pt-4" : "mt-auto border-t border-outline-variant/20 pt-4",
       )}
     >
+      <div className="flex items-center justify-between px-3 pb-2">
+        <span className="text-xs font-medium text-on-surface-variant">Tema</span>
+        <ThemeToggle />
+      </div>
       <Link
         href="/"
         onClick={() => mobile && setMobileOpen(false)}
@@ -156,14 +161,17 @@ export function DashboardFrame({
             <DashboardBrand />
             <p className="mt-1 truncate text-xs text-on-surface-variant">{email ?? "Admin"}</p>
           </div>
-          <button
-            type="button"
-            aria-label={mobileOpen ? "Cerrar menú" : "Abrir menú"}
-            className={buttonClass({ variant: "outline", size: "sm", className: "min-h-11 min-w-11 p-0" })}
-            onClick={() => setMobileOpen((o) => !o)}
-          >
-            {mobileOpen ? <X className="size-5" /> : <Menu className="size-5" />}
-          </button>
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <button
+              type="button"
+              aria-label={mobileOpen ? "Cerrar menú" : "Abrir menú"}
+              className={buttonClass({ variant: "outline", size: "sm", className: "min-h-11 min-w-11 p-0" })}
+              onClick={() => setMobileOpen((o) => !o)}
+            >
+              {mobileOpen ? <X className="size-5" /> : <Menu className="size-5" />}
+            </button>
+          </div>
         </div>
         {mobileOpen ? (
           <nav className="max-h-[70vh] space-y-4 overflow-y-auto border-t border-outline-variant/25 px-3 py-4">

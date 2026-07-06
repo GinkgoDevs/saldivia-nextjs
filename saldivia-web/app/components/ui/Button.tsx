@@ -7,7 +7,12 @@ export type ButtonVariant =
   | "outline"
   | "ghost"
   | "icon"
-  | "link-cta";
+  | "link-cta"
+  /** Sobre heroes / secciones oscuras — no depende del tema global */
+  | "on-dark"
+  | "on-dark-outline"
+  | "on-dark-ghost";
+
 export type ButtonSize = "sm" | "md" | "lg";
 
 export type UIButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
@@ -23,15 +28,21 @@ const VARIANT_CLASS: Record<ButtonVariant, string> = {
   primary:
     "bg-accent-blue text-white border border-accent-blue hover:bg-accent-blue-alt hover:border-accent-blue-alt shadow-elev-1",
   secondary:
-    "bg-primary text-white border border-primary hover:opacity-95 dark:bg-secondary-container dark:text-primary dark:border-secondary-container",
+    "bg-primary-container text-on-primary border border-primary-container hover:brightness-110",
   outline:
-    "bg-transparent text-primary border border-outline-variant/50 hover:bg-surface-container dark:text-zinc-100 dark:border-white/15 dark:hover:bg-white/5",
+    "bg-transparent text-on-surface border border-outline-variant hover:bg-surface-container-low",
   ghost:
-    "bg-transparent text-primary border border-transparent hover:bg-surface-container-low dark:text-zinc-100 dark:hover:bg-white/10",
+    "bg-transparent text-on-surface border border-transparent hover:bg-surface-container-low",
   icon:
-    "bg-transparent text-primary border border-outline-variant/45 hover:bg-surface-container-low dark:text-zinc-100 dark:border-white/15 dark:hover:bg-white/10",
+    "bg-transparent text-on-surface border border-outline-variant hover:bg-surface-container-low",
   "link-cta":
-    "bg-transparent text-accent-blue border border-transparent hover:text-primary dark:text-secondary-container dark:hover:text-zinc-100",
+    "bg-transparent text-accent-blue border border-transparent hover:text-secondary",
+  "on-dark":
+    "border border-white bg-white text-industrial-charcoal hover:border-accent-blue hover:bg-accent-blue hover:text-white",
+  "on-dark-outline":
+    "border border-white/30 bg-white/5 text-white backdrop-blur-sm hover:border-white/50 hover:bg-white/10",
+  "on-dark-ghost":
+    "border border-white/20 bg-transparent text-white hover:bg-white/10",
 };
 
 const SIZE_CLASS: Record<ButtonSize, string> = {
@@ -57,7 +68,7 @@ export function buttonClass({
     SIZE_CLASS[size],
     fullWidth && "w-full",
     variant === "icon" && "h-11 w-11 min-h-0 min-w-0 p-0 rounded-curve-md",
-    className
+    className,
   );
 }
 
