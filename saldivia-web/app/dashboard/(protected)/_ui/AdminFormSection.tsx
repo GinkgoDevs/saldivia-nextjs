@@ -12,7 +12,7 @@ export function AdminFormSection({ title, description, children, className }: Pr
   return (
     <fieldset
       className={cn(
-        "space-y-2.5 rounded-sm border border-outline-variant/25 bg-surface-container-low/40 p-3",
+        "space-y-2.5 rounded-lg border border-outline-variant/25 bg-surface-container-low/40 p-3",
         className,
       )}
     >

@@ -364,7 +364,7 @@ export function ModelImagesAdmin({ models, initialImages }: Props) {
               uploading={uploading}
               disabled={busy || !selectedModelId}
               showUrlField
-              frameClassName="rounded-curve-md border border-outline-variant/25 bg-surface-container-lowest shadow-elev-1"
+              frameClassName="rounded-curve-lg border border-outline-variant/25 bg-surface-container-lowest shadow-elev-1"
               uploadDisabled={!selectedModelId}
               uploadDisabledMessage={!selectedModelId ? "Elegí un modelo primero." : undefined}
               onImageUrlChange={(url) => setForm((f) => ({ ...f, image_url: url }))}

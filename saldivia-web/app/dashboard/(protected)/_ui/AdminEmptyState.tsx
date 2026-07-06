@@ -24,7 +24,7 @@ export function AdminEmptyState({
   return (
     <Tag
       className={cn(
-        "flex flex-col items-center justify-center rounded-sm border border-dashed border-outline-variant/35 bg-surface-container-low/25 text-center",
+        "flex flex-col items-center justify-center rounded-lg border border-dashed border-outline-variant/35 bg-surface-container-low/25 text-center",
         compact ? "px-4 py-5" : "px-6 py-10",
         className,
       )}

@@ -198,7 +198,7 @@ export function ModelVariantsEditor({ variants, onChange, busy }: Props) {
       {variants.map((variant, index) => (
         <div
           key={variant.id ?? `new-${index}`}
-          className="space-y-4 rounded-sm border border-accent-blue/25 bg-surface-container-low/50 p-4"
+          className="space-y-4 rounded-lg border border-accent-blue/25 bg-surface-container-low/50 p-4"
         >
           <div className="flex flex-wrap items-start justify-between gap-3">
             <p className="text-xs font-bold uppercase tracking-wide text-secondary">

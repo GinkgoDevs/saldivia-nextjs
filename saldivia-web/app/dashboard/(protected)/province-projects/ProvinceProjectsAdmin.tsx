@@ -541,7 +541,7 @@ export function ProvinceProjectsAdmin({ initial, provinceOptions }: Props) {
                 zoom={form.image_zoom}
                 uploading={uploading}
                 disabled={busy}
-                frameClassName="rounded-curve-sm border border-white/12 bg-[#051018]/90 shadow-[0_12px_32px_rgba(0,0,0,0.35)]"
+                frameClassName="rounded-curve-lg border border-white/12 bg-[#051018]/90 shadow-[0_12px_32px_rgba(0,0,0,0.35)]"
                 frameFooter={
                   form.title.trim() ? (
                     <div className="p-4">

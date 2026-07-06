@@ -164,7 +164,7 @@ function MobileNavDrawer({
                 className={buttonClass({
                   variant: "secondary",
                   size: "sm",
-                  className: "rounded-curve-md px-2 text-[12px]",
+                  className: "rounded-curve-sm px-2 text-[12px]",
                 })}
               >
                 Trabaja
@@ -174,7 +174,7 @@ function MobileNavDrawer({
                 className={buttonClass({
                   variant: "outline",
                   size: "sm",
-                  className: "rounded-curve-md px-2 text-[13px]",
+                  className: "rounded-curve-sm px-2 text-[13px]",
                 })}
                 aria-label={`Llamar a ${SALES_TEL_DISPLAY}`}
               >

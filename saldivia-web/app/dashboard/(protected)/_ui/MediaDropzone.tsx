@@ -103,7 +103,7 @@ export function MediaDropzone({
           if (!busy) inputRef.current?.click();
         }}
         className={cn(
-          "group relative cursor-pointer overflow-hidden rounded-sm border-2 border-dashed transition-colors duration-200",
+          "group relative cursor-pointer overflow-hidden rounded-lg border-2 border-dashed transition-colors duration-200",
           dragOver
             ? "border-primary bg-primary-brand/5"
             : "border-outline-variant/45 bg-surface-container-low/50 hover:border-secondary/50 hover:bg-surface-container-low",

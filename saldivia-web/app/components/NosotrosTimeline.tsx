@@ -130,7 +130,7 @@ function ChronologyCard({
 }) {
   return (
     <div
-      className={`rounded bg-surface-container-lowest p-5 shadow-sm sm:p-6 border-l-4 border-secondary ${
+      className={`rounded-lg bg-surface-container-lowest p-5 shadow-sm sm:p-6 border-l-4 border-secondary ${
         alignRight ? "lg:border-l-0 lg:border-r-4 lg:text-right" : ""
       }`}
     >

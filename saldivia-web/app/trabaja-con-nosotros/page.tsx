@@ -105,7 +105,7 @@ export default async function TrabajaConNosotrosPage() {
                 </div>
               </div>
 
-              <div className="rounded-curve-sm border border-outline-variant/30 bg-surface-container-low p-6 text-sm text-on-surface-variant sm:p-8">
+              <div className="rounded-curve-lg border border-outline-variant/30 bg-surface-container-low p-6 text-sm text-on-surface-variant sm:p-8">
                 Si desea postularse, envíe su CV por mail y nos pondremos en contacto cuando haya vacantes.
               </div>
             </aside>

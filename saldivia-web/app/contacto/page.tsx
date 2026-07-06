@@ -94,7 +94,7 @@ export default async function ContactoPage() {
                 </div>
               </div>
 
-              <div className="rounded-curve-sm border border-outline-variant/30 bg-surface-container-low p-6 text-sm text-on-surface-variant sm:p-8">
+              <div className="rounded-curve-lg border border-outline-variant/30 bg-surface-container-low p-6 text-sm text-on-surface-variant sm:p-8">
                 Para postventa y asistencia técnica, visite la sección{" "}
                 <a href="/postventa" className="font-bold text-primary hover:text-secondary">
                   Postventa

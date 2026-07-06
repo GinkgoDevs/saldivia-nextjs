@@ -23,7 +23,7 @@ export function AdminListPanel({ title, description, action, children, className
       </div>
       <div
         className={cn(
-          "mt-4 overflow-hidden rounded-sm border border-outline-variant/30 bg-surface-container-lowest",
+          "mt-4 overflow-hidden rounded-lg border border-outline-variant/30 bg-surface-container-lowest",
         )}
       >
         {children}

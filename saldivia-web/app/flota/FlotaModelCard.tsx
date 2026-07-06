@@ -45,10 +45,13 @@ function ModelCardInner({
 
   const flotaCardSurface = "ui-flota-card-surface";
 
+  const cardShell =
+    "group relative flex flex-col overflow-hidden rounded-curve-lg border shadow-elev-2 transition-shadow duration-300 hover:border-accent-blue/25 hover:shadow-elev-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue focus-visible:ring-offset-2";
+
   const wrapClass =
     variant === "grid"
-      ? `group relative flex flex-col overflow-hidden border border-outline-variant/15 ${flotaCardSurface} shadow-elev-2 transition-shadow duration-300 hover:border-accent-blue/25 hover:shadow-elev-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue focus-visible:ring-offset-2`
-      : `group relative flex flex-col overflow-hidden rounded-curve-md border border-outline-variant/30 ${flotaCardSurface} shadow-elev-1 transition-all duration-base ease-brand-fluid hover:border-accent-blue/45 hover:shadow-elev-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-blue focus-visible:ring-offset-2`;
+      ? `${cardShell} border-outline-variant/15 ${flotaCardSurface}`
+      : `${cardShell} border-outline-variant/30 ${flotaCardSurface} shadow-elev-1 transition-all duration-base ease-brand-fluid hover:border-accent-blue/45`;
 
   return (
     <a href={href} className={wrapClass}>
@@ -80,7 +83,7 @@ function ModelCardInner({
         />
         <div className="ui-brand-navy-overlay absolute inset-0" />
 
-        <div className="absolute inset-3 sm:inset-4 md:inset-5">
+        <div className="absolute inset-2 rounded-curve-md">
           <div className="absolute left-0 top-0 h-11 w-11 origin-top-left scale-75 border-l-[3px] border-t-[3px] border-accent-blue opacity-0 transition-all delay-75 duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-100 group-hover:opacity-100" />
           <div className="absolute right-0 top-0 h-11 w-11 origin-top-right scale-75 border-r-[3px] border-t-[3px] border-accent-blue opacity-0 transition-all delay-100 duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-100 group-hover:opacity-100" />
           <div className="absolute bottom-0 left-0 h-11 w-11 origin-bottom-left scale-75 border-b-[3px] border-l-[3px] border-accent-blue opacity-0 transition-all delay-150 duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-100 group-hover:opacity-100" />

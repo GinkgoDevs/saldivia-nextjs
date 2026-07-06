@@ -6,9 +6,12 @@
   --background: #ffffff;
   --foreground: #171717;
   --ring-brand: #2095d4;
-  --radius-control-sm: 0.375rem;
-  --radius-control-md: 0.75rem;
-  --radius-control-lg: 1.125rem;
+  --radius-surface: 1rem;
+  --radius-control: 0.5rem;
+  --radius-inset: 0.5rem;
+  --radius-control-sm: var(--radius-control);
+  --radius-control-md: var(--radius-inset);
+  --radius-control-lg: var(--radius-surface);
   --motion-fast: 150ms;
   --motion-base: 240ms;
   --motion-ease-brand: cubic-bezier(0.22, 1, 0.36, 1);
@@ -160,6 +163,7 @@ body {
   flex-shrink: 0;
   border-top: 1px solid rgb(255 255 255 / 0.2);
   background-color: #001732 !important;
+  border-radius: 0 0 var(--radius-surface) var(--radius-surface);
 }
 
 .ui-brand-navy-overlay {
@@ -188,7 +192,7 @@ body {
   }
 
   .ui-surface-card {
-    @apply rounded-curve-md border bg-surface-container-lowest shadow-elev-1 transition-all duration-base ease-brand-fluid;
+    @apply rounded-curve-lg border bg-surface-container-lowest shadow-elev-1 transition-all duration-base ease-brand-fluid;
     border-color: color-mix(in srgb, var(--color-outline-variant) 30%, transparent);
   }
 
@@ -312,7 +316,7 @@ body {
   background: #0d2c4f;
   color: #e2e8f0;
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
+  border-radius: var(--radius-surface);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
 }
 
@@ -377,7 +381,7 @@ body {
   }
 
   .contact-card {
-    @apply border bg-surface-container-lowest shadow-sm;
+    @apply rounded-curve-lg border bg-surface-container-lowest shadow-sm;
     border-color: color-mix(in srgb, var(--color-outline-variant) 30%, transparent);
   }
 
@@ -477,7 +481,7 @@ body {
 
   ::-webkit-scrollbar-thumb {
     background: #2088cc;
-    border-radius: 10px;
+    border-radius: var(--radius-control);
   }
 
   html.dark ::-webkit-scrollbar-thumb {

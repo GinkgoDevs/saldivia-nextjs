@@ -67,7 +67,7 @@ export function buttonClass({
     VARIANT_CLASS[variant],
     SIZE_CLASS[size],
     fullWidth && "w-full",
-    variant === "icon" && "h-11 w-11 min-h-0 min-w-0 p-0 rounded-curve-md",
+    variant === "icon" && "h-11 w-11 min-h-0 min-w-0 p-0 rounded-curve-sm",
     className,
   );
 }
