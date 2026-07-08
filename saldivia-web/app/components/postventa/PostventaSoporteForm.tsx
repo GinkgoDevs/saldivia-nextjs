@@ -27,7 +27,7 @@ function errorMessage(s: ServiceRequestState): string | null {
   if (s.error === "validation")
     return "Revise empresa, nombre, correo electrónico y mensaje. El email debe ser válido.";
   if (s.error === "database")
-    return "No pudimos registrar la consulta. Intente de nuevo o escríbanos a postventa@saldiviabuses.com.ar.";
+    return "No pudimos registrar la consulta. Intente de nuevo o utilice los canales de la sección Contacto.";
   return null;
 }
 

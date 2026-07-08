@@ -21,8 +21,10 @@ export const metadata: Metadata = {
 
 const CONTACT_PHONE = "+54 0341 4921135";
 const CONTACT_PHONE_HREF = "tel:+543414921135";
-const CONTACT_EMAIL = "info@saldiviabuses.com.ar";
-const CONTACT_EMAIL_HREF = `mailto:${CONTACT_EMAIL}`;
+const SALES_EMAIL = "ventas@saldiviabuses.com.ar";
+const SALES_EMAIL_HREF = `mailto:${SALES_EMAIL}`;
+const AFTERSALES_EMAIL = "postventa@saldiviabuses.com.ar";
+const AFTERSALES_EMAIL_HREF = `mailto:${AFTERSALES_EMAIL}`;
 
 export default async function ContactoPage() {
   const supabase = await createClient();
@@ -70,13 +72,33 @@ export default async function ContactoPage() {
                     </a>
                   </div>
                   <div>
-                    <p className="text-xs font-bold uppercase tracking-[0.2em] text-on-surface-variant">Email</p>
-                    <a
-                      href={CONTACT_EMAIL_HREF}
-                      className="mt-1 inline-block text-base font-bold text-primary hover:text-secondary"
-                    >
-                      {CONTACT_EMAIL}
-                    </a>
+                    <p className="text-xs font-bold uppercase tracking-[0.2em] text-on-surface-variant">
+                      Correos directos
+                    </p>
+                    <div className="mt-2 grid gap-4 sm:grid-cols-2">
+                      <div>
+                        <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-on-surface-variant">
+                          Ventas
+                        </p>
+                        <a
+                          href={SALES_EMAIL_HREF}
+                          className="mt-1 inline-block break-all text-base font-bold text-primary hover:text-secondary"
+                        >
+                          {SALES_EMAIL}
+                        </a>
+                      </div>
+                      <div>
+                        <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-on-surface-variant">
+                          Postventa
+                        </p>
+                        <a
+                          href={AFTERSALES_EMAIL_HREF}
+                          className="mt-1 inline-block break-all text-base font-bold text-primary hover:text-secondary"
+                        >
+                          {AFTERSALES_EMAIL}
+                        </a>
+                      </div>
+                    </div>
                   </div>
                   <div>
                     <p className="text-xs font-bold uppercase tracking-[0.2em] text-on-surface-variant">Planta</p>
