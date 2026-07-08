@@ -17,7 +17,7 @@ const CONTACT_PHONE = "+54 0341 4921135";
 const CONTACT_PHONE_HREF = "tel:+543414921135";
 const CONTACT_EMAIL = "info@saldiviabuses.com.ar";
 const CONTACT_EMAIL_HREF = `mailto:${CONTACT_EMAIL}`;
-const RRHH_EMAIL = "rrhh@saldiviabuses.com.ar";
+const RRHH_EMAIL = "cv@saldiviabuses.com.ar";
 const RRHH_EMAIL_HREF = `mailto:${RRHH_EMAIL}`;
 
 export default async function TrabajaConNosotrosPage() {

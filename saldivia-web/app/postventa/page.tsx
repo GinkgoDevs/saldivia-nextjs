@@ -49,7 +49,7 @@ export default function PostventaPage() {
             <aside className="space-y-4 lg:col-span-5">
               <div className="ui-surface-card p-6 sm:p-8">
                 <p className="text-sm leading-relaxed text-on-surface-variant sm:text-base">
-                  También puede escribirnos a:{" "}
+                  También podes escribirnos a:{" "}
                   <a
                     href={POSTVENTA_EMAIL_HREF}
                     className="font-bold text-primary hover:text-secondary"
