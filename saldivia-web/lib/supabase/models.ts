@@ -69,7 +69,6 @@ export async function getModels(
     let q = supabase.from("models").select(columns).eq("active", true);
     if (filters.segment) q = q.eq("segment", filters.segment);
     return q
-      .order("segment")
       .order("sort_order", { ascending: true, nullsFirst: false })
       .order("name");
   };
@@ -136,7 +135,6 @@ export async function getAllModelsForAdmin(
     supabase
       .from("models")
       .select(columns)
-      .order("segment")
       .order("sort_order", { ascending: true, nullsFirst: false })
       .order("name");
 
