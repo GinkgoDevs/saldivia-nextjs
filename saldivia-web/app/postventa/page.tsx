@@ -10,7 +10,7 @@ import {
 
 const POSTVENTA_EMAIL = "postventa@saldiviabuses.com.ar";
 const POSTVENTA_EMAIL_HREF = `mailto:${POSTVENTA_EMAIL}`;
-const AUTOGESTION_URL = "https://autogestion.saldiviabuses.com.ar";
+const AUTOGESTION_URL = "https://portal.saldiviabuses.com.ar/";
 
 export default function PostventaPage() {
   return (
@@ -69,7 +69,7 @@ export default function PostventaPage() {
                   rel="noopener noreferrer"
                   className="mt-2 inline-block text-base font-bold text-primary hover:text-secondary"
                 >
-                  autogestion.saldiviabuses.com.ar
+                  portal.saldiviabuses.com.ar
                 </a>
               </div>
             </aside>

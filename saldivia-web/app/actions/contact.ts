@@ -1,6 +1,7 @@
 "use server";
 
 import { sendQuoteRequestEmail } from "@/lib/email/notify-quote";
+import type { NotifySection } from "@/lib/email/section-notify";
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 
@@ -27,10 +28,16 @@ function getStr(formData: FormData, k: string): string {
   return String(v).trim();
 }
 
+function resolveSection(formData: FormData): NotifySection {
+  const raw = getStr(formData, "notify_section");
+  return raw === "cv" ? "cv" : "ventas";
+}
+
 export async function submitContactQuote(
   _prev: ContactQuoteState,
   formData: FormData,
 ): Promise<ContactQuoteState> {
+  const section = resolveSection(formData);
   const f: Field = {
     modelName: getStr(formData, "model_name"),
     configuration: getStr(formData, "configuration"),
@@ -60,9 +67,9 @@ export async function submitContactQuote(
     return { ok: false, error: "database" };
   }
 
-  if (process.env.RESEND_API_KEY && process.env.QUOTE_NOTIFY_EMAIL) {
-    const { sent, error: mailErr } = await sendQuoteRequestEmail(f);
-    if (!sent) {
+  if (process.env.RESEND_API_KEY) {
+    const { sent, skipped, error: mailErr } = await sendQuoteRequestEmail(f, section);
+    if (!skipped && !sent) {
       console.error("[submitContactQuote] email", mailErr);
       return { ok: false, error: "email" };
     }
