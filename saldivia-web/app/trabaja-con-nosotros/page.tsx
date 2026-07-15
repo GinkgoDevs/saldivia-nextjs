@@ -15,8 +15,6 @@ import { PLANT_ADDRESS, PLANT_MAPS_HREF } from "@/lib/site-location";
 
 const CONTACT_PHONE = "+54 0341 4921135";
 const CONTACT_PHONE_HREF = "tel:+543414921135";
-const CONTACT_EMAIL = "info@saldiviabuses.com.ar";
-const CONTACT_EMAIL_HREF = `mailto:${CONTACT_EMAIL}`;
 const RRHH_EMAIL = "cv@saldiviabuses.com.ar";
 const RRHH_EMAIL_HREF = `mailto:${RRHH_EMAIL}`;
 
@@ -70,15 +68,6 @@ export default async function TrabajaConNosotrosPage() {
                     </a>
                   </div>
                   <div>
-                    <p className="text-xs font-bold uppercase tracking-[0.2em] text-on-surface-variant">Email</p>
-                    <a
-                      href={CONTACT_EMAIL_HREF}
-                      className="mt-1 inline-block text-base font-bold text-primary hover:text-secondary"
-                    >
-                      {CONTACT_EMAIL}
-                    </a>
-                  </div>
-                  <div>
                     <p className="text-xs font-bold uppercase tracking-[0.2em] text-on-surface-variant">
                       RRHH (CV)
                     </p>
@@ -119,7 +108,7 @@ export default async function TrabajaConNosotrosPage() {
                   Complete el formulario y nuestro equipo se pondrá en contacto.
                 </p>
                 <div className="mt-8">
-                  <ContactoForm modelOptions={modelOptions} />
+                  <ContactoForm modelOptions={modelOptions} notifySection="cv" />
                 </div>
               </div>
             </div>

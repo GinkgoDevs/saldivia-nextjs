@@ -28,6 +28,8 @@ function errorMessage(s: ServiceRequestState): string | null {
     return "Revise empresa, nombre, correo electrónico y mensaje. El email debe ser válido.";
   if (s.error === "database")
     return "No pudimos registrar la consulta. Intente de nuevo o utilice los canales de la sección Contacto.";
+  if (s.error === "email")
+    return "La consulta se registró, pero el aviso por correo falló. Nos pondremos en contacto igualmente.";
   return null;
 }
 

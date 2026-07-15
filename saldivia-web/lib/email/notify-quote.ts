@@ -1,4 +1,7 @@
-const RESEND_API = "https://api.resend.com/emails";
+import {
+  sendSectionNotificationEmail,
+  type NotifySection,
+} from "@/lib/email/section-notify";
 
 export type QuoteEmailPayload = {
   modelName: string;
@@ -10,17 +13,19 @@ export type QuoteEmailPayload = {
   message: string;
 };
 
+const SECTION_LABEL: Record<NotifySection, string> = {
+  ventas: "Cotización / contacto comercial",
+  postventa: "Consulta de postventa",
+  cv: "CV / trabaja con nosotros",
+};
+
 export async function sendQuoteRequestEmail(
   payload: QuoteEmailPayload,
-): Promise<{ sent: boolean; error?: string }> {
-  const to = process.env.QUOTE_NOTIFY_EMAIL;
-  const key = process.env.RESEND_API_KEY;
-  if (!key || !to) {
-    return { sent: false };
-  }
-
+  section: NotifySection = "ventas",
+): Promise<{ sent: boolean; skipped?: boolean; error?: string }> {
+  const label = SECTION_LABEL[section];
   const text = [
-    "Nueva solicitud de cotización — Saldivia web",
+    `Nueva solicitud — ${label} — Saldivia web`,
     "",
     `Modelo: ${payload.modelName || "—"}`,
     `Configuración: ${payload.configuration || "—"}`,
@@ -33,26 +38,13 @@ export async function sendQuoteRequestEmail(
     payload.message || "—",
   ].join("\n");
 
-  const from = process.env.RESEND_FROM || "Saldivia <onboarding@resend.dev>";
+  const subjectPrefix =
+    section === "cv" ? "CV" : section === "postventa" ? "Postventa" : "Cotización";
 
-  const res = await fetch(RESEND_API, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${key}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      from,
-      to: [to],
-      subject: `Cotización — ${payload.contactName}`,
-      text,
-    }),
+  return sendSectionNotificationEmail({
+    section,
+    subject: `${subjectPrefix} — ${payload.contactName}`,
+    text,
+    replyTo: payload.email,
   });
-
-  if (!res.ok) {
-    const errText = await res.text().catch(() => "");
-    return { sent: false, error: errText || res.statusText };
-  }
-
-  return { sent: true };
 }

@@ -4,10 +4,12 @@ import { submitContactQuote, type ContactQuoteState } from "@/app/actions/contac
 import { Button } from "@/app/components/ui/Button";
 import { Input } from "@/app/components/ui/Input";
 import { Textarea } from "@/app/components/ui/Textarea";
+import type { NotifySection } from "@/lib/email/section-notify";
 import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
 
 type ModelOption = { name: string; slug: string };
+type ContactNotifySection = Extract<NotifySection, "ventas" | "cv">;
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -31,15 +33,20 @@ function errorMessage(s: ContactQuoteState): string | null {
   return null;
 }
 
-type Props = { modelOptions: ModelOption[] };
+type Props = {
+  modelOptions: ModelOption[];
+  /** Correo de destino: ventas@… (contacto) o cv@… (trabaja con nosotros). */
+  notifySection?: ContactNotifySection;
+};
 
-export function ContactoForm({ modelOptions }: Props) {
+export function ContactoForm({ modelOptions, notifySection = "ventas" }: Props) {
   const [state, formAction] = useActionState<ContactQuoteState, FormData>(submitContactQuote, null);
   const err = errorMessage(state);
   const ok = state?.ok;
 
   return (
     <form action={formAction} className="space-y-8">
+      <input type="hidden" name="notify_section" value={notifySection} />
       {ok && (
         <p className="rounded-sm border border-secondary-container/40 bg-surface-container-low px-4 py-3 text-sm text-primary">
           Gracias. Un asesor se pondrá en contacto a la brevedad.

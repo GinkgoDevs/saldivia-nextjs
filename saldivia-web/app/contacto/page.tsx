@@ -138,7 +138,7 @@ export default async function ContactoPage() {
                   Complete el formulario y nuestro equipo comercial se pondrá en contacto.
                 </p>
                 <div className="mt-8">
-                  <ContactoForm modelOptions={modelOptions} />
+                  <ContactoForm modelOptions={modelOptions} notifySection="ventas" />
                 </div>
               </div>
             </div>

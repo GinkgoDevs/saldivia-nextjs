@@ -1,5 +1,6 @@
 "use server";
 
+import { sendSectionNotificationEmail } from "@/lib/email/section-notify";
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 
@@ -7,7 +8,7 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export type ServiceRequestState =
   | { ok: true }
-  | { ok: false; error: "validation" | "database" }
+  | { ok: false; error: "validation" | "database" | "email" }
   | null;
 
 function getStr(formData: FormData, k: string): string {
@@ -18,6 +19,7 @@ function getStr(formData: FormData, k: string): string {
 
 /**
  * Origen: formulario /postventa → tabla public.service_requests (ver migración 001 + RLS inserción pública en 004).
+ * Notifica a postventa@saldiviabuses.com.ar cuando Resend está configurado.
  */
 export async function submitServiceRequest(
   _prev: ServiceRequestState,
@@ -52,6 +54,32 @@ export async function submitServiceRequest(
 
   if (error) {
     return { ok: false, error: "database" };
+  }
+
+  if (process.env.RESEND_API_KEY) {
+    const text = [
+      "Nueva consulta de postventa — Saldivia web",
+      "",
+      `Empresa: ${company}`,
+      `Contacto: ${contactName}`,
+      `Email: ${email}`,
+      `Asunto: ${subject || "—"}`,
+      "",
+      "Mensaje:",
+      description,
+    ].join("\n");
+
+    const { sent, skipped, error: mailErr } = await sendSectionNotificationEmail({
+      section: "postventa",
+      subject: `Postventa — ${contactName}${company ? ` (${company})` : ""}`,
+      text,
+      replyTo: email,
+    });
+
+    if (!skipped && !sent) {
+      console.error("[submitServiceRequest] email", mailErr);
+      return { ok: false, error: "email" };
+    }
   }
 
   revalidatePath("/postventa");
