@@ -11,6 +11,9 @@ import { buttonClass } from "./components/ui/Button";
 import { getHomeHeroSlides } from "@/lib/supabase/home-hero";
 import { createClient } from "@/lib/supabase/server";
 
+/** Ocultar temporalmente el mapa del home (cambiar a `true` para volver a mostrarlo). */
+const SHOW_HOME_MAP = false;
+
 export const metadata: Metadata = {
   title: "Inicio",
   description:
@@ -40,7 +43,7 @@ export default async function HomePage() {
         {/* Stats Row */}
         <CountUpStatsRow />
 
-        <ArgentinaProjectsMap />
+        {SHOW_HOME_MAP ? <ArgentinaProjectsMap /> : null}
 
         <TechnicalShowcase />
 
