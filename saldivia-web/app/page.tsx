@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import ArgentinaProjectsMap from "./components/ArgentinaProjectsMap";
 import { CountUpStatsRow } from "./components/CountUpStatsRow";
 import HomeHero3 from "./components/HomeHero3";
 import GalleryCarousel from "./components/GalleryCarousel";
