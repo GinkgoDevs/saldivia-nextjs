@@ -30,9 +30,9 @@ const CRONOLOGIA = [
     year: 1995,
     body: "Comienza oficialmente nuestra historia el 10 de agosto de 1995.",
     icon: "flag",
-    imgSrc: "/historia/1995.png",
-    imgAlt: "Evolución de marcas Saldivia y MCM, origen 1995",
-    imgContain: true,
+    imgSrc: "/historia/1995.jpg",
+    imgAlt: "Evolución de los logos Saldivia y MCM desde 1995",
+    imgFit: "contain",
   },
   {
     year: 1998,
@@ -149,23 +149,23 @@ function ChronologyMedia({
   imgSrc,
   imgAlt,
   icon,
-  imgContain = false,
+  imgFit = "cover",
 }: {
   imgSrc?: string;
   imgAlt?: string;
   icon: string;
-  imgContain?: boolean;
+  imgFit?: "cover" | "contain";
 }) {
   if (imgSrc) {
     return (
       <div
         className={`h-52 overflow-hidden rounded-lg shadow-2xl sm:h-64 lg:h-72 ${
-          imgContain ? "bg-white p-3 sm:p-4" : ""
+          imgFit === "contain" ? "bg-white" : ""
         }`}
       >
         <img
           className={`h-full w-full object-center ${
-            imgContain ? "object-contain" : "object-cover"
+            imgFit === "contain" ? "object-contain p-2 sm:p-3" : "object-cover"
           }`}
           alt={imgAlt ?? ""}
           src={imgSrc}
@@ -200,7 +200,7 @@ function ChronologyItem({
   const nodeColor = NODE_COLORS[index % NODE_COLORS.length];
   const imgSrc = "imgSrc" in item ? item.imgSrc : undefined;
   const imgAlt = "imgAlt" in item ? item.imgAlt : undefined;
-  const imgContain = "imgContain" in item ? Boolean(item.imgContain) : false;
+  const imgFit = "imgFit" in item ? item.imgFit : undefined;
 
   const card = <ChronologyCard year={year} body={item.body} alignRight={textOnLeft} />;
   const media = (
@@ -208,7 +208,7 @@ function ChronologyItem({
       imgSrc={imgSrc}
       imgAlt={imgAlt ?? `Saldivia ${item.year}`}
       icon={item.icon}
-      imgContain={imgContain}
+      imgFit={imgFit}
     />
   );
 
