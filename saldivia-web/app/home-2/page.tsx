@@ -1,4 +1,3 @@
-import ArgentinaProjectsMap from "../components/ArgentinaProjectsMap";
 import { CountUpStatsRow } from "../components/CountUpStatsRow";
 import HomeHero2 from "../components/HomeHero2";
 import { TechnicalShowcase } from "../components/home/TechnicalShowcase";
@@ -24,7 +23,8 @@ export default function Home2Page() {
 
         <CountUpStatsRow />
 
-        <ArgentinaProjectsMap />
+        {/* Mapa de proyectos oculto: el cliente no quiere exponer info de clientes */}
+        {/* <ArgentinaProjectsMap /> */}
 
         <TechnicalShowcase />
 

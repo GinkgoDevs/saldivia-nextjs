@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import ArgentinaProjectsMap from "./components/ArgentinaProjectsMap";
 import { CountUpStatsRow } from "./components/CountUpStatsRow";
 import HomeHero3 from "./components/HomeHero3";
 import GalleryCarousel from "./components/GalleryCarousel";
@@ -17,7 +16,7 @@ const SHOW_HOME_MAP = false;
 export const metadata: Metadata = {
   title: "Inicio",
   description:
-    "Carrocerías para transporte de pasajeros. Proyectos por provincia, catálogo ARIES y soluciones urbano, interurbano e interprovincial.",
+    "Carrocerías para transporte de pasajeros. Catálogo ARIES y soluciones urbano, interurbano e interprovincial.",
   openGraph: {
     title: "Saldivia — Excelencia en Carrocerías",
     description:
