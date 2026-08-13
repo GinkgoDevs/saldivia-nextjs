@@ -1,24 +1,12 @@
 "use client";
 
 import { animate, motion, useMotionValue } from "framer-motion";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-const GALLERY_BASE = "/galeria-innovacion";
-
-const IMAGES = [
-  { src: `${GALLERY_BASE}/01-planta.webp`, alt: "Unidades Saldivia en planta de fabricación" },
-  { src: `${GALLERY_BASE}/02-flota-entrega.webp`, alt: "Flota Saldivia lista para entrega" },
-  { src: `${GALLERY_BASE}/03-buses-terminados.webp`, alt: "Buses Saldivia terminados" },
-  { src: `${GALLERY_BASE}/04-aerea-planta.webp`, alt: "Vista aérea de la planta Saldivia" },
-  { src: `${GALLERY_BASE}/05-aerea-instalaciones.webp`, alt: "Vista aérea de las instalaciones Saldivia" },
-  { src: `${GALLERY_BASE}/06-carroceria-elevador.webp`, alt: "Carrocería Saldivia sobre elevador" },
-  { src: `${GALLERY_BASE}/07-linea-produccion.webp`, alt: "Línea de producción y taller Saldivia" },
-  { src: `${GALLERY_BASE}/08-estructura-carroceria.webp`, alt: "Estructura de carrocería en fabricación" },
-  { src: `${GALLERY_BASE}/09-interior-terminado.webp`, alt: "Interior terminado de unidad Saldivia" },
-] as const;
+import { STATIC_GALLERY_IMAGES } from "@/lib/home-gallery-data";
+import type { ResolvedGalleryImage } from "@/types/home-gallery";
 
 const GAP = 24;
-const N = IMAGES.length;
 /** Clones al inicio/fin: debe ser >= máximo de ítems visibles en cualquier breakpoint */
 const CLONE = 4;
 
@@ -29,14 +17,18 @@ function visibleCount(viewportWidth: number) {
   return 1;
 }
 
-function buildExtended() {
-  return [...IMAGES.slice(-CLONE), ...IMAGES, ...IMAGES.slice(0, CLONE)];
-}
+type Props = {
+  images?: ResolvedGalleryImage[];
+};
 
-const extended = buildExtended();
-const INITIAL_POS = CLONE;
-
-export default function GalleryCarousel() {
+export default function GalleryCarousel({ images }: Props) {
+  const IMAGES = images ?? STATIC_GALLERY_IMAGES;
+  const N = IMAGES.length;
+  const extended = useMemo(() => {
+    if (N === 0) return [];
+    return [...IMAGES.slice(-CLONE), ...IMAGES, ...IMAGES.slice(0, CLONE)];
+  }, [IMAGES, N]);
+  const INITIAL_POS = CLONE;
   const viewportRef = useRef<HTMLDivElement>(null);
   const x = useMotionValue(0);
   const posRef = useRef(INITIAL_POS);
@@ -48,6 +40,12 @@ export default function GalleryCarousel() {
   const [paused, setPaused] = useState(false);
   const [visible, setVisible] = useState(3);
   const [lightboxIdx, setLightboxIdx] = useState<number | null>(null);
+
+  useEffect(() => {
+    posRef.current = INITIAL_POS;
+    setDotIdx(0);
+    x.set(-INITIAL_POS * stepRef.current);
+  }, [N, INITIAL_POS, x]);
 
   const recalcLayout = useCallback(() => {
     const el = viewportRef.current;
@@ -83,7 +81,7 @@ export default function GalleryCarousel() {
       p = N + p;
     }
     return p;
-  }, []);
+  }, [N]);
 
   const go = useCallback(
     (next: number) => {
@@ -107,7 +105,7 @@ export default function GalleryCarousel() {
       });
       setDotIdx((((target - CLONE) % N) + N) % N);
     },
-    [normalizePos, x],
+    [normalizePos, x, N],
   );
 
   const next = useCallback(() => go(posRef.current + 1), [go]);
@@ -117,11 +115,11 @@ export default function GalleryCarousel() {
   const closeLightbox = useCallback(() => setLightboxIdx(null), []);
   const lightboxNext = useCallback(
     () => setLightboxIdx((i) => (i === null ? i : (i + 1) % N)),
-    [],
+    [N],
   );
   const lightboxPrev = useCallback(
     () => setLightboxIdx((i) => (i === null ? i : (i - 1 + N) % N)),
-    [],
+    [N],
   );
 
   useEffect(() => {
@@ -148,6 +146,8 @@ export default function GalleryCarousel() {
 
   const slideWidth =
     itemW > 0 ? `${itemW}px` : `calc((100% - ${GAP * (visible - 1)}px) / ${visible})`;
+
+  if (N === 0) return null;
 
   return (
     <section

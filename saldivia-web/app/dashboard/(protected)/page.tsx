@@ -51,6 +51,16 @@ export default function DashboardPage() {
           </p>
         </Link>
         <Link
+          href="/dashboard/home-gallery"
+          className="ui-surface-card block cursor-pointer p-8 transition hover:border-secondary-container/40"
+        >
+          <span className="material-symbols-outlined text-3xl text-secondary">photo_library</span>
+          <h2 className="mt-3 text-lg font-bold text-primary">Galería del inicio</h2>
+          <p className="mt-2 text-sm text-on-surface-variant">
+            Galería de innovación: subir, ordenar, activar o quitar fotos del carrusel.
+          </p>
+        </Link>
+        <Link
           href="/dashboard/locations"
           className="ui-surface-card block cursor-pointer p-8 transition hover:border-secondary-container/40"
         >

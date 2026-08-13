@@ -1,5 +1,6 @@
 import { FadeUp, HeroStagger, TrajectoryRail } from "../components/motion";
 import NosotrosTimeline from "../components/NosotrosTimeline";
+import { NosotrosCalidad } from "./NosotrosCalidad";
 import {
   PageHero,
   PageHeroImage,
@@ -33,6 +34,8 @@ export default function NosotrosPage() {
         </PageHero>
 
         <NosotrosTimeline />
+
+        <NosotrosCalidad />
 
         <FadeUp>
           <section className="relative overflow-hidden border-t border-outline-variant/20 bg-surface py-14 sm:py-20 md:py-24">

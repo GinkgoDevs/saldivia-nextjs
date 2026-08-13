@@ -40,6 +40,7 @@ const NAV_GROUPS = [
     items: [
       { href: "/dashboard/home-hero", label: "Hero inicio", icon: Layers },
       { href: "/dashboard/home-showcase", label: "Showcase", icon: Globe },
+      { href: "/dashboard/home-gallery", label: "Galería home", icon: ImageIcon },
     ],
   },
   {

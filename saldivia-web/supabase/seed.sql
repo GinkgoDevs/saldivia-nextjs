@@ -294,3 +294,28 @@ BEGIN
     AND NOT EXISTS (SELECT 1 FROM public.home_showcase_slides s WHERE s.model_id = m.id);
 END
 $seed_home_showcase$;
+
+-- Galería de innovación del home (tras migración 017_home_gallery_slides.sql)
+DO $seed_home_gallery$
+BEGIN
+  IF to_regclass('public.home_gallery_slides') IS NULL THEN
+    RETURN;
+  END IF;
+
+  INSERT INTO public.home_gallery_slides (sort_order, image_url, image_alt, active)
+  SELECT v.sort_order, v.image_url, v.image_alt, true
+  FROM (
+    VALUES
+      (0, '/galeria-innovacion/01-planta.webp', 'Unidades Saldivia en planta de fabricación'),
+      (1, '/galeria-innovacion/02-flota-entrega.webp', 'Flota Saldivia lista para entrega'),
+      (2, '/galeria-innovacion/03-buses-terminados.webp', 'Buses Saldivia terminados'),
+      (3, '/galeria-innovacion/04-aerea-planta.webp', 'Vista aérea de la planta Saldivia'),
+      (4, '/galeria-innovacion/05-aerea-instalaciones.webp', 'Vista aérea de las instalaciones Saldivia'),
+      (5, '/galeria-innovacion/06-carroceria-elevador.webp', 'Carrocería Saldivia sobre elevador'),
+      (6, '/galeria-innovacion/07-linea-produccion.webp', 'Línea de producción y taller Saldivia'),
+      (7, '/galeria-innovacion/08-estructura-carroceria.webp', 'Estructura de carrocería en fabricación'),
+      (8, '/galeria-innovacion/09-interior-terminado.webp', 'Interior terminado de unidad Saldivia')
+  ) AS v(sort_order, image_url, image_alt)
+  WHERE NOT EXISTS (SELECT 1 FROM public.home_gallery_slides);
+END
+$seed_home_gallery$;
