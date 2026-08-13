@@ -925,6 +925,78 @@ export async function reorderHomeHeroSlides(ordered_ids: string[]) {
   return { ok: true as const };
 }
 
+type SaveHomeGallerySlideInput = {
+  id: string | null;
+  sort_order: number;
+  image_url: string;
+  image_alt: string;
+  active: boolean;
+};
+
+export async function saveHomeGallerySlide(input: SaveHomeGallerySlideInput) {
+  const { supabase, user } = await requireUser();
+  if (!user) {
+    return { ok: false as const, error: "unauthorized" };
+  }
+
+  const image_url = input.image_url.trim();
+  if (!image_url) {
+    return { ok: false as const, error: "validation" };
+  }
+
+  const row = {
+    sort_order: Number.isFinite(input.sort_order) ? input.sort_order : 0,
+    image_url,
+    image_alt: input.image_alt.trim() || null,
+    active: input.active,
+  };
+
+  if (input.id) {
+    const { error } = await supabase.from("home_gallery_slides").update(row).eq("id", input.id);
+    if (error) return { ok: false as const, error: error.message };
+  } else {
+    const { error } = await supabase.from("home_gallery_slides").insert(row);
+    if (error) return { ok: false as const, error: error.message };
+  }
+
+  revalidateContent();
+  revalidatePath("/dashboard/home-gallery");
+  return { ok: true as const };
+}
+
+export async function deleteHomeGallerySlide(id: string) {
+  const { supabase, user } = await requireUser();
+  if (!user) {
+    return { ok: false as const, error: "unauthorized" };
+  }
+  const { error } = await supabase.from("home_gallery_slides").delete().eq("id", id);
+  if (error) return { ok: false as const, error: error.message };
+  revalidateContent();
+  revalidatePath("/dashboard/home-gallery");
+  return { ok: true as const };
+}
+
+export async function reorderHomeGallerySlides(ordered_ids: string[]) {
+  const { supabase, user } = await requireUser();
+  if (!user) return { ok: false as const, error: "unauthorized" };
+
+  if (ordered_ids.length === 0 || new Set(ordered_ids).size !== ordered_ids.length) {
+    return { ok: false as const, error: "validation" };
+  }
+
+  for (let i = 0; i < ordered_ids.length; i++) {
+    const { error } = await supabase
+      .from("home_gallery_slides")
+      .update({ sort_order: i })
+      .eq("id", ordered_ids[i]);
+    if (error) return { ok: false as const, error: error.message };
+  }
+
+  revalidateContent();
+  revalidatePath("/dashboard/home-gallery");
+  return { ok: true as const };
+}
+
 export async function addModelImage(input: {
   model_id: string;
   image_url: string;

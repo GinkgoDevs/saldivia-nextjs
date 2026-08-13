@@ -8,6 +8,7 @@ import { TechnicalShowcase } from "./components/home/TechnicalShowcase";
 import { TrajectoryRail } from "./components/motion";
 import Link from "next/link";
 import { buttonClass } from "./components/ui/Button";
+import { getHomeGalleryImages } from "@/lib/supabase/home-gallery";
 import { getHomeHeroSlides } from "@/lib/supabase/home-hero";
 import { createClient } from "@/lib/supabase/server";
 
@@ -27,9 +28,13 @@ export const metadata: Metadata = {
 
 export default async function HomePage() {
   let heroSlides;
+  let galleryImages;
   try {
     const supabase = await createClient();
-    heroSlides = await getHomeHeroSlides(supabase);
+    [heroSlides, galleryImages] = await Promise.all([
+      getHomeHeroSlides(supabase),
+      getHomeGalleryImages(supabase),
+    ]);
   } catch (err) {
     console.error("[HomePage] hero slides fallback:", err);
   }
@@ -50,7 +55,7 @@ export default async function HomePage() {
         <div className="relative overflow-hidden bg-surface-container-low">
           <TrajectoryRail side="right" height="60%" />
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_20%,rgba(32,149,212,0.08),transparent_60%)]" />
-          <GalleryCarousel />
+          <GalleryCarousel images={galleryImages} />
           {/* Final CTA */}
           <MotionReveal>
             <section className="relative py-20">
