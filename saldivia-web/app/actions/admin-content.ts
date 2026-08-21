@@ -32,6 +32,7 @@ function revalidateContent() {
   revalidatePath("/flota");
   revalidatePath("/producto");
   revalidatePath("/");
+  revalidatePath("/nosotros");
   revalidatePath("/trabaja-con-nosotros");
   revalidatePath("/contacto");
 }
@@ -1132,5 +1133,40 @@ export async function reorderModelImages(model_id: string, ordered_image_ids: st
 
   revalidateContent();
   revalidatePath("/dashboard/model-images");
+  return { ok: true as const };
+}
+
+export async function saveQualityPolicyPdf(pdf_url: string) {
+  const { supabase, user } = await requireUser();
+  if (!user) return { ok: false as const, error: "unauthorized" };
+
+  const url = pdf_url.trim();
+  if (!url) return { ok: false as const, error: "validation" };
+
+  const { error } = await supabase.from("quality_policy").upsert({
+    id: 1,
+    pdf_url: url,
+    updated_at: new Date().toISOString(),
+  });
+
+  if (error) return { ok: false as const, error: error.message };
+
+  revalidateContent();
+  revalidatePath("/dashboard/quality-policy");
+  return { ok: true as const };
+}
+
+export async function clearQualityPolicyPdf() {
+  const { supabase, user } = await requireUser();
+  if (!user) return { ok: false as const, error: "unauthorized" };
+
+  const { error } = await supabase
+    .from("quality_policy")
+    .upsert({ id: 1, pdf_url: null, updated_at: new Date().toISOString() });
+
+  if (error) return { ok: false as const, error: error.message };
+
+  revalidateContent();
+  revalidatePath("/dashboard/quality-policy");
   return { ok: true as const };
 }

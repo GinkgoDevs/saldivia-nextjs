@@ -37,9 +37,9 @@ export default async function ContactoPage() {
         <PageHero
           image={
             <PageHeroImage
-              src="/hero-buses.png"
-              alt="Unidades Saldivia en planta industrial"
-              className="object-cover object-center"
+              src="/saldivia/contacto-hero.jpg"
+              alt="Camión con carrocería Saldivia montada en el playón de la planta"
+              className="object-cover object-[55%_48%]"
             />
           }
         >

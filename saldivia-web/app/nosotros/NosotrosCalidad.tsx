@@ -6,10 +6,6 @@ import { useRef } from "react";
 import { BRAND_EASE } from "../components/motion/brand-ease";
 import { buttonClass } from "../components/ui/Button";
 
-/** Colocar el PDF en `public/politica-calidad.pdf`. Si no está, no se muestra el botón. */
-const QUALITY_POLICY_PDF = "/politica-calidad.pdf";
-const SHOW_QUALITY_PDF = false;
-
 const METRICS = [
   { label: "Sistema de gestión de calidad NORMA ISO 9001.", value: 100 },
   { label: "Expectativas de nuestros clientes", value: 100 },
@@ -59,10 +55,11 @@ function QualityMetric({
   );
 }
 
-export function NosotrosCalidad() {
+export function NosotrosCalidad({ pdfUrl }: { pdfUrl?: string | null }) {
   const ref = useRef<HTMLElement>(null);
   const inView = useInView(ref, { once: true, amount: 0.35 });
   const reduceMotion = useReducedMotion() ?? false;
+  const href = pdfUrl?.trim() || null;
 
   return (
     <section
@@ -96,9 +93,9 @@ export function NosotrosCalidad() {
             <p className="mt-6 text-xs font-bold uppercase italic tracking-[0.28em] text-accent-blue sm:text-sm">
               Política de calidad
             </p>
-            {SHOW_QUALITY_PDF ? (
+            {href ? (
               <a
-                href={QUALITY_POLICY_PDF}
+                href={href}
                 target="_blank"
                 rel="noopener noreferrer"
                 className={buttonClass({

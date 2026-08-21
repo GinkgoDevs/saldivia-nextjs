@@ -61,6 +61,16 @@ export default function DashboardPage() {
           </p>
         </Link>
         <Link
+          href="/dashboard/quality-policy"
+          className="ui-surface-card block cursor-pointer p-8 transition hover:border-secondary-container/40"
+        >
+          <span className="material-symbols-outlined text-3xl text-secondary">picture_as_pdf</span>
+          <h2 className="mt-3 text-lg font-bold text-primary">Política de calidad</h2>
+          <p className="mt-2 text-sm text-on-surface-variant">
+            PDF descargable en Nosotros: subir o reemplazar cuando lo actualicen.
+          </p>
+        </Link>
+        <Link
           href="/dashboard/locations"
           className="ui-surface-card block cursor-pointer p-8 transition hover:border-secondary-container/40"
         >
