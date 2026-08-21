@@ -8,8 +8,18 @@ import {
   PAGE_HERO_LEAD_CLASS,
   PAGE_HERO_TITLE_CLASS,
 } from "../components/PageHero";
+import { getQualityPolicyPdfUrl } from "@/lib/supabase/quality-policy";
+import { createClient } from "@/lib/supabase/server";
 
-export default function NosotrosPage() {
+export default async function NosotrosPage() {
+  let qualityPdfUrl: string | null = null;
+  try {
+    const supabase = await createClient();
+    qualityPdfUrl = await getQualityPolicyPdfUrl(supabase);
+  } catch (err) {
+    console.error("[NosotrosPage] quality policy pdf:", err);
+  }
+
   return (
     <div className="bg-surface text-on-surface font-headline">
       <main>
@@ -35,7 +45,7 @@ export default function NosotrosPage() {
 
         <NosotrosTimeline />
 
-        <NosotrosCalidad />
+        <NosotrosCalidad pdfUrl={qualityPdfUrl} />
 
         <FadeUp>
           <section className="relative overflow-hidden border-t border-outline-variant/20 bg-surface py-14 sm:py-20 md:py-24">

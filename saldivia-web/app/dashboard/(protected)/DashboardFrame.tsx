@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
+  FileText,
   Globe,
   Home,
   ImageIcon,
@@ -42,6 +43,10 @@ const NAV_GROUPS = [
       { href: "/dashboard/home-showcase", label: "Showcase", icon: Globe },
       { href: "/dashboard/home-gallery", label: "Galería home", icon: ImageIcon },
     ],
+  },
+  {
+    title: "Nosotros",
+    items: [{ href: "/dashboard/quality-policy", label: "Política calidad", icon: FileText }],
   },
   {
     title: "Mapa",
