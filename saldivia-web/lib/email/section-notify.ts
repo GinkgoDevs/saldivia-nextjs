@@ -23,11 +23,19 @@ export function resolveNotifyEmail(section: NotifySection): string {
   return process.env.CV_NOTIFY_EMAIL?.trim() || SECTION_NOTIFY_EMAILS.cv;
 }
 
+export type EmailAttachment = {
+  filename: string;
+  /** Contenido en Base64 (API REST de Resend). */
+  content: string;
+  content_type?: string;
+};
+
 export async function sendSectionNotificationEmail(opts: {
   section: NotifySection;
   subject: string;
   text: string;
   replyTo?: string;
+  attachments?: EmailAttachment[];
 }): Promise<{ sent: boolean; skipped?: boolean; error?: string }> {
   const key = process.env.RESEND_API_KEY;
   if (!key) {
@@ -45,6 +53,9 @@ export async function sendSectionNotificationEmail(opts: {
   };
   if (opts.replyTo) {
     body.reply_to = opts.replyTo;
+  }
+  if (opts.attachments?.length) {
+    body.attachments = opts.attachments;
   }
 
   const res = await fetch(RESEND_API, {
