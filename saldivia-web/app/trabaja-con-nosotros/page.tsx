@@ -1,5 +1,7 @@
+import type { Metadata } from "next";
+
 import { HeroStagger } from "../components/motion";
-import { ContactoForm } from "../components/contact/ContactoForm";
+import { CvApplicationForm } from "../components/contact/CvApplicationForm";
 import {
   PageHero,
   PageHeroImage,
@@ -8,21 +10,21 @@ import {
   PAGE_HERO_TITLE_CLASS,
   PAGE_HERO_ACCENT_CLASS,
 } from "../components/PageHero";
-import { getModels } from "@/lib/supabase/models";
-import { createClient } from "@/lib/supabase/server";
 
 import { PLANT_ADDRESS, PLANT_MAPS_HREF } from "@/lib/site-location";
+
+export const metadata: Metadata = {
+  title: "Trabaja con nosotros",
+  description:
+    "Postulate en Saldivia Carrocerías. Enviá tu CV y nos pondremos en contacto cuando haya vacantes.",
+};
 
 const CONTACT_PHONE = "+54 0341 4921135";
 const CONTACT_PHONE_HREF = "tel:+543414921135";
 const RRHH_EMAIL = "cv@saldiviabuses.com.ar";
 const RRHH_EMAIL_HREF = `mailto:${RRHH_EMAIL}`;
 
-export default async function TrabajaConNosotrosPage() {
-  const supabase = await createClient();
-  const { data: models } = await getModels(supabase, {});
-  const modelOptions = (models ?? []).map((m) => ({ name: m.name, slug: m.slug }));
-
+export default function TrabajaConNosotrosPage() {
   return (
     <div className="bg-surface text-on-surface font-headline">
       <main>
@@ -36,14 +38,14 @@ export default async function TrabajaConNosotrosPage() {
           }
         >
           <HeroStagger>
-            <span className={PAGE_HERO_EYEBROW_CLASS}>Contacto y RRHH</span>
+            <span className={PAGE_HERO_EYEBROW_CLASS}>RRHH</span>
             <h1 className={PAGE_HERO_TITLE_CLASS}>
               Trabaja
               <br />
               <span className={PAGE_HERO_ACCENT_CLASS}>con nosotros</span>
             </h1>
             <p className={PAGE_HERO_LEAD_CLASS}>
-              Envíenos su consulta comercial o su CV para futuras búsquedas laborales.
+              Envíenos su CV para futuras búsquedas laborales. Nos pondremos en contacto cuando haya vacantes.
             </p>
           </HeroStagger>
         </PageHero>
@@ -95,20 +97,21 @@ export default async function TrabajaConNosotrosPage() {
               </div>
 
               <div className="rounded-curve-lg border border-outline-variant/30 bg-surface-container-low p-6 text-sm text-on-surface-variant sm:p-8">
-                Si desea postularse, envíe su CV por mail y nos pondremos en contacto cuando haya vacantes.
+                Adjunte su CV en el formulario o envíelo por mail. Nos pondremos en contacto cuando haya vacantes.
               </div>
             </aside>
 
             <div className="lg:col-span-7">
               <div className="ui-surface-card p-6 sm:p-8 md:p-10">
                 <h3 className="text-2xl font-black uppercase tracking-tighter text-primary sm:text-3xl">
-                  Escríbanos
+                  Envíe su CV
                 </h3>
                 <p className="mt-3 text-sm text-on-surface-variant sm:text-base">
-                  Complete el formulario y nuestro equipo se pondrá en contacto.
+                  Complete el formulario y adjunte su currículum. El equipo de RRHH lo recibirá en{" "}
+                  {RRHH_EMAIL}.
                 </p>
                 <div className="mt-8">
-                  <ContactoForm modelOptions={modelOptions} notifySection="cv" />
+                  <CvApplicationForm />
                 </div>
               </div>
             </div>
